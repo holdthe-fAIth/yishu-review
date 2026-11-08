@@ -1,0 +1,3219 @@
+{
+ "version": 1,
+ "generatedAt": "2026-11-08T07:32:48.485Z",
+ "up": {
+  "mid": 14229967,
+  "name": "一数",
+  "space": "https://space.bilibili.com/14229967"
+ },
+ "systemCourse": {
+  "id": "system",
+  "bvid": "BV147411K7xu",
+  "title": "高中数学基础与解法全集",
+  "subtitle": "一数 · 大合集（含 2025 新增）",
+  "kpCount": 194,
+  "durationMin": 6818,
+  "modules": [
+   {
+    "id": "m2",
+    "name": "初高衔接",
+    "count": 2,
+    "durationMin": 64,
+    "items": [
+     {
+      "p": 2,
+      "no": 1,
+      "name": "等式变形方法回顾",
+      "difficulty": "",
+      "level": "",
+      "duration": 2082,
+      "durationText": "34:42"
+     },
+     {
+      "p": 3,
+      "no": 2,
+      "name": "不等式解法梳理",
+      "difficulty": "",
+      "level": "",
+      "duration": 1753,
+      "durationText": "29:13"
+     }
+    ]
+   },
+   {
+    "id": "m5",
+    "name": "集合",
+    "count": 6,
+    "durationMin": 146,
+    "items": [
+     {
+      "p": 5,
+      "no": 1,
+      "name": "集合的概念",
+      "difficulty": "易",
+      "level": "基础",
+      "duration": 1509,
+      "durationText": "25:09"
+     },
+     {
+      "p": 6,
+      "no": 2,
+      "name": "子集的概念",
+      "difficulty": "易",
+      "level": "基础",
+      "duration": 2390,
+      "durationText": "39:50"
+     },
+     {
+      "p": 7,
+      "no": 3,
+      "name": "交并补运算",
+      "difficulty": "易",
+      "level": "基础",
+      "duration": 1409,
+      "durationText": "23:29"
+     },
+     {
+      "p": 8,
+      "no": 4,
+      "name": "综合大题练习",
+      "difficulty": "中档",
+      "level": "中档",
+      "duration": 788,
+      "durationText": "13:08"
+     },
+     {
+      "p": 9,
+      "no": 5,
+      "name": "易错大盘点",
+      "difficulty": "中档",
+      "level": "中档",
+      "duration": 1676,
+      "durationText": "27:56"
+     },
+     {
+      "p": 10,
+      "no": 6,
+      "name": "新定义问题",
+      "difficulty": "中档",
+      "level": "中档",
+      "duration": 1002,
+      "durationText": "16:42"
+     }
+    ]
+   },
+   {
+    "id": "m11",
+    "name": "逻辑",
+    "count": 2,
+    "durationMin": 46,
+    "items": [
+     {
+      "p": 11,
+      "no": 1,
+      "name": "充分必要条件",
+      "difficulty": "易",
+      "level": "基础",
+      "duration": 1803,
+      "durationText": "30:03"
+     },
+     {
+      "p": 12,
+      "no": 2,
+      "name": "全称与存在量词",
+      "difficulty": "易",
+      "level": "基础",
+      "duration": 931,
+      "durationText": "15:31"
+     }
+    ]
+   },
+   {
+    "id": "m13",
+    "name": "不等式",
+    "count": 3,
+    "durationMin": 114,
+    "items": [
+     {
+      "p": 13,
+      "no": 1,
+      "name": "不等式的性质",
+      "difficulty": "易",
+      "level": "基础",
+      "duration": 1450,
+      "durationText": "24:10"
+     },
+     {
+      "p": 14,
+      "no": 2,
+      "name": "基本不等式",
+      "difficulty": "易-中档",
+      "level": "中档",
+      "duration": 2260,
+      "durationText": "37:40"
+     },
+     {
+      "p": 15,
+      "no": 3,
+      "name": "基本不等式进阶篇",
+      "difficulty": "稍难",
+      "level": "拔高",
+      "duration": 3139,
+      "durationText": "52:19"
+     }
+    ]
+   },
+   {
+    "id": "m16",
+    "name": "二次函数",
+    "count": 2,
+    "durationMin": 51,
+    "items": [
+     {
+      "p": 16,
+      "no": 1,
+      "name": "二次函数中的a、b、c与不等式",
+      "difficulty": "中档",
+      "level": "中档",
+      "duration": 1604,
+      "durationText": "26:44"
+     },
+     {
+      "p": 17,
+      "no": 2,
+      "name": "二次函数根分布问题",
+      "difficulty": "中档",
+      "level": "中档",
+      "duration": 1448,
+      "durationText": "24:08"
+     }
+    ]
+   },
+   {
+    "id": "m18",
+    "name": "函数",
+    "count": 13,
+    "durationMin": 454,
+    "items": [
+     {
+      "p": 18,
+      "no": 1,
+      "name": "引导课：高中为什么用f(x)",
+      "difficulty": "",
+      "level": "",
+      "duration": 1473,
+      "durationText": "24:33"
+     },
+     {
+      "p": 19,
+      "no": 2,
+      "name": "函数的定义域与解析式",
+      "difficulty": "易",
+      "level": "基础",
+      "duration": 2344,
+      "durationText": "39:04"
+     },
+     {
+      "p": 20,
+      "no": 3,
+      "name": "分段函数与复合函数",
+      "difficulty": "中档",
+      "level": "中档",
+      "duration": 1426,
+      "durationText": "23:46"
+     },
+     {
+      "p": 21,
+      "no": 4,
+      "name": "分式函数的值域",
+      "difficulty": "易",
+      "level": "基础",
+      "duration": 2299,
+      "durationText": "38:19"
+     },
+     {
+      "p": 22,
+      "no": 5,
+      "name": "函数单调性",
+      "difficulty": "易",
+      "level": "基础",
+      "duration": 2632,
+      "durationText": "43:52"
+     },
+     {
+      "p": 23,
+      "no": 6,
+      "name": "复合函数单调性：同增异减",
+      "difficulty": "易",
+      "level": "基础",
+      "duration": 819,
+      "durationText": "13:39"
+     },
+     {
+      "p": 24,
+      "no": 7,
+      "name": "恒成立问题！分类讨论+必要探路+分离参数！",
+      "difficulty": "中档-拔高",
+      "level": "拔高",
+      "duration": 2430,
+      "durationText": "40:30"
+     },
+     {
+      "p": 25,
+      "no": 8,
+      "name": "函数奇偶性",
+      "difficulty": "易-中档",
+      "level": "中档",
+      "duration": 2301,
+      "durationText": "38:21"
+     },
+     {
+      "p": 26,
+      "no": 9,
+      "name": "单调奇偶考法复习",
+      "difficulty": "易",
+      "level": "基础",
+      "duration": 1446,
+      "durationText": "24:06"
+     },
+     {
+      "p": 27,
+      "no": 10,
+      "name": "单调奇偶综合拓展（中档）（承接上集）",
+      "difficulty": "",
+      "level": "",
+      "duration": 2353,
+      "durationText": "39:13"
+     },
+     {
+      "p": 28,
+      "no": 11,
+      "name": "函数的对称性与周期性",
+      "difficulty": "中档-进阶",
+      "level": "中档",
+      "duration": 2488,
+      "durationText": "41:28"
+     },
+     {
+      "p": 29,
+      "no": 12,
+      "name": "「抽象函数」性质大综合问题！",
+      "difficulty": "基础-中档",
+      "level": "中档",
+      "duration": 2243,
+      "durationText": "37:23"
+     },
+     {
+      "p": 30,
+      "no": 13,
+      "name": "抽象函数、恒成立、构造函数期中压轴复习",
+      "difficulty": "拔高",
+      "level": "拔高",
+      "duration": 2979,
+      "durationText": "49:39"
+     }
+    ]
+   },
+   {
+    "id": "m31",
+    "name": "初等函数",
+    "count": 12,
+    "durationMin": 382,
+    "items": [
+     {
+      "p": 31,
+      "no": 1,
+      "name": "幂函数",
+      "difficulty": "基础",
+      "level": "基础",
+      "duration": 1175,
+      "durationText": "19:35"
+     },
+     {
+      "p": 32,
+      "no": 2,
+      "name": "分数指数幂的计算",
+      "difficulty": "基础",
+      "level": "基础",
+      "duration": 972,
+      "durationText": "16:12"
+     },
+     {
+      "p": 33,
+      "no": 3,
+      "name": "指数函数",
+      "difficulty": "基础",
+      "level": "基础",
+      "duration": 1285,
+      "durationText": "21:25"
+     },
+     {
+      "p": 34,
+      "no": 4,
+      "name": "指数函数+幂函数，重点难点全梳理！",
+      "difficulty": "",
+      "level": "",
+      "duration": 2869,
+      "durationText": "47:49"
+     },
+     {
+      "p": 35,
+      "no": 5,
+      "name": "对数定义+基本运算规则",
+      "difficulty": "基础",
+      "level": "基础",
+      "duration": 1584,
+      "durationText": "26:24"
+     },
+     {
+      "p": 36,
+      "no": 6,
+      "name": "对数换底公式+练习",
+      "difficulty": "基础",
+      "level": "基础",
+      "duration": 927,
+      "durationText": "15:27"
+     },
+     {
+      "p": 37,
+      "no": 7,
+      "name": "对数函数",
+      "difficulty": "基础",
+      "level": "基础",
+      "duration": 1330,
+      "durationText": "22:10"
+     },
+     {
+      "p": 38,
+      "no": 8,
+      "name": "指对幂比大小问题",
+      "difficulty": "基础-中档",
+      "level": "中档",
+      "duration": 2737,
+      "durationText": "45:37"
+     },
+     {
+      "p": 39,
+      "no": 9,
+      "name": "指数、对数的常见重要“丑函数”",
+      "difficulty": "拔高",
+      "level": "拔高",
+      "duration": 2440,
+      "durationText": "40:40"
+     },
+     {
+      "p": 40,
+      "no": 10,
+      "name": "零点问题!存在定理+分段函数+复合函数",
+      "difficulty": "基础-拔高",
+      "level": "拔高",
+      "duration": 1915,
+      "durationText": "31:55"
+     },
+     {
+      "p": 41,
+      "no": 11,
+      "name": "函数问题的解题流程总结",
+      "difficulty": "中档-拔高",
+      "level": "拔高",
+      "duration": 2939,
+      "durationText": "48:59"
+     },
+     {
+      "p": 42,
+      "no": 12,
+      "name": "函数最后一课",
+      "difficulty": "中档+拔高",
+      "level": "拔高",
+      "duration": 2773,
+      "durationText": "46:13"
+     }
+    ]
+   },
+   {
+    "id": "m43",
+    "name": "三角函数",
+    "count": 14,
+    "durationMin": 306,
+    "items": [
+     {
+      "p": 43,
+      "no": 1,
+      "name": "任意角的表示",
+      "difficulty": "易",
+      "level": "基础",
+      "duration": 1197,
+      "durationText": "19:57"
+     },
+     {
+      "p": 44,
+      "no": 2,
+      "name": "弧度制",
+      "difficulty": "易",
+      "level": "基础",
+      "duration": 1059,
+      "durationText": "17:39"
+     },
+     {
+      "p": 45,
+      "no": 3,
+      "name": "弧长与扇形面积公式",
+      "difficulty": "易",
+      "level": "基础",
+      "duration": 1025,
+      "durationText": "17:05"
+     },
+     {
+      "p": 46,
+      "no": 4,
+      "name": "三角函数的定义",
+      "difficulty": "易",
+      "level": "基础",
+      "duration": 1680,
+      "durationText": "28:00"
+     },
+     {
+      "p": 47,
+      "no": 5,
+      "name": "同角三角函数关系",
+      "difficulty": "易+中档",
+      "level": "中档",
+      "duration": 985,
+      "durationText": "16:25"
+     },
+     {
+      "p": 48,
+      "no": 6,
+      "name": "诱导公式",
+      "difficulty": "易",
+      "level": "基础",
+      "duration": 2074,
+      "durationText": "34:34"
+     },
+     {
+      "p": 49,
+      "no": 7,
+      "name": "sinx的图像与性质",
+      "difficulty": "易+中档",
+      "level": "中档",
+      "duration": 1934,
+      "durationText": "32:14"
+     },
+     {
+      "p": 50,
+      "no": 8,
+      "name": "cosx的图像与性质",
+      "difficulty": "易+中档",
+      "level": "中档",
+      "duration": 823,
+      "durationText": "13:43"
+     },
+     {
+      "p": 51,
+      "no": 9,
+      "name": "tanx的图像与性质",
+      "difficulty": "易+中档",
+      "level": "中档",
+      "duration": 460,
+      "durationText": "7:40"
+     },
+     {
+      "p": 52,
+      "no": 10,
+      "name": "三角4个解题妙招",
+      "difficulty": "中档",
+      "level": "中档",
+      "duration": 1653,
+      "durationText": "27:33"
+     },
+     {
+      "p": 53,
+      "no": 11,
+      "name": "三角函数的平移伸缩",
+      "difficulty": "易",
+      "level": "基础",
+      "duration": 902,
+      "durationText": "15:02"
+     },
+     {
+      "p": 54,
+      "no": 12,
+      "name": "三角函数一般形式的各参数含义",
+      "difficulty": "易",
+      "level": "基础",
+      "duration": 649,
+      "durationText": "10:49"
+     },
+     {
+      "p": 55,
+      "no": 13,
+      "name": "整体换元法",
+      "difficulty": "中档",
+      "level": "中档",
+      "duration": 1761,
+      "durationText": "29:21"
+     },
+     {
+      "p": 56,
+      "no": 14,
+      "name": "三角函数取值范围大串讲！",
+      "difficulty": "超级拔高",
+      "level": "拔高",
+      "duration": 2168,
+      "durationText": "36:08"
+     }
+    ]
+   },
+   {
+    "id": "m57",
+    "name": "三角恒等变换",
+    "count": 10,
+    "durationMin": 239,
+    "items": [
+     {
+      "p": 57,
+      "no": 1,
+      "name": "sincos两角和差公式",
+      "difficulty": "易",
+      "level": "基础",
+      "duration": 1966,
+      "durationText": "32:46"
+     },
+     {
+      "p": 58,
+      "no": 2,
+      "name": "tan两角和差公式",
+      "difficulty": "易",
+      "level": "基础",
+      "duration": 788,
+      "durationText": "13:08"
+     },
+     {
+      "p": 59,
+      "no": 3,
+      "name": "两角和差公式进阶练习",
+      "difficulty": "中档",
+      "level": "中档",
+      "duration": 1284,
+      "durationText": "21:24"
+     },
+     {
+      "p": 60,
+      "no": 4,
+      "name": "二倍角公式",
+      "difficulty": "易",
+      "level": "基础",
+      "duration": 1421,
+      "durationText": "23:41"
+     },
+     {
+      "p": 61,
+      "no": 5,
+      "name": "二倍角公式进阶变形",
+      "difficulty": "中档",
+      "level": "中档",
+      "duration": 916,
+      "durationText": "15:16"
+     },
+     {
+      "p": 62,
+      "no": 6,
+      "name": "二倍角与半角公式复习",
+      "difficulty": "中档",
+      "level": "中档",
+      "duration": 1264,
+      "durationText": "21:04"
+     },
+     {
+      "p": 63,
+      "no": 7,
+      "name": "辅助角公式",
+      "difficulty": "易",
+      "level": "基础",
+      "duration": 1663,
+      "durationText": "27:43"
+     },
+     {
+      "p": 64,
+      "no": 8,
+      "name": "和差化积积化和差",
+      "difficulty": "选学，拔高",
+      "level": "拔高",
+      "duration": 1050,
+      "durationText": "17:30"
+     },
+     {
+      "p": 65,
+      "no": 9,
+      "name": "恒等变换公式大梳理",
+      "difficulty": "中档",
+      "level": "中档",
+      "duration": 2334,
+      "durationText": "38:54"
+     },
+     {
+      "p": 66,
+      "no": 10,
+      "name": "三角恒等变换做题思路总结",
+      "difficulty": "中档-拔高",
+      "level": "拔高",
+      "duration": 1632,
+      "durationText": "27:12"
+     }
+    ]
+   },
+   {
+    "id": "m67",
+    "name": "高一上",
+    "count": 1,
+    "durationMin": 52,
+    "items": [
+     {
+      "p": 67,
+      "no": null,
+      "name": "期末大复习",
+      "difficulty": "中档-拔高",
+      "level": "拔高",
+      "duration": 3108,
+      "durationText": "51:48"
+     }
+    ]
+   },
+   {
+    "id": "m69",
+    "name": "平面向量",
+    "count": 10,
+    "durationMin": 325,
+    "items": [
+     {
+      "p": 69,
+      "no": 1,
+      "name": "平面向量的概念",
+      "difficulty": "易",
+      "level": "基础",
+      "duration": 968,
+      "durationText": "16:08"
+     },
+     {
+      "p": 70,
+      "no": 2,
+      "name": "向量的加减数乘运算",
+      "difficulty": "易",
+      "level": "基础",
+      "duration": 1301,
+      "durationText": "21:41"
+     },
+     {
+      "p": 71,
+      "no": 3,
+      "name": "向量技巧三点共线定理",
+      "difficulty": "中档-拔高",
+      "level": "拔高",
+      "duration": 3280,
+      "durationText": "54:40"
+     },
+     {
+      "p": 72,
+      "no": 4,
+      "name": "向量的数量积",
+      "difficulty": "易",
+      "level": "基础",
+      "duration": 1566,
+      "durationText": "26:06"
+     },
+     {
+      "p": 73,
+      "no": 5,
+      "name": "向量的数量积进阶",
+      "difficulty": "中档-拔高",
+      "level": "拔高",
+      "duration": 3427,
+      "durationText": "57:07"
+     },
+     {
+      "p": 74,
+      "no": 6,
+      "name": "平面向量基本定理",
+      "difficulty": "易",
+      "level": "基础",
+      "duration": 804,
+      "durationText": "13:24"
+     },
+     {
+      "p": 75,
+      "no": 7,
+      "name": "向量的坐标运算",
+      "difficulty": "易",
+      "level": "基础",
+      "duration": 1405,
+      "durationText": "23:25"
+     },
+     {
+      "p": 76,
+      "no": 8,
+      "name": "向量的坐标运算进阶",
+      "difficulty": "中档-拔高",
+      "level": "拔高",
+      "duration": 2449,
+      "durationText": "40:49"
+     },
+     {
+      "p": 77,
+      "no": 9,
+      "name": "平面向量必会十题 上",
+      "difficulty": "中档-拔高",
+      "level": "拔高",
+      "duration": 2782,
+      "durationText": "46:22"
+     },
+     {
+      "p": 78,
+      "no": 10,
+      "name": "平面向量必会十题 下",
+      "difficulty": "中档-拔高",
+      "level": "拔高",
+      "duration": 1524,
+      "durationText": "25:24"
+     }
+    ]
+   },
+   {
+    "id": "m79",
+    "name": "解三角形",
+    "count": 6,
+    "durationMin": 201,
+    "items": [
+     {
+      "p": 79,
+      "no": 1,
+      "name": "正余弦定理基础",
+      "difficulty": "易",
+      "level": "基础",
+      "duration": 1918,
+      "durationText": "31:58"
+     },
+     {
+      "p": 80,
+      "no": 2,
+      "name": "角形解个数与测量",
+      "difficulty": "中档",
+      "level": "中档",
+      "duration": 1500,
+      "durationText": "25:00"
+     },
+     {
+      "p": 81,
+      "no": 3,
+      "name": "边角化简",
+      "difficulty": "中档",
+      "level": "中档",
+      "duration": 2102,
+      "durationText": "35:02"
+     },
+     {
+      "p": 82,
+      "no": 4,
+      "name": "最值范围问题",
+      "difficulty": "中档-拔高",
+      "level": "拔高",
+      "duration": 1451,
+      "durationText": "24:11"
+     },
+     {
+      "p": 83,
+      "no": 5,
+      "name": "多三角形问题",
+      "difficulty": "拔高",
+      "level": "拔高",
+      "duration": 3018,
+      "durationText": "50:18"
+     },
+     {
+      "p": 84,
+      "no": 6,
+      "name": "奔驰定理与四心最后最后一版",
+      "difficulty": "拔高",
+      "level": "拔高",
+      "duration": 2068,
+      "durationText": "34:28"
+     }
+    ]
+   },
+   {
+    "id": "m85",
+    "name": "复数",
+    "count": 2,
+    "durationMin": 34,
+    "items": [
+     {
+      "p": 85,
+      "no": 1,
+      "name": "复数的概念",
+      "difficulty": "易",
+      "level": "基础",
+      "duration": 574,
+      "durationText": "9:34"
+     },
+     {
+      "p": 86,
+      "no": 2,
+      "name": "复数的运算",
+      "difficulty": "易-中档",
+      "level": "中档",
+      "duration": 1441,
+      "durationText": "24:01"
+     }
+    ]
+   },
+   {
+    "id": "m87",
+    "name": "立体几何",
+    "count": 16,
+    "durationMin": 560,
+    "items": [
+     {
+      "p": 87,
+      "no": 1,
+      "name": "空间几何体",
+      "difficulty": "基础",
+      "level": "基础",
+      "duration": 2247,
+      "durationText": "37:27"
+     },
+     {
+      "p": 88,
+      "no": 2,
+      "name": "斜二测画法",
+      "difficulty": "基础",
+      "level": "基础",
+      "duration": 770,
+      "durationText": "12:50"
+     },
+     {
+      "p": 89,
+      "no": 3,
+      "name": "柱体、锥体、台体的体积",
+      "difficulty": "基础",
+      "level": "基础",
+      "duration": 1583,
+      "durationText": "26:23"
+     },
+     {
+      "p": 90,
+      "no": 4,
+      "name": "球的体积与表面积",
+      "difficulty": "基础",
+      "level": "基础",
+      "duration": 1153,
+      "durationText": "19:13"
+     },
+     {
+      "p": 91,
+      "no": 5,
+      "name": "空间中的点线面",
+      "difficulty": "基础",
+      "level": "基础",
+      "duration": 1775,
+      "durationText": "29:35"
+     },
+     {
+      "p": 92,
+      "no": 6,
+      "name": "空间中的平行",
+      "difficulty": "基础",
+      "level": "基础",
+      "duration": 3697,
+      "durationText": "61:37"
+     },
+     {
+      "p": 93,
+      "no": 7,
+      "name": "平行证明辅助线套路总结",
+      "difficulty": "中档",
+      "level": "中档",
+      "duration": 2061,
+      "durationText": "34:21"
+     },
+     {
+      "p": 94,
+      "no": 8,
+      "name": "空间中的垂直",
+      "difficulty": "基础",
+      "level": "基础",
+      "duration": 2830,
+      "durationText": "47:10"
+     },
+     {
+      "p": 95,
+      "no": 9,
+      "name": "垂直证明定理应用",
+      "difficulty": "中档",
+      "level": "中档",
+      "duration": 1677,
+      "durationText": "27:57"
+     },
+     {
+      "p": 96,
+      "no": 10,
+      "name": "垂直辅助线技巧梳理",
+      "difficulty": "中档-拔高",
+      "level": "拔高",
+      "duration": 2348,
+      "durationText": "39:08"
+     },
+     {
+      "p": 97,
+      "no": 11,
+      "name": "空间中的角度",
+      "difficulty": "中档",
+      "level": "中档",
+      "duration": 3296,
+      "durationText": "54:56"
+     },
+     {
+      "p": 98,
+      "no": 12,
+      "name": "角度与动点问题",
+      "difficulty": "拔高",
+      "level": "拔高",
+      "duration": 1549,
+      "durationText": "25:49"
+     },
+     {
+      "p": 99,
+      "no": 13,
+      "name": "外接球问题 上",
+      "difficulty": "基础-中档",
+      "level": "中档",
+      "duration": 2019,
+      "durationText": "33:39"
+     },
+     {
+      "p": 100,
+      "no": 14,
+      "name": "外接球问题 下",
+      "difficulty": "中档-拔高",
+      "level": "拔高",
+      "duration": 1346,
+      "durationText": "22:26"
+     },
+     {
+      "p": 101,
+      "no": 15,
+      "name": "内切球问题",
+      "difficulty": "中档-进阶",
+      "level": "中档",
+      "duration": 2897,
+      "durationText": "48:17"
+     },
+     {
+      "p": 117,
+      "no": null,
+      "name": "赛博刷题！",
+      "difficulty": "中档-拔高",
+      "level": "拔高",
+      "duration": 2370,
+      "durationText": "39:30"
+     }
+    ]
+   },
+   {
+    "id": "m102",
+    "name": "统计必修",
+    "count": 3,
+    "durationMin": 92,
+    "items": [
+     {
+      "p": 102,
+      "no": 1,
+      "name": "随机抽样&用样本估计总体",
+      "difficulty": "易",
+      "level": "基础",
+      "duration": 1872,
+      "durationText": "31:12"
+     },
+     {
+      "p": 103,
+      "no": 2,
+      "name": "方差进阶问题",
+      "difficulty": "中档",
+      "level": "中档",
+      "duration": 1883,
+      "durationText": "31:23"
+     },
+     {
+      "p": 104,
+      "no": 3,
+      "name": "频率分布直方图",
+      "difficulty": "易-中档",
+      "level": "中档",
+      "duration": 1782,
+      "durationText": "29:42"
+     }
+    ]
+   },
+   {
+    "id": "m105",
+    "name": "概率必修",
+    "count": 4,
+    "durationMin": 122,
+    "items": [
+     {
+      "p": 105,
+      "no": 4,
+      "name": "随机事件与概率",
+      "difficulty": "易",
+      "level": "基础",
+      "duration": 2091,
+      "durationText": "34:51"
+     },
+     {
+      "p": 106,
+      "no": 5,
+      "name": "事件的独立性",
+      "difficulty": "中档",
+      "level": "中档",
+      "duration": 2651,
+      "durationText": "44:11"
+     },
+     {
+      "p": 107,
+      "no": 6,
+      "name": "概率常考大题串讲",
+      "difficulty": "中档",
+      "level": "中档",
+      "duration": 1675,
+      "durationText": "27:55"
+     },
+     {
+      "p": 108,
+      "no": 7,
+      "name": "频率与概率",
+      "difficulty": "易",
+      "level": "基础",
+      "duration": 877,
+      "durationText": "14:37"
+     }
+    ]
+   },
+   {
+    "id": "m109",
+    "name": "空间向量",
+    "count": 9,
+    "durationMin": 321,
+    "items": [
+     {
+      "p": 109,
+      "no": 1,
+      "name": "空间向量及其运算",
+      "difficulty": "易",
+      "level": "基础",
+      "duration": 1153,
+      "durationText": "19:13"
+     },
+     {
+      "p": 110,
+      "no": 2,
+      "name": "建系与坐标运算",
+      "difficulty": "易",
+      "level": "基础",
+      "duration": 1193,
+      "durationText": "19:53"
+     },
+     {
+      "p": 111,
+      "no": 3,
+      "name": "证明平行垂直",
+      "difficulty": "易-中档",
+      "level": "中档",
+      "duration": 1583,
+      "durationText": "26:23"
+     },
+     {
+      "p": 112,
+      "no": 4,
+      "name": "空间中的角度问题",
+      "difficulty": "中档",
+      "level": "中档",
+      "duration": 2247,
+      "durationText": "37:27"
+     },
+     {
+      "p": 113,
+      "no": 5,
+      "name": "空间中的距离问题",
+      "difficulty": "中档",
+      "level": "中档",
+      "duration": 3102,
+      "durationText": "51:42"
+     },
+     {
+      "p": 114,
+      "no": null,
+      "name": "四点共面问题",
+      "difficulty": "中档",
+      "level": "中档",
+      "duration": 1167,
+      "durationText": "19:27"
+     },
+     {
+      "p": 115,
+      "no": 6,
+      "name": "立体几何不好建系的处理策略",
+      "difficulty": "中档-稍难",
+      "level": "拔高",
+      "duration": 2924,
+      "durationText": "48:44"
+     },
+     {
+      "p": 116,
+      "no": null,
+      "name": "三道题搞定建系",
+      "difficulty": "",
+      "level": "",
+      "duration": 2683,
+      "durationText": "44:43"
+     },
+     {
+      "p": 118,
+      "no": 7,
+      "name": "盘点高考历年最难立体几何大题",
+      "difficulty": "稍难",
+      "level": "拔高",
+      "duration": 3184,
+      "durationText": "53:04"
+     }
+    ]
+   },
+   {
+    "id": "m119",
+    "name": "直线与圆",
+    "count": 11,
+    "durationMin": 323,
+    "items": [
+     {
+      "p": 119,
+      "no": 1,
+      "name": "直线倾斜角与斜率",
+      "difficulty": "易",
+      "level": "基础",
+      "duration": 1710,
+      "durationText": "28:30"
+     },
+     {
+      "p": 120,
+      "no": 2,
+      "name": "直线的方程",
+      "difficulty": "易",
+      "level": "基础",
+      "duration": 909,
+      "durationText": "15:09"
+     },
+     {
+      "p": 121,
+      "no": 3,
+      "name": "交点坐标与距离公式",
+      "difficulty": "易-中档",
+      "level": "中档",
+      "duration": 1959,
+      "durationText": "32:39"
+     },
+     {
+      "p": 122,
+      "no": 4,
+      "name": "圆的标准方程",
+      "difficulty": "易",
+      "level": "基础",
+      "duration": 1445,
+      "durationText": "24:05"
+     },
+     {
+      "p": 123,
+      "no": 5,
+      "name": "圆的一般方程",
+      "difficulty": "易",
+      "level": "基础",
+      "duration": 1676,
+      "durationText": "27:56"
+     },
+     {
+      "p": 124,
+      "no": 6,
+      "name": "直线与圆位置关系",
+      "difficulty": "易-中档",
+      "level": "中档",
+      "duration": 2042,
+      "durationText": "34:02"
+     },
+     {
+      "p": 125,
+      "no": 7,
+      "name": "圆与圆的位置关系",
+      "difficulty": "中档",
+      "level": "中档",
+      "duration": 1540,
+      "durationText": "25:40"
+     },
+     {
+      "p": 126,
+      "no": 8,
+      "name": "直线与圆的最值问题",
+      "difficulty": "中档",
+      "level": "中档",
+      "duration": 1637,
+      "durationText": "27:17"
+     },
+     {
+      "p": 127,
+      "no": 9,
+      "name": "数形结合+参数方程！",
+      "difficulty": "中档-拔高",
+      "level": "拔高",
+      "duration": 1171,
+      "durationText": "19:31"
+     },
+     {
+      "p": 128,
+      "no": 10,
+      "name": "切线问题+隐圆阿氏圆",
+      "difficulty": "中档-拔高",
+      "level": "拔高",
+      "duration": 4065,
+      "durationText": "67:45"
+     },
+     {
+      "p": 129,
+      "no": 11,
+      "name": "对称问题",
+      "difficulty": "易-中档",
+      "level": "中档",
+      "duration": 1239,
+      "durationText": "20:39"
+     }
+    ]
+   },
+   {
+    "id": "m130",
+    "name": "圆锥曲线",
+    "count": 19,
+    "durationMin": 719,
+    "items": [
+     {
+      "p": 130,
+      "no": 1,
+      "name": "椭圆的标准方程",
+      "difficulty": "易",
+      "level": "基础",
+      "duration": 1507,
+      "durationText": "25:07"
+     },
+     {
+      "p": 131,
+      "no": 2,
+      "name": "椭圆核心题型",
+      "difficulty": "中档",
+      "level": "中档",
+      "duration": 2354,
+      "durationText": "39:14"
+     },
+     {
+      "p": 132,
+      "no": 3,
+      "name": "椭圆离心率核心思路",
+      "difficulty": "中档-稍难",
+      "level": "拔高",
+      "duration": 1592,
+      "durationText": "26:32"
+     },
+     {
+      "p": 133,
+      "no": 4,
+      "name": "椭圆离心率进阶技巧",
+      "difficulty": "拔高",
+      "level": "拔高",
+      "duration": 1876,
+      "durationText": "31:16"
+     },
+     {
+      "p": 134,
+      "no": 5,
+      "name": "「椭圆大题」一小时零基础上手！",
+      "difficulty": "中档-拔高",
+      "level": "拔高",
+      "duration": 3793,
+      "durationText": "63:13"
+     },
+     {
+      "p": 135,
+      "no": 6,
+      "name": "双曲线的标准方程",
+      "difficulty": "易",
+      "level": "基础",
+      "duration": 1247,
+      "durationText": "20:47"
+     },
+     {
+      "p": 136,
+      "no": 7,
+      "name": "双曲线的几何性质",
+      "difficulty": "易-中档",
+      "level": "中档",
+      "duration": 1436,
+      "durationText": "23:56"
+     },
+     {
+      "p": 137,
+      "no": 8,
+      "name": "双曲线与几何问题进阶",
+      "difficulty": "中档-稍难",
+      "level": "拔高",
+      "duration": 2981,
+      "durationText": "49:41"
+     },
+     {
+      "p": 138,
+      "no": 9,
+      "name": "直线与双曲线",
+      "difficulty": "中档",
+      "level": "中档",
+      "duration": 1455,
+      "durationText": "24:15"
+     },
+     {
+      "p": 139,
+      "no": 10,
+      "name": "抛物线的标准方程与常见题型",
+      "difficulty": "易",
+      "level": "基础",
+      "duration": 1606,
+      "durationText": "26:46"
+     },
+     {
+      "p": 140,
+      "no": 11,
+      "name": "抛物线常见二级结论",
+      "difficulty": "中档-稍难",
+      "level": "拔高",
+      "duration": 1609,
+      "durationText": "26:49"
+     },
+     {
+      "p": 141,
+      "no": 12,
+      "name": "解析大题方法论",
+      "difficulty": "中档",
+      "level": "中档",
+      "duration": 1935,
+      "durationText": "32:15"
+     },
+     {
+      "p": 142,
+      "no": 13,
+      "name": "弦长、面积问题",
+      "difficulty": "拔高",
+      "level": "拔高",
+      "duration": 3254,
+      "durationText": "54:14"
+     },
+     {
+      "p": 143,
+      "no": 14,
+      "name": "定点问题",
+      "difficulty": "拔高",
+      "level": "拔高",
+      "duration": 3622,
+      "durationText": "60:22"
+     },
+     {
+      "p": 144,
+      "no": 15,
+      "name": "切线问题",
+      "difficulty": "拔高",
+      "level": "拔高",
+      "duration": 3118,
+      "durationText": "51:58"
+     },
+     {
+      "p": 145,
+      "no": 16,
+      "name": "条件翻译大总结",
+      "difficulty": "拔高",
+      "level": "拔高",
+      "duration": 2216,
+      "durationText": "36:56"
+     },
+     {
+      "p": 146,
+      "no": 17,
+      "name": "解析大题模型盘点",
+      "difficulty": "拔高",
+      "level": "拔高",
+      "duration": 2022,
+      "durationText": "33:42"
+     },
+     {
+      "p": 147,
+      "no": 18,
+      "name": "阿基米德三角形问题",
+      "difficulty": "拔高",
+      "level": "拔高",
+      "duration": 2809,
+      "durationText": "46:49"
+     },
+     {
+      "p": 148,
+      "no": 19,
+      "name": "常见二级结论汇总（补充）",
+      "difficulty": "拔高",
+      "level": "拔高",
+      "duration": 2715,
+      "durationText": "45:15"
+     }
+    ]
+   },
+   {
+    "id": "m149",
+    "name": "数列",
+    "count": 13,
+    "durationMin": 479,
+    "items": [
+     {
+      "p": 149,
+      "no": 1,
+      "name": "数列的基本概念",
+      "difficulty": "易",
+      "level": "基础",
+      "duration": 845,
+      "durationText": "14:05"
+     },
+     {
+      "p": 150,
+      "no": 2,
+      "name": "等差数列定义",
+      "difficulty": "易",
+      "level": "基础",
+      "duration": 1494,
+      "durationText": "24:54"
+     },
+     {
+      "p": 151,
+      "no": 3,
+      "name": "公式+结论+变形",
+      "difficulty": "易-中档-稍难",
+      "level": "拔高",
+      "duration": 2575,
+      "durationText": "42:55"
+     },
+     {
+      "p": 152,
+      "no": 4,
+      "name": "等比数列定义与公式",
+      "difficulty": "易",
+      "level": "基础",
+      "duration": 2282,
+      "durationText": "38:02"
+     },
+     {
+      "p": 153,
+      "no": 5,
+      "name": "等比数列的常见结论",
+      "difficulty": "中档",
+      "level": "中档",
+      "duration": 813,
+      "durationText": "13:33"
+     },
+     {
+      "p": 154,
+      "no": 6,
+      "name": "等差等比公式考点综合梳理",
+      "difficulty": "中档",
+      "level": "中档",
+      "duration": 2270,
+      "durationText": "37:50"
+     },
+     {
+      "p": 155,
+      "no": 7,
+      "name": "数列求和：错位相减+裂项相消",
+      "difficulty": "中档-拔高",
+      "level": "拔高",
+      "duration": 2383,
+      "durationText": "39:43"
+     },
+     {
+      "p": 156,
+      "no": 8,
+      "name": "数列求和：分组求和+倒序相加",
+      "difficulty": "易-中档",
+      "level": "中档",
+      "duration": 915,
+      "durationText": "15:15"
+     },
+     {
+      "p": 157,
+      "no": 9,
+      "name": "数列求通项重要方法总结",
+      "difficulty": "中档",
+      "level": "中档",
+      "duration": 2771,
+      "durationText": "46:11"
+     },
+     {
+      "p": 158,
+      "no": 10,
+      "name": "奇偶数列问题全梳理",
+      "difficulty": "中档-拔高",
+      "level": "拔高",
+      "duration": 2429,
+      "durationText": "40:29"
+     },
+     {
+      "p": 159,
+      "no": 11,
+      "name": "必做十题系列 上篇",
+      "difficulty": "中档-稍难",
+      "level": "拔高",
+      "duration": 3060,
+      "durationText": "51:00"
+     },
+     {
+      "p": 160,
+      "no": 12,
+      "name": "必做十题系列 中篇",
+      "difficulty": "拔高",
+      "level": "拔高",
+      "duration": 2897,
+      "durationText": "48:17"
+     },
+     {
+      "p": 161,
+      "no": 13,
+      "name": "必做十题系列 终篇",
+      "difficulty": "拔高",
+      "level": "拔高",
+      "duration": 3985,
+      "durationText": "66:25"
+     }
+    ]
+   },
+   {
+    "id": "m162",
+    "name": "导数",
+    "count": 21,
+    "durationMin": 975,
+    "items": [
+     {
+      "p": 162,
+      "no": 1,
+      "name": "导数的基本概念、常见函数的导数",
+      "difficulty": "易",
+      "level": "基础",
+      "duration": 1758,
+      "durationText": "29:18"
+     },
+     {
+      "p": 163,
+      "no": 2,
+      "name": "导数的四则运算",
+      "difficulty": "易",
+      "level": "基础",
+      "duration": 986,
+      "durationText": "16:26"
+     },
+     {
+      "p": 164,
+      "no": 3,
+      "name": "复合函数求导法则",
+      "difficulty": "中档",
+      "level": "中档",
+      "duration": 771,
+      "durationText": "12:51"
+     },
+     {
+      "p": 165,
+      "no": 4,
+      "name": "导数与切线问题汇总",
+      "difficulty": "易-中档",
+      "level": "中档",
+      "duration": 1942,
+      "durationText": "32:22"
+     },
+     {
+      "p": 166,
+      "no": 5,
+      "name": "导数的运用：单调性、极值",
+      "difficulty": "易-中档",
+      "level": "中档",
+      "duration": 2005,
+      "durationText": "33:25"
+     },
+     {
+      "p": 167,
+      "no": 6,
+      "name": "利用导数研究复杂函数",
+      "difficulty": "中档",
+      "level": "中档",
+      "duration": 3266,
+      "durationText": "54:26"
+     },
+     {
+      "p": 168,
+      "no": 7,
+      "name": "高频问题：含参函数的单调性讨论",
+      "difficulty": "中档",
+      "level": "中档",
+      "duration": 3396,
+      "durationText": "56:36"
+     },
+     {
+      "p": 169,
+      "no": 8,
+      "name": "不等式证明！直接求导+变换主元！",
+      "difficulty": "易-中档",
+      "level": "中档",
+      "duration": 2744,
+      "durationText": "45:44"
+     },
+     {
+      "p": 170,
+      "no": 9,
+      "name": "导数恒成立问题！分离参数与分类讨论！",
+      "difficulty": "易-中档",
+      "level": "中档",
+      "duration": 3367,
+      "durationText": "56:07"
+     },
+     {
+      "p": 171,
+      "no": 10,
+      "name": "数形结合+双变量必会题型！",
+      "difficulty": "中档-拔高",
+      "level": "拔高",
+      "duration": 5317,
+      "durationText": "88:37"
+     },
+     {
+      "p": 172,
+      "no": 11,
+      "name": "隐零点问题",
+      "difficulty": "拔高",
+      "level": "拔高",
+      "duration": 3323,
+      "durationText": "55:23"
+     },
+     {
+      "p": 173,
+      "no": 12,
+      "name": "导数放缩 上",
+      "difficulty": "拔高",
+      "level": "拔高",
+      "duration": 1937,
+      "durationText": "32:17"
+     },
+     {
+      "p": 174,
+      "no": 13,
+      "name": "导数放缩 下",
+      "difficulty": "拔高",
+      "level": "拔高",
+      "duration": 1883,
+      "durationText": "31:23"
+     },
+     {
+      "p": 175,
+      "no": 14,
+      "name": "恒成立问题之“端点效应”",
+      "difficulty": "拔高",
+      "level": "拔高",
+      "duration": 1379,
+      "durationText": "22:59"
+     },
+     {
+      "p": 176,
+      "no": 15,
+      "name": "端点效应失效应对策略",
+      "difficulty": "拔高",
+      "level": "拔高",
+      "duration": 2075,
+      "durationText": "34:35"
+     },
+     {
+      "p": 177,
+      "no": 16,
+      "name": "必要探路法！恒成立利器",
+      "difficulty": "拔高",
+      "level": "拔高",
+      "duration": 7605,
+      "durationText": "126:45"
+     },
+     {
+      "p": 178,
+      "no": 17,
+      "name": "同构思想",
+      "difficulty": "拔高",
+      "level": "拔高",
+      "duration": 1340,
+      "durationText": "22:20"
+     },
+     {
+      "p": 179,
+      "no": 18,
+      "name": "指对同构",
+      "difficulty": "拔高",
+      "level": "拔高",
+      "duration": 1953,
+      "durationText": "32:33"
+     },
+     {
+      "p": 180,
+      "no": 19,
+      "name": "导数含参零点问题",
+      "difficulty": "拔高",
+      "level": "拔高",
+      "duration": 5621,
+      "durationText": "93:41"
+     },
+     {
+      "p": 181,
+      "no": 20,
+      "name": "极值点偏移核心题型",
+      "difficulty": "拔高",
+      "level": "拔高",
+      "duration": 3680,
+      "durationText": "61:20"
+     },
+     {
+      "p": 182,
+      "no": 21,
+      "name": "极值点偏移进阶思路",
+      "difficulty": "拔高",
+      "level": "拔高",
+      "duration": 2165,
+      "durationText": "36:05"
+     }
+    ]
+   },
+   {
+    "id": "m183",
+    "name": "计数原理",
+    "count": 4,
+    "durationMin": 308,
+    "items": [
+     {
+      "p": 183,
+      "no": 1,
+      "name": "加法与乘法+排列与组合",
+      "difficulty": "易-中档",
+      "level": "中档",
+      "duration": 4734,
+      "durationText": "78:54"
+     },
+     {
+      "p": 184,
+      "no": 2,
+      "name": "排列组合技巧",
+      "difficulty": "易-中档",
+      "level": "中档",
+      "duration": 5352,
+      "durationText": "89:12"
+     },
+     {
+      "p": 185,
+      "no": 3,
+      "name": "排列组合常考题型",
+      "difficulty": "易-中档",
+      "level": "中档",
+      "duration": 3059,
+      "durationText": "50:59"
+     },
+     {
+      "p": 186,
+      "no": 4,
+      "name": "二项式定理",
+      "difficulty": "易-中档",
+      "level": "中档",
+      "duration": 5355,
+      "durationText": "89:15"
+     }
+    ]
+   },
+   {
+    "id": "m187",
+    "name": "概率选修",
+    "count": 8,
+    "durationMin": 391,
+    "items": [
+     {
+      "p": 187,
+      "no": 1,
+      "name": "条件概率",
+      "difficulty": "易",
+      "level": "基础",
+      "duration": 3419,
+      "durationText": "56:59"
+     },
+     {
+      "p": 188,
+      "no": 2,
+      "name": "全概率公式",
+      "difficulty": "易-中档",
+      "level": "中档",
+      "duration": 2772,
+      "durationText": "46:12"
+     },
+     {
+      "p": 189,
+      "no": 3,
+      "name": "离散型随机变量分布列与数字特征",
+      "difficulty": "易",
+      "level": "基础",
+      "duration": 4623,
+      "durationText": "77:03"
+     },
+     {
+      "p": 190,
+      "no": 4,
+      "name": "二项分布",
+      "difficulty": "易-中档",
+      "level": "中档",
+      "duration": 3595,
+      "durationText": "59:55"
+     },
+     {
+      "p": 191,
+      "no": 5,
+      "name": "超几何分布",
+      "difficulty": "易-中档",
+      "level": "中档",
+      "duration": 2871,
+      "durationText": "47:51"
+     },
+     {
+      "p": 192,
+      "no": 6,
+      "name": "正态分布",
+      "difficulty": "易",
+      "level": "基础",
+      "duration": 1815,
+      "durationText": "30:15"
+     },
+     {
+      "p": 193,
+      "no": 7,
+      "name": "概率最值问题",
+      "difficulty": "拔高",
+      "level": "拔高",
+      "duration": 2737,
+      "durationText": "45:37"
+     },
+     {
+      "p": 194,
+      "no": 8,
+      "name": "马尔可夫链",
+      "difficulty": "拔高",
+      "level": "拔高",
+      "duration": 1642,
+      "durationText": "27:22"
+     }
+    ]
+   },
+   {
+    "id": "m195",
+    "name": "统计选修",
+    "count": 3,
+    "durationMin": 114,
+    "items": [
+     {
+      "p": 195,
+      "no": 1,
+      "name": "成对数据的线性相关性",
+      "difficulty": "易",
+      "level": "基础",
+      "duration": 2938,
+      "durationText": "48:58"
+     },
+     {
+      "p": 196,
+      "no": 2,
+      "name": "一元线性回归",
+      "difficulty": "易-中档",
+      "level": "中档",
+      "duration": 2632,
+      "durationText": "43:52"
+     },
+     {
+      "p": 197,
+      "no": 3,
+      "name": "独立性检验",
+      "difficulty": "易",
+      "level": "基础",
+      "duration": 1289,
+      "durationText": "21:29"
+     }
+    ]
+   }
+  ]
+ },
+ "topics": [
+  {
+   "id": "t8397438",
+   "seasonId": 8397438,
+   "title": "新高考一轮复习",
+   "count": 13,
+   "durationMin": 716,
+   "videos": [
+    {
+     "bvid": "BV1cE4m1R7YK",
+     "title": "「新定义」不敢做？来听思路！",
+     "cover": "http://i0.hdslb.com/bfs/archive/c64a5fc7a5e6b540cd17c7e72755756479941536.jpg",
+     "duration": 3017,
+     "durationText": "50:17",
+     "pubdate": 1724471921,
+     "views": 1007565
+    },
+    {
+     "bvid": "BV1C9J56wEpK",
+     "title": "新高考太创新？一数一轮复习！开始！",
+     "cover": "http://i0.hdslb.com/bfs/archive/b67f80568b4240ab64c6c6f58204ccbbd4976674.jpg",
+     "duration": 79,
+     "durationText": "1:19",
+     "pubdate": 1781272542,
+     "views": 1673972
+    },
+    {
+     "bvid": "BV1M4jJ65Ee9",
+     "title": "【新高考一轮复习】二次函数！考点全梳理！",
+     "cover": "http://i0.hdslb.com/bfs/archive/2c4553d80b95f35e878ee25c13d567393061a241.jpg",
+     "duration": 4502,
+     "durationText": "75:02",
+     "pubdate": 1781948565,
+     "views": 2333979
+    },
+    {
+     "bvid": "BV1wv7W6EEWh",
+     "title": "【新高考一轮复习】分式函数！一站式讲解！",
+     "cover": "http://i0.hdslb.com/bfs/archive/825eb399c25d8b40fff80b237c865933ca5d0a53.jpg",
+     "duration": 3767,
+     "durationText": "62:47",
+     "pubdate": 1782571517,
+     "views": 1290513
+    },
+    {
+     "bvid": "BV1ZAM36EEqZ",
+     "title": "【一轮复习】指对幂函数+比大小! 一节课搞定！",
+     "cover": "http://i2.hdslb.com/bfs/archive/67a4b6c36eed3a82dead774b4d768ca1f4808868.jpg",
+     "duration": 7500,
+     "durationText": "125:00",
+     "pubdate": 1783501505,
+     "views": 1366305
+    },
+    {
+     "bvid": "BV1Xy356ZEXM",
+     "title": "【一轮复习】高考热点！绝对值问题！基础篇！",
+     "cover": "http://i2.hdslb.com/bfs/archive/cfaec525a1665f9cbed730364d084ec8b2e08c86.jpg",
+     "duration": 2434,
+     "durationText": "40:34",
+     "pubdate": 1785035402,
+     "views": 984977
+    },
+    {
+     "bvid": "BV1KPGG6GEEN",
+     "title": "【一轮复习】绝对值的数形结合与零点综合！",
+     "cover": "http://i2.hdslb.com/bfs/archive/240eb25a9ee55c9d3d3f276deb97559bd1819bbe.jpg",
+     "duration": 2778,
+     "durationText": "46:18",
+     "pubdate": 1785591524,
+     "views": 1034190
+    },
+    {
+     "bvid": "BV1kKuv6tEp9",
+     "title": "【一轮复习】绝对值拔高篇：曼哈顿距离+切比雪夫最佳逼近直线+三角不等式",
+     "cover": "http://i2.hdslb.com/bfs/archive/70a0ce119b567caa38b865002c5dd87d974c2c95.jpg",
+     "duration": 3853,
+     "durationText": "64:13",
+     "pubdate": 1786435200,
+     "views": 1154455
+    },
+    {
+     "bvid": "BV1Na8m6QEpU",
+     "title": "【一轮复习】函数单调性常考题型大串讲！",
+     "cover": "http://i1.hdslb.com/bfs/archive/034238cbf2ccd7267ed0f787d4afb3d901b40c5e.jpg",
+     "duration": 3092,
+     "durationText": "51:32",
+     "pubdate": 1787397918,
+     "views": 1299140
+    },
+    {
+     "bvid": "BV1dNhQ6UEes",
+     "title": "【一轮复习】函数奇偶性！题型串讲！",
+     "cover": "http://i2.hdslb.com/bfs/archive/149c1112aa8cbd324d361db0174e2790d7cd4092.jpg",
+     "duration": 1651,
+     "durationText": "27:31",
+     "pubdate": 1790390130,
+     "views": 429430
+    },
+    {
+     "bvid": "BV1CFar6KE5K",
+     "title": "【一轮复习】函数的对称性！热门题型梳理！",
+     "cover": "http://i1.hdslb.com/bfs/archive/b276d8e88fa2c94c09848514ff02bc6af25f8a9c.jpg",
+     "duration": 2486,
+     "durationText": "41:26",
+     "pubdate": 1790859647,
+     "views": 612723
+    },
+    {
+     "bvid": "BV1wEJt6YE33",
+     "title": "【直线和圆】热门题型一遍过！(上篇)",
+     "cover": "http://i0.hdslb.com/bfs/archive/2ab47ba10c84f796c44043e6e927d8df60c2e169.jpg",
+     "duration": 4941,
+     "durationText": "82:21",
+     "pubdate": 1792153316,
+     "views": 717565
+    },
+    {
+     "bvid": "BV1UqHw63EEw",
+     "title": "【直线和圆】高考热点“切线问题”大串讲！",
+     "cover": "http://i2.hdslb.com/bfs/archive/3ceb9668b56dd3ba69f3fbfb05bcc99bb5ba0988.jpg",
+     "duration": 2865,
+     "durationText": "47:45",
+     "pubdate": 1792811638,
+     "views": 478636
+    }
+   ]
+  },
+  {
+   "id": "t5896377",
+   "seasonId": 5896377,
+   "title": "一数120+拔高系统合集",
+   "count": 12,
+   "durationMin": 873,
+   "videos": [
+    {
+     "bvid": "BV14gu3zmEko",
+     "title": "【一数】120+拔高系统合集！启动！",
+     "cover": "http://i1.hdslb.com/bfs/archive/0d64f704e3b1e7ddc9298b236e89528561603a81.jpg",
+     "duration": 35,
+     "durationText": "0:35",
+     "pubdate": 1752229800,
+     "views": 1762429
+    },
+    {
+     "bvid": "BV1zNudzfEXX",
+     "title": "【一数拔高】高考不等式大荟萃！基本不等式+柯西+权方和！",
+     "cover": "http://i0.hdslb.com/bfs/archive/f4d3005875120e91e7bd7731099c1a154159b73d.jpg",
+     "duration": 5380,
+     "durationText": "89:40",
+     "pubdate": 1752910926,
+     "views": 4009069
+    },
+    {
+     "bvid": "BV1UY8gzvE4u",
+     "title": "【一数拔高】高考必会函数！二次+分式！",
+     "cover": "http://i1.hdslb.com/bfs/archive/52cc5e4bc054ba724acf9c9a3bcaadc8fa58cf04.jpg",
+     "duration": 2872,
+     "durationText": "47:52",
+     "pubdate": 1753622923,
+     "views": 2013175
+    },
+    {
+     "bvid": "BV1eQhgzjEAB",
+     "title": "【一数拔高】指对幂函数大综合！",
+     "cover": "http://i0.hdslb.com/bfs/archive/b2230f8bfe119b15713d340e648f411cabd6c2bc.jpg",
+     "duration": 2892,
+     "durationText": "48:12",
+     "pubdate": 1754215452,
+     "views": 1825305
+    },
+    {
+     "bvid": "BV1amYrzME21",
+     "title": "【一数拔高】数形结合！函数必会技巧！",
+     "cover": "http://i2.hdslb.com/bfs/archive/c3852a8ee0b99a0fb3a69fdaa971cb7a58cffdf2.jpg",
+     "duration": 4224,
+     "durationText": "70:24",
+     "pubdate": 1755408469,
+     "views": 1862307
+    },
+    {
+     "bvid": "BV1FCHCzbEyM",
+     "title": "【一数拔高】函数性质大综合",
+     "cover": "http://i1.hdslb.com/bfs/archive/c6c01384947c032d7a0f64e8c6253ef1221f7426.jpg",
+     "duration": 4863,
+     "durationText": "81:03",
+     "pubdate": 1757424633,
+     "views": 1856456
+    },
+    {
+     "bvid": "BV1i2pfzvEYM",
+     "title": "【一数拔高】抽象函数！题型全总结！",
+     "cover": "http://i0.hdslb.com/bfs/archive/410d39f8573ac9bad2189c05b07de00192b60780.jpg",
+     "duration": 3547,
+     "durationText": "59:07",
+     "pubdate": 1758428528,
+     "views": 2084413
+    },
+    {
+     "bvid": "BV1UXW4zNEBS",
+     "title": "【一数拔高】圆锥曲线技巧大全！平移齐次+点乘双根+垂径定理+非对称韦达+三角代换！",
+     "cover": "http://i0.hdslb.com/bfs/archive/462f300f34a6ba74fa3fe3c623dacd8140361cf8.jpg",
+     "duration": 5845,
+     "durationText": "97:25",
+     "pubdate": 1760778697,
+     "views": 3164551
+    },
+    {
+     "bvid": "BV1jfsoziE2E",
+     "title": "【一数拔高】圆锥曲线进阶技巧！和积关系+定比点差+直线参数方程！",
+     "cover": "http://i1.hdslb.com/bfs/archive/f666176d095de46fe208198eb42c5b9ef1914736.jpg",
+     "duration": 5074,
+     "durationText": "84:34",
+     "pubdate": 1761380822,
+     "views": 2154042
+    },
+    {
+     "bvid": "BV19YUwBEEX7",
+     "title": "【一数拔高】圆锥曲线命题背景！射影几何：调和点列+极点极线！高考五年考五次！",
+     "cover": "http://i1.hdslb.com/bfs/archive/6d427ec0bcc522096b9709303b35ff26e92b8ed5.jpg",
+     "duration": 3652,
+     "durationText": "60:52",
+     "pubdate": 1763864020,
+     "views": 2013825
+    },
+    {
+     "bvid": "BV1Kg2WBoENe",
+     "title": "【圆锥曲线邪修】调和线束斜率关系+二次调和点列+对合！圆锥曲线命题背景保姆级讲解！",
+     "cover": "http://i1.hdslb.com/bfs/archive/c39bc3c3f8f46d53e1b37ec2413e9e0379a14236.jpg",
+     "duration": 6521,
+     "durationText": "108:41",
+     "pubdate": 1765012564,
+     "views": 1631007
+    },
+    {
+     "bvid": "BV1YWP4zxEdV",
+     "title": "【一数拔高】圆锥曲线弦长压轴！封神训练篇！",
+     "cover": "http://i2.hdslb.com/bfs/archive/25f65bc724602ab113c5704917212258b16046c0.jpg",
+     "duration": 7467,
+     "durationText": "124:27",
+     "pubdate": 1772800323,
+     "views": 1343719
+    }
+   ]
+  },
+  {
+   "id": "t8126719",
+   "seasonId": 8126719,
+   "title": "一数教辅",
+   "count": 17,
+   "durationMin": 94303,
+   "videos": [
+    {
+     "bvid": "BV1Jt411E76i",
+     "title": "【2025-2026学年】高中数学一本通：必修第1册",
+     "cover": "http://i1.hdslb.com/bfs/archive/7bfdeb3f4698427fd7c61f9457dbca62e5f95c26.jpg",
+     "duration": 336948,
+     "durationText": "5615:48",
+     "pubdate": 1563948193,
+     "views": 1625778
+    },
+    {
+     "bvid": "BV13t411E7G3",
+     "title": "2026高考数学必刷100讲",
+     "cover": "http://i0.hdslb.com/bfs/archive/a838794565f6950ce4844e489ecf0595cbaa90e5.jpg",
+     "duration": 365069,
+     "durationText": "6084:29",
+     "pubdate": 1563949157,
+     "views": 1414744
+    },
+    {
+     "bvid": "BV13t411E7M5",
+     "title": "2026高考数学必刷100讲",
+     "cover": "http://i1.hdslb.com/bfs/archive/b89c08ca1784857ec249bfdd41b7d7ebff22b54b.jpg",
+     "duration": 297750,
+     "durationText": "4962:30",
+     "pubdate": 1563954711,
+     "views": 2685751
+    },
+    {
+     "bvid": "BV13t411j7AQ",
+     "title": "2024必刷100讲",
+     "cover": "http://i1.hdslb.com/bfs/archive/3a100dbe35fb526c1af1b53eb5806ea4906d8466.jpg",
+     "duration": 274049,
+     "durationText": "4567:29",
+     "pubdate": 1564028898,
+     "views": 2507912
+    },
+    {
+     "bvid": "BV1Et411j7zk",
+     "title": "2024必刷100讲",
+     "cover": "http://i1.hdslb.com/bfs/archive/5bbdfc3338295ce9a75215ec7eb566e24cfbd8ed.jpg",
+     "duration": 314095,
+     "durationText": "5234:55",
+     "pubdate": 1564029070,
+     "views": 3386017
+    },
+    {
+     "bvid": "BV1qt411c7gx",
+     "title": "【2026-2027学年】高中数学一本通：必修第2册",
+     "cover": "http://i0.hdslb.com/bfs/archive/f97eccc2d06fdf2f41a5032162f8425e6a2d149d.jpg",
+     "duration": 374502,
+     "durationText": "6241:42",
+     "pubdate": 1564508757,
+     "views": 408630
+    },
+    {
+     "bvid": "BV1Gt411w7FZ",
+     "title": "【2026-2027学年】高中数学一本通：必修第1册",
+     "cover": "http://i1.hdslb.com/bfs/archive/203b69861be469df067ea4858bf5a32257096401.jpg",
+     "duration": 377569,
+     "durationText": "6292:49",
+     "pubdate": 1564565654,
+     "views": 785180
+    },
+    {
+     "bvid": "BV1K4411Q7q1",
+     "title": "【2026-2027学年】高中数学一本通：选择性必修第1册",
+     "cover": "http://i1.hdslb.com/bfs/archive/92298aa6e0c5c22b3dc91df14db1b72f6285a8db.jpg",
+     "duration": 408359,
+     "durationText": "6805:59",
+     "pubdate": 1565535224,
+     "views": 1333038
+    },
+    {
+     "bvid": "BV1w7411w7kQ",
+     "title": "2027高考数学必刷100讲",
+     "cover": "http://i2.hdslb.com/bfs/archive/9d6a0ccd726015f9a041976d666f326e1a674c7a.jpg",
+     "duration": 299634,
+     "durationText": "4993:54",
+     "pubdate": 1582247710,
+     "views": 16842322
+    },
+    {
+     "bvid": "BV1VD4y1D7UB",
+     "title": "2027高考数学必刷100讲",
+     "cover": "http://i1.hdslb.com/bfs/archive/6a51c78459df3bc46fec46cb0e3e02614a638203.jpg",
+     "duration": 371040,
+     "durationText": "6184:00",
+     "pubdate": 1595409319,
+     "views": 36407915
+    },
+    {
+     "bvid": "BV1mE421A71a",
+     "title": "2025高考数学必刷100讲",
+     "cover": "http://i1.hdslb.com/bfs/archive/be660e10df8c3ac250e76eab8780dcc5d772060a.jpg",
+     "duration": 289969,
+     "durationText": "4832:49",
+     "pubdate": 1720865318,
+     "views": 4325239
+    },
+    {
+     "bvid": "BV1Bb42147jA",
+     "title": "【2024-2025学年】高中数学一本通：必修第1册",
+     "cover": "http://i1.hdslb.com/bfs/archive/8facf31510b57f9438e0b5114a85816ab7c7391a.jpg",
+     "duration": 308008,
+     "durationText": "5133:28",
+     "pubdate": 1724498362,
+     "views": 1516097
+    },
+    {
+     "bvid": "BV15SH9eREx2",
+     "title": "2025高考数学必刷100讲",
+     "cover": "http://i1.hdslb.com/bfs/archive/04411f1e97103f42e59560595cb1bafdf609b34d.jpg",
+     "duration": 339262,
+     "durationText": "5654:22",
+     "pubdate": 1725706800,
+     "views": 9949135
+    },
+    {
+     "bvid": "BV1V4PTeVEGu",
+     "title": "【2024-2025学年】高中数学一本通：必修第2册",
+     "cover": "http://i0.hdslb.com/bfs/archive/e212d9c0297654ddcd80ff0fe90fb946daf4feb1.jpg",
+     "duration": 327381,
+     "durationText": "5456:21",
+     "pubdate": 1740221588,
+     "views": 2864626
+    },
+    {
+     "bvid": "BV127eizjEW5",
+     "title": "【2025-2026学年】高中数学一本通：选择性必修第1册",
+     "cover": "http://i0.hdslb.com/bfs/archive/ca99c4acd1e13408fdc588fd95bf5264a13f0fe5.jpg",
+     "duration": 382451,
+     "durationText": "6374:11",
+     "pubdate": 1755934004,
+     "views": 1963202
+    },
+    {
+     "bvid": "BV1mJCCB6EuB",
+     "title": "【2025-2026学年】高中数学一本通：选择性必修第2册",
+     "cover": "http://i0.hdslb.com/bfs/archive/f971e076a8af152af12043e623f910cfcacc83ac.jpg",
+     "duration": 217525,
+     "durationText": "3625:25",
+     "pubdate": 1763201100,
+     "views": 1475038
+    },
+    {
+     "bvid": "BV1J2rUB6EYj",
+     "title": "【2026版】高中数学一本通：必修第2册",
+     "cover": "http://i0.hdslb.com/bfs/archive/6ab22f16d73768b21ab2c0e1a1189f31daaaf8de.jpg",
+     "duration": 374584,
+     "durationText": "6243:04",
+     "pubdate": 1768644000,
+     "views": 1207374
+    }
+   ]
+  },
+  {
+   "id": "t527242",
+   "seasonId": 527242,
+   "title": "高考一轮复习（旧版）",
+   "count": 49,
+   "durationMin": 1646,
+   "videos": [
+    {
+     "bvid": "BV1iq4y1B7Km",
+     "title": "圆锥曲线实用的特殊性质、二级结论、重要方法全梳理！",
+     "cover": "http://i1.hdslb.com/bfs/archive/478b321db686db782ece55f9e587cb6a6f093ddb.jpg",
+     "duration": 1700,
+     "durationText": "28:20",
+     "pubdate": 1638064806,
+     "views": 3320723
+    },
+    {
+     "bvid": "BV1sr4y1e7js",
+     "title": "圆锥曲线大题也能稳定得分？小姚老师教你清晰思路！第一集",
+     "cover": "http://i0.hdslb.com/bfs/archive/632e74b89bb129e061ba0446721cdd62793653fc.jpg",
+     "duration": 1108,
+     "durationText": "18:28",
+     "pubdate": 1642858567,
+     "views": 1981997
+    },
+    {
+     "bvid": "BV1DY41157ap",
+     "title": "学会刻画参数，圆锥曲线大题思路也很清晰！小姚老师|亲子理论第二集：切线与同构",
+     "cover": "http://i1.hdslb.com/bfs/archive/2402753370a4c20b577a360c7d430637f713d706.jpg",
+     "duration": 1682,
+     "durationText": "28:02",
+     "pubdate": 1644234823,
+     "views": 1082852
+    },
+    {
+     "bvid": "BV1Rq4y1x7uv",
+     "title": "高考数学圆锥曲线大题，实操找准方向！小姚老师|亲子理论第三集：长度篇",
+     "cover": "http://i0.hdslb.com/bfs/archive/99f943e259d837256902c644a7ee6e9b861810ff.jpg",
+     "duration": 1723,
+     "durationText": "28:43",
+     "pubdate": 1645876267,
+     "views": 776881
+    },
+    {
+     "bvid": "BV1JG411x7jY",
+     "title": "高考数学系统复习【函数概念与性质】|函数篇1|小姚老师",
+     "cover": "http://i2.hdslb.com/bfs/archive/2922ece15ec663a6418f6b9776b9dba546233038.jpg",
+     "duration": 4433,
+     "durationText": "73:53",
+     "pubdate": 1656752713,
+     "views": 9444126
+    },
+    {
+     "bvid": "BV1Pe4y1R7Xh",
+     "title": "图像+比大小=10分【初等函数模块复习】高考数学|小姚老师",
+     "cover": "http://i0.hdslb.com/bfs/archive/701c56c4a98fc7ba19497259369fd5e9bc17c083.jpg",
+     "duration": 2822,
+     "durationText": "47:02",
+     "pubdate": 1657369931,
+     "views": 2746181
+    },
+    {
+     "bvid": "BV1mY4y177yd",
+     "title": "看到分段函数就头疼？看看这吧！高考复习|小姚老师",
+     "cover": "http://i0.hdslb.com/bfs/archive/958537759afafb7ff7f3a991aa6e5f6b1cfb25e7.jpg",
+     "duration": 1962,
+     "durationText": "32:42",
+     "pubdate": 1657974975,
+     "views": 1949445
+    },
+    {
+     "bvid": "BV1oW4y117Xu",
+     "title": "函数零点专题，分离思想的运用【高考一轮】小姚老师",
+     "cover": "http://i2.hdslb.com/bfs/archive/1224183545c053b81009016a205539ad883e47fb.jpg",
+     "duration": 1378,
+     "durationText": "22:58",
+     "pubdate": 1658576099,
+     "views": 2282344
+    },
+    {
+     "bvid": "BV1wT411j7Ko",
+     "title": "【高考系统复习】复合函数 虽然复杂，套路性强！",
+     "cover": "http://i0.hdslb.com/bfs/archive/bce0aa2a0b446eba06bdbc87df88ec4aa712c203.jpg",
+     "duration": 1606,
+     "durationText": "26:46",
+     "pubdate": 1660131000,
+     "views": 2246853
+    },
+    {
+     "bvid": "BV1ma4y1f7YC",
+     "title": "高考导数基础、常规题型，一个视频搞定！",
+     "cover": "http://i2.hdslb.com/bfs/archive/3368a86a8f1e44e0e5bba3117bcf9f542e2304da.jpg",
+     "duration": 2627,
+     "durationText": "43:47",
+     "pubdate": 1661050480,
+     "views": 3816803
+    },
+    {
+     "bvid": "BV1Ke4y1Z71Z",
+     "title": "三角恒等变换，三大思想搞定！【高考复习】小姚老师",
+     "cover": "http://i1.hdslb.com/bfs/archive/56411a5db8a30dfb5a4062eb54f4954097870032.jpg",
+     "duration": 2272,
+     "durationText": "37:52",
+     "pubdate": 1661601853,
+     "views": 2464143
+    },
+    {
+     "bvid": "BV1wU4y1z7tZ",
+     "title": "三角函数-整体换元法系统复习【高考数学】小姚老师",
+     "cover": "http://i0.hdslb.com/bfs/archive/9175d40182dccfb9e9538d27903941617a66a01a.jpg",
+     "duration": 2390,
+     "durationText": "39:50",
+     "pubdate": 1662207797,
+     "views": 1468791
+    },
+    {
+     "bvid": "BV1TT411M7bW",
+     "title": "【高考数学】三角函数图像综合题，一网打尽！|小姚老师",
+     "cover": "http://i0.hdslb.com/bfs/archive/dcc30edc59b672b9197f1b0c973e98aa54ac6223.jpg",
+     "duration": 2007,
+     "durationText": "33:27",
+     "pubdate": 1662897099,
+     "views": 1355271
+    },
+    {
+     "bvid": "BV1y14y1872V",
+     "title": "直线与圆公式、方法、二级结论全梳理，事半功倍！",
+     "cover": "http://i1.hdslb.com/bfs/archive/f1e1eba0027ff503afe707b2ce2434cfe08d73cd.jpg",
+     "duration": 3186,
+     "durationText": "53:06",
+     "pubdate": 1664760600,
+     "views": 4011965
+    },
+    {
+     "bvid": "BV1r14y1j7Ev",
+     "title": "40分钟构建 椭圆题型、方法体系！",
+     "cover": "http://i0.hdslb.com/bfs/archive/60a9370a07ff505fd8c1ffd31c169c9664c04773.jpg",
+     "duration": 2404,
+     "durationText": "40:04",
+     "pubdate": 1666534515,
+     "views": 3306311
+    },
+    {
+     "bvid": "BV1wP4y1273G",
+     "title": "椭圆 好用的二级结论梳理！",
+     "cover": "http://i0.hdslb.com/bfs/archive/1bd2060753a3d7fb340bd0afefa919bf8fcdda87.jpg",
+     "duration": 1859,
+     "durationText": "30:59",
+     "pubdate": 1667709716,
+     "views": 3640516
+    },
+    {
+     "bvid": "BV15t4y1N7UN",
+     "title": "双曲线方法、题型、性质，框架梳理！",
+     "cover": "http://i0.hdslb.com/bfs/archive/009b3a7735c00f9dbaf66649f105a38d0108e58b.jpg",
+     "duration": 2155,
+     "durationText": "35:55",
+     "pubdate": 1668318535,
+     "views": 2196777
+    },
+    {
+     "bvid": "BV1MP41137Yw",
+     "title": "抛物线重点全在这，事半功倍！超棒新老师登场！",
+     "cover": "http://i1.hdslb.com/bfs/archive/bce35b1a0dd968a5ccde2c14b6c955f11f5fbd93.jpg",
+     "duration": 1854,
+     "durationText": "30:54",
+     "pubdate": 1668857400,
+     "views": 3044345
+    },
+    {
+     "bvid": "BV1MR4y1Z791",
+     "title": "圆锥曲线硬解定理-入门到今年高考！|小姚老师",
+     "cover": "http://i0.hdslb.com/bfs/archive/9886563a6e2ff153ddcc53e71cbae1562da5224b.jpg",
+     "duration": 2411,
+     "durationText": "40:11",
+     "pubdate": 1669457077,
+     "views": 1842686
+    },
+    {
+     "bvid": "BV1wY411d7uQ",
+     "title": "立体几何大题辅助线 终极教学，手把手指导！|平行篇",
+     "cover": "http://i1.hdslb.com/bfs/archive/992375acf6249f843feb7af75b5c4d9549197410.jpg",
+     "duration": 2856,
+     "durationText": "47:36",
+     "pubdate": 1669510800,
+     "views": 2658884
+    },
+    {
+     "bvid": "BV1FW4y1W75P",
+     "title": "12分钟学会三角所有诱导公式！|神奇小猪",
+     "cover": "http://i2.hdslb.com/bfs/archive/69802491f67978c6982e85a76716bdc250cd2cc7.jpg",
+     "duration": 1065,
+     "durationText": "17:45",
+     "pubdate": 1670059226,
+     "views": 6844593
+    },
+    {
+     "bvid": "BV11K411X7Ps",
+     "title": "等差、等比数列重要性质全汇总！|小姚老师",
+     "cover": "http://i0.hdslb.com/bfs/archive/d956c6d0b1034909358d863c556dbf0f85b15430.jpg",
+     "duration": 1698,
+     "durationText": "28:18",
+     "pubdate": 1670069479,
+     "views": 3104707
+    },
+    {
+     "bvid": "BV1Me411P7tx",
+     "title": "数列求和三大核心方法，一个视频搞定！|神奇小猪",
+     "cover": "http://i2.hdslb.com/bfs/archive/028b218434bec523681165615a4619ceca72e2ac.jpg",
+     "duration": 2207,
+     "durationText": "36:47",
+     "pubdate": 1670678009,
+     "views": 6460661
+    },
+    {
+     "bvid": "BV1X44y1m7bv",
+     "title": "高考立体几何大题-垂直证明方法，全在这了",
+     "cover": "http://i1.hdslb.com/bfs/archive/dec83a9edb1b24ee36a921bb61e3190e973a8368.jpg",
+     "duration": 2623,
+     "durationText": "43:43",
+     "pubdate": 1670741305,
+     "views": 3299756
+    },
+    {
+     "bvid": "BV1uV4y1c7o8",
+     "title": "高考涉及的数列通项核心求法， 都在这！|小猪2.0",
+     "cover": "http://i0.hdslb.com/bfs/archive/46238eb2ac9f6f2386c9e95b5f6647b184c83325.jpg",
+     "duration": 1734,
+     "durationText": "28:54",
+     "pubdate": 1671283242,
+     "views": 4682338
+    },
+    {
+     "bvid": "BV1rG411P7kM",
+     "title": "高考立体几何噩梦-外接球，四大模型KO！|小姚老师",
+     "cover": "http://i1.hdslb.com/bfs/archive/f6789021b800af60c6f8692e5bdc4d90542d7228.jpg",
+     "duration": 3099,
+     "durationText": "51:39",
+     "pubdate": 1671328800,
+     "views": 3912354
+    },
+    {
+     "bvid": "BV17V4y1w7kL",
+     "title": "高考数列anSn题型与变形，一步到位！|小姚老师",
+     "cover": "http://i2.hdslb.com/bfs/archive/71bba3fd2d68b516eca4f4fdb96d703029b60910.jpg",
+     "duration": 1762,
+     "durationText": "29:22",
+     "pubdate": 1671886008,
+     "views": 2226576
+    },
+    {
+     "bvid": "BV14d4y177Qp",
+     "title": "看见数列奇偶问题就头秃？这是解药",
+     "cover": "http://i1.hdslb.com/bfs/archive/25168706bdaeadba3130925b556ec9da1bc4fbbd.jpg",
+     "duration": 2429,
+     "durationText": "40:29",
+     "pubdate": 1672623900,
+     "views": 2354749
+    },
+    {
+     "bvid": "BV1Pv4y1v719",
+     "title": "高中函数-平移伸缩对称周期 性质总结大全！|小姚老师",
+     "cover": "http://i1.hdslb.com/bfs/archive/31680d951a9714348d9bdacd03d3e0e7d6fabc1a.jpg",
+     "duration": 1737,
+     "durationText": "28:57",
+     "pubdate": 1673085496,
+     "views": 1702614
+    },
+    {
+     "bvid": "BV1DR4y1m7gU",
+     "title": "奇偶数列不会做？超详细原理解读！",
+     "cover": "http://i0.hdslb.com/bfs/archive/8e8df734029de9e3b4a668d35a35dd0577e4b794.jpg",
+     "duration": 2599,
+     "durationText": "43:19",
+     "pubdate": 1673145316,
+     "views": 2141035
+    },
+    {
+     "bvid": "BV1JY4y1o73Y",
+     "title": "高考立体几何-内切球难？就这两种思路！|小姚老师",
+     "cover": "http://i0.hdslb.com/bfs/archive/e5eb5c0749c08532c6da750464b65d612a56c0b4.jpg",
+     "duration": 1401,
+     "durationText": "23:21",
+     "pubdate": 1674647351,
+     "views": 2950141
+    },
+    {
+     "bvid": "BV1ue4y1c7qD",
+     "title": "快学！向量妙招！三点共线定理！等和线！",
+     "cover": "http://i2.hdslb.com/bfs/archive/6acb9616a9b9876e245c6330897a46ab91c6796c.jpg",
+     "duration": 1676,
+     "durationText": "27:56",
+     "pubdate": 1676638331,
+     "views": 3596419
+    },
+    {
+     "bvid": "BV1sA411176A",
+     "title": "数量积不会做？重要方法都在这！投影+极化恒等式+拆解 | 神奇小猪",
+     "cover": "http://i2.hdslb.com/bfs/archive/de097728bdadb39ff5a00fc5bdb8c008bcb8976c.jpg",
+     "duration": 1609,
+     "durationText": "26:49",
+     "pubdate": 1677246035,
+     "views": 2670852
+    },
+    {
+     "bvid": "BV1Qs4y1Z7kt",
+     "title": "导数恒成立问题，今天学TA！小姚老师",
+     "cover": "http://i0.hdslb.com/bfs/archive/acabd91a6eda39078e3434c4d35a6f352d219f16.jpg",
+     "duration": 1091,
+     "durationText": "18:11",
+     "pubdate": 1677376800,
+     "views": 2224857
+    },
+    {
+     "bvid": "BV1Ro4y1r7tE",
+     "title": "导数热点！30分钟彻底学完「同构」所有题型 | 神奇小猪",
+     "cover": "http://i1.hdslb.com/bfs/archive/59ecda94a58efa9ab65e5a59764484a230489748.jpg",
+     "duration": 1901,
+     "durationText": "31:41",
+     "pubdate": 1677930098,
+     "views": 3455776
+    },
+    {
+     "bvid": "BV1u8411c7k7",
+     "title": "平面向量建系教学！题目无系，心中有戏",
+     "cover": "http://i2.hdslb.com/bfs/archive/a933ac98c465f90b025aa2b0e46bef6dbb86d1b9.jpg",
+     "duration": 1355,
+     "durationText": "22:35",
+     "pubdate": 1677938326,
+     "views": 1561307
+    },
+    {
+     "bvid": "BV1gg4y1b7ju",
+     "title": "近年越来越\"离谱\"的正余弦定理化简，从基础到进阶！",
+     "cover": "http://i2.hdslb.com/bfs/archive/5a32601c0ba63888f4d48e16e0e08f337e40d412.jpg",
+     "duration": 1436,
+     "durationText": "23:56",
+     "pubdate": 1678525364,
+     "views": 2817487
+    },
+    {
+     "bvid": "BV1Ng4y1x7s9",
+     "title": "解三角形“范围与最值”没思路？两大做题方法梳理！",
+     "cover": "http://i1.hdslb.com/bfs/archive/505178c254823e9443dd9d2f71d90ec9a8162579.jpg",
+     "duration": 1319,
+     "durationText": "21:59",
+     "pubdate": 1679128776,
+     "views": 3232082
+    },
+    {
+     "bvid": "BV1Gg4y1t7HA",
+     "title": "排列组合，20分钟从零基础到高考要求！|小姚老师",
+     "cover": "http://i2.hdslb.com/bfs/archive/44c98a09c9245fb594de4a397a2d7f1a53d671dd.jpg",
+     "duration": 1463,
+     "durationText": "24:23",
+     "pubdate": 1679142661,
+     "views": 6822582
+    },
+    {
+     "bvid": "BV1sc411L75L",
+     "title": "【二项式定理】保姆级梳理，重点题型一网打尽！",
+     "cover": "http://i1.hdslb.com/bfs/archive/5d7ccfab1ee3aa80d1efabc27ef0a79249b5da94.jpg",
+     "duration": 2103,
+     "durationText": "35:03",
+     "pubdate": 1679734443,
+     "views": 7791077
+    },
+    {
+     "bvid": "BV1G24y1j7iQ",
+     "title": "立体几何如何算体积？公式法+割补法+祖暅原理",
+     "cover": "http://i2.hdslb.com/bfs/archive/d37c333edecea65d32ab35bb2b494d277ad140f6.jpg",
+     "duration": 1439,
+     "durationText": "23:59",
+     "pubdate": 1680338400,
+     "views": 1784690
+    },
+    {
+     "bvid": "BV13X4y1d7So",
+     "title": "条件概率-超保姆的全面细致讲解！|小姚老师",
+     "cover": "http://i2.hdslb.com/bfs/archive/31712a6b8238a4a3c4b43448fe5f8d34c297c5bb.jpg",
+     "duration": 1842,
+     "durationText": "30:42",
+     "pubdate": 1680352322,
+     "views": 4007556
+    },
+    {
+     "bvid": "BV19T411p7gi",
+     "title": "立体几何看见截面就怕？完整截面画法！|小姚老师",
+     "cover": "http://i0.hdslb.com/bfs/archive/a8bacc21423b1f60b9752f1ab3dcdfc4f335dc16.jpg",
+     "duration": 1115,
+     "durationText": "18:35",
+     "pubdate": 1680873227,
+     "views": 2252117
+    },
+    {
+     "bvid": "BV1qc411n7w1",
+     "title": "概率大题看不懂？保姆式分析指导！|高考数学",
+     "cover": "http://i0.hdslb.com/bfs/archive/5030b9ec32ad97a2f060801f70bffb1e7a91731d.jpg",
+     "duration": 3434,
+     "durationText": "57:14",
+     "pubdate": 1681612813,
+     "views": 2363347
+    },
+    {
+     "bvid": "BV1UV4y1C7di",
+     "title": "【期末冲刺】概率统计“易错点”太多？20分钟保姆式查缺补漏！",
+     "cover": "http://i0.hdslb.com/bfs/archive/8223806fdd878147f945f383d48b9774a67cb034.jpg",
+     "duration": 1390,
+     "durationText": "23:10",
+     "pubdate": 1687350000,
+     "views": 5489939
+    },
+    {
+     "bvid": "BV1K14y197Rj",
+     "title": "【立体几何】当然用几何法！线线角与线面角总结！| 小姚老师",
+     "cover": "http://i1.hdslb.com/bfs/archive/dc9d403ebb4a6a1826b27453584bfed0cdbfe9c9.jpg",
+     "duration": 1936,
+     "durationText": "32:16",
+     "pubdate": 1689254606,
+     "views": 1800549
+    },
+    {
+     "bvid": "BV1YX4y1J7Qj",
+     "title": "【二面角】用几何法那么难吗？一个视频讲清细节！| 小姚老师",
+     "cover": "http://i1.hdslb.com/bfs/archive/e5b790b2bb836719217d11bc069741b06d7130ad.jpg",
+     "duration": 1527,
+     "durationText": "25:27",
+     "pubdate": 1689946800,
+     "views": 2415748
+    },
+    {
+     "bvid": "BV1yXbFeBE13",
+     "title": "基本不等式学懵了？40mins学会做题！",
+     "cover": "http://i1.hdslb.com/bfs/archive/6e3fa2cc772f09e00638a5cf59c59dfac92140d3.jpg",
+     "duration": 2784,
+     "durationText": "46:24",
+     "pubdate": 1726833315,
+     "views": 3665195
+    },
+    {
+     "bvid": "BV1rnx4eeEDy",
+     "title": "“基本不等式”不会做题？一个视频搞定！",
+     "cover": "http://i0.hdslb.com/bfs/archive/dc2460c4020153fe315fe31ed6e0df7394347cc4.jpg",
+     "duration": 2538,
+     "durationText": "42:18",
+     "pubdate": 1727697522,
+     "views": 2626798
+    }
+   ]
+  },
+  {
+   "id": "t1291233",
+   "seasonId": 1291233,
+   "title": "高考最后十课",
+   "count": 22,
+   "durationMin": 2309,
+   "videos": [
+    {
+     "bvid": "BV1th4y1W7sq",
+     "title": "【最后十课】函数与导数-核心总结！2023高考冲刺！第一讲",
+     "cover": "http://i2.hdslb.com/bfs/archive/1e8f09f345868fa8ee3b9b6e03fd13802eafcc56.jpg",
+     "duration": 5475,
+     "durationText": "91:15",
+     "pubdate": 1681562525,
+     "views": 4368294
+    },
+    {
+     "bvid": "BV1os4y1A7Ka",
+     "title": "【最后十课】三角函数-核心全讲！2023高考冲刺！第2讲",
+     "cover": "http://i1.hdslb.com/bfs/archive/3f416019c398ecd9a608df0efce7fd6ee5ca6b55.jpg",
+     "duration": 5267,
+     "durationText": "87:47",
+     "pubdate": 1682252351,
+     "views": 2391987
+    },
+    {
+     "bvid": "BV1fM4y187C8",
+     "title": "【最后十课】一小时拿下“解三角形“所有题型！2023高考冲刺！第3讲",
+     "cover": "http://i0.hdslb.com/bfs/archive/7e9b3421f125506e227b669496f6b3533cb7a4cd.jpg",
+     "duration": 3861,
+     "durationText": "64:21",
+     "pubdate": 1682684100,
+     "views": 2458412
+    },
+    {
+     "bvid": "BV1zM4y187yk",
+     "title": "【最后十课】数列-核心全梳理！2023高考冲刺！第4讲",
+     "cover": "http://i1.hdslb.com/bfs/archive/0ec3f7c1194a11948b73752516db2c10db1affa2.jpg",
+     "duration": 4603,
+     "durationText": "76:43",
+     "pubdate": 1682842228,
+     "views": 2294808
+    },
+    {
+     "bvid": "BV1E14y1Z7wq",
+     "title": "【最后十课】立体几何-重点全解！2023高考冲刺！第5讲",
+     "cover": "http://i0.hdslb.com/bfs/archive/a278ea603da5b4589b28e876e27e450045200323.jpg",
+     "duration": 6121,
+     "durationText": "102:01",
+     "pubdate": 1682864343,
+     "views": 2541912
+    },
+    {
+     "bvid": "BV1t24y1T7Vx",
+     "title": "【最后十课】概率统计-扫盲式全面复习！2023高考冲刺！第6讲",
+     "cover": "http://i1.hdslb.com/bfs/archive/55bcf33520fe383e55021e9cc419519a62ce1f42.jpg",
+     "duration": 6628,
+     "durationText": "110:28",
+     "pubdate": 1683458326,
+     "views": 3704959
+    },
+    {
+     "bvid": "BV1zg4y1V7sW",
+     "title": "【最后十课】不等式、向量、二项式等五章串讲！2023高考冲刺！第7讲",
+     "cover": "http://i1.hdslb.com/bfs/archive/0665af7d257e08dc16f50b325b516e753a021027.jpg",
+     "duration": 4926,
+     "durationText": "82:06",
+     "pubdate": 1684035611,
+     "views": 1736825
+    },
+    {
+     "bvid": "BV17z4y1b7ad",
+     "title": "【最后十课】圆锥曲线小题-考点全梳理！2023高考冲刺！第8讲",
+     "cover": "http://i2.hdslb.com/bfs/archive/d6578a141c7a0cf2596e5238cf8006cee50a4220.jpg",
+     "duration": 4197,
+     "durationText": "69:57",
+     "pubdate": 1684580400,
+     "views": 1690800
+    },
+    {
+     "bvid": "BV1Uh4y1t7rP",
+     "title": "【最后十课】解析大题-题型策略都在这！2023高考冲刺！第9讲",
+     "cover": "http://i1.hdslb.com/bfs/archive/cd0fb3fec7fb29a602f895b06506000aa58ac93e.jpg",
+     "duration": 5723,
+     "durationText": "95:23",
+     "pubdate": 1684634400,
+     "views": 1398081
+    },
+    {
+     "bvid": "BV1nh411c7cx",
+     "title": "【最后十课终篇】导数大题-方法思路大总结！2023高考冲刺！第10讲",
+     "cover": "http://i2.hdslb.com/bfs/archive/4e3c489d5766e8f74979bddcf54fc4a2d3710695.jpg",
+     "duration": 4588,
+     "durationText": "76:28",
+     "pubdate": 1685179800,
+     "views": 1623424
+    },
+    {
+     "bvid": "BV1Nc41137sq",
+     "title": "【2023高考】让你安心的最后一课！条件翻译+考点梳理+考试锦囊！",
+     "cover": "http://i2.hdslb.com/bfs/archive/d8fdbdd1608376e6ec358b4fecf805c5091ce031.jpg",
+     "duration": 4035,
+     "durationText": "67:15",
+     "pubdate": 1685863313,
+     "views": 2460355
+    },
+    {
+     "bvid": "BV13H4y1K74s",
+     "title": "【最后十课】函数篇！2024高考冲刺！",
+     "cover": "http://i1.hdslb.com/bfs/archive/2da946be4b0459d7a25c0240cc2ef6fd8fe19f07.jpg",
+     "duration": 8202,
+     "durationText": "136:42",
+     "pubdate": 1713013238,
+     "views": 6239815
+    },
+    {
+     "bvid": "BV1ww4m1U7CP",
+     "title": "【最后十课】三角函数篇！2024高考冲刺！",
+     "cover": "http://i2.hdslb.com/bfs/archive/7f6f9c512b15ff70a320330f326d10ccc8edcb36.jpg",
+     "duration": 5885,
+     "durationText": "98:05",
+     "pubdate": 1713597848,
+     "views": 2649706
+    },
+    {
+     "bvid": "BV1dZ421n7zm",
+     "title": "【最后十课】解三角形篇！2024高考冲刺！",
+     "cover": "http://i1.hdslb.com/bfs/archive/6c395d4b5328e1104267c946d06cb5be378ee88d.jpg",
+     "duration": 5264,
+     "durationText": "87:44",
+     "pubdate": 1714132432,
+     "views": 2486223
+    },
+    {
+     "bvid": "BV1Nf421D7Kv",
+     "title": "【最后十课】立体几何基础篇 ！2024高考冲刺！",
+     "cover": "http://i1.hdslb.com/bfs/archive/baa2619e3cd20d76f3d928eb97356b755917145a.jpg",
+     "duration": 5459,
+     "durationText": "90:59",
+     "pubdate": 1714548600,
+     "views": 3721983
+    },
+    {
+     "bvid": "BV1Gw4m1y7m5",
+     "title": "【最后十课】立体几何进阶篇！2024高考冲刺",
+     "cover": "http://i2.hdslb.com/bfs/archive/15574308c1fc43bdf0ced3f7b2a98a13eca5690b.jpg",
+     "duration": 5974,
+     "durationText": "99:34",
+     "pubdate": 1714793417,
+     "views": 2087862
+    },
+    {
+     "bvid": "BV1yz42127Dc",
+     "title": "【最后十课】数列篇！2024高考冲刺！",
+     "cover": "http://i1.hdslb.com/bfs/archive/8447f17a6a601be55ff6b7f3144767e57d1314a7.jpg",
+     "duration": 8709,
+     "durationText": "145:09",
+     "pubdate": 1715482401,
+     "views": 2708951
+    },
+    {
+     "bvid": "BV1ty411a7z2",
+     "title": "【最后十课】圆锥曲线小题篇！2024高考冲刺！",
+     "cover": "http://i0.hdslb.com/bfs/archive/1ba305492e13d4be4c13326105274107b05b04bd.jpg",
+     "duration": 8851,
+     "durationText": "147:31",
+     "pubdate": 1716032361,
+     "views": 1776660
+    },
+    {
+     "bvid": "BV1xr42157dc",
+     "title": "【最后十课】概率统计基础篇！2024高考冲刺！",
+     "cover": "http://i2.hdslb.com/bfs/archive/dab5485d4129886c438c40209fa927793a07db1f.jpg",
+     "duration": 6703,
+     "durationText": "111:43",
+     "pubdate": 1716205727,
+     "views": 4570774
+    },
+    {
+     "bvid": "BV14M4m1k71g",
+     "title": "【最后十课】概率大题束手无策？来拔高！2024高考冲刺！",
+     "cover": "http://i0.hdslb.com/bfs/archive/9d8f15edfc7216eccbecddba7ba8d6c8c9d44d37.jpg",
+     "duration": 5432,
+     "durationText": "90:32",
+     "pubdate": 1716549596,
+     "views": 2105946
+    },
+    {
+     "bvid": "BV1sr421w7GS",
+     "title": "【最后十课】导数基础+压轴全梳理！2024高考冲刺！",
+     "cover": "http://i0.hdslb.com/bfs/archive/3bae8f8a84fe312106a66297c92b379db72f9f2c.jpg",
+     "duration": 10801,
+     "durationText": "180:01",
+     "pubdate": 1717073011,
+     "views": 2268062
+    },
+    {
+     "bvid": "BV1nt421K7F8",
+     "title": "【最后十课·终篇】圆锥曲线大题！2024高考冲刺！",
+     "cover": "http://i1.hdslb.com/bfs/archive/3c03c20f6d13c42aa2caf244cefcfd253fdcd01f.jpg",
+     "duration": 11865,
+     "durationText": "197:45",
+     "pubdate": 1717229281,
+     "views": 2272485
+    }
+   ]
+  },
+  {
+   "id": "t1623316",
+   "seasonId": 1623316,
+   "title": "进阶小专题",
+   "count": 21,
+   "durationMin": 609,
+   "videos": [
+    {
+     "bvid": "BV1Kb4y187Gn",
+     "title": "圆锥曲线 动态离心率三大核心策略！ |或或",
+     "cover": "http://i2.hdslb.com/bfs/archive/be410dfc216685505d7210d7536fa3afbd61e398.jpg",
+     "duration": 840,
+     "durationText": "14:00",
+     "pubdate": 1635645600,
+     "views": 1054596
+    },
+    {
+     "bvid": "BV18R4y1E79R",
+     "title": "高中数学同构思想，最保姆式的讲解，从基础到压轴！",
+     "cover": "http://i1.hdslb.com/bfs/archive/f1cd03b6f5f3b99c83b84dfd03bbf468d06c5e40.jpg",
+     "duration": 775,
+     "durationText": "12:55",
+     "pubdate": 1636251312,
+     "views": 1447812
+    },
+    {
+     "bvid": "BV1Vf4y1F7v4",
+     "title": "学霸喜欢的三角换元法-普通人也能会！",
+     "cover": "http://i0.hdslb.com/bfs/archive/e7423889debad41ab8e1827fad013072973eaf50.jpg",
+     "duration": 1379,
+     "durationText": "22:59",
+     "pubdate": 1642766389,
+     "views": 2442924
+    },
+    {
+     "bvid": "BV17L411N7Gb",
+     "title": "高中数学平面向量主流方法、二级结论全梳理！|小姚老师",
+     "cover": "http://i1.hdslb.com/bfs/archive/41286dc69267198a456e3ab88ef55f8437c87255.jpg",
+     "duration": 2799,
+     "durationText": "46:39",
+     "pubdate": 1646401709,
+     "views": 1690135
+    },
+    {
+     "bvid": "BV1Qu411B7N1",
+     "title": "导数小题云刷题，来练练手！核心方法基本全覆盖！",
+     "cover": "http://i1.hdslb.com/bfs/archive/4096896b9363c3361ba393044c78597da07caba7.jpg",
+     "duration": 1579,
+     "durationText": "26:19",
+     "pubdate": 1647090004,
+     "views": 1073731
+    },
+    {
+     "bvid": "BV1pF41137g2",
+     "title": "刚学立体几何懵了？学会找面，秒变初中几何！|小姚老师",
+     "cover": "http://i1.hdslb.com/bfs/archive/ebec07d4b264d272b4ef5c3d3979f6983363b8b3.jpg",
+     "duration": 1154,
+     "durationText": "19:14",
+     "pubdate": 1648992626,
+     "views": 989276
+    },
+    {
+     "bvid": "BV1mA4y1X7Bm",
+     "title": "慎入，又臭又长的概率大题！手把手教你分析 |高考数学",
+     "cover": "http://i2.hdslb.com/bfs/archive/1ce7cedf610e9089bb57932ac355b725b0d70b93.jpg",
+     "duration": 1693,
+     "durationText": "28:13",
+     "pubdate": 1649504150,
+     "views": 2745972
+    },
+    {
+     "bvid": "BV1aY411j7kL",
+     "title": "立体几何平行不会用？证明与运用思路都在这儿！｜小姚老师",
+     "cover": "http://i2.hdslb.com/bfs/archive/b14a48521991e12cec76516a379ea3ce5709c35e.jpg",
+     "duration": 1581,
+     "durationText": "26:21",
+     "pubdate": 1650030576,
+     "views": 676413
+    },
+    {
+     "bvid": "BV1AY411P7uR",
+     "title": "立体几何垂直利器：三垂线定理教学与运用|小姚老师",
+     "cover": "http://i0.hdslb.com/bfs/archive/7749e57d6d5b987f05afad13dedce1ff2957fbb4.jpg",
+     "duration": 1427,
+     "durationText": "23:47",
+     "pubdate": 1650634169,
+     "views": 1068212
+    },
+    {
+     "bvid": "BV1xZ4y1y7b7",
+     "title": "超好懂的立体几何动点专题！位置关系的判定",
+     "cover": "http://i2.hdslb.com/bfs/archive/abbd06d1eef234ceb055e18a9656c445015c0ffa.jpg",
+     "duration": 1571,
+     "durationText": "26:11",
+     "pubdate": 1651568400,
+     "views": 813571
+    },
+    {
+     "bvid": "BV143411w7P1",
+     "title": "高中数学解题思想【数形结合】|理解本质，灵活运用！",
+     "cover": "http://i1.hdslb.com/bfs/archive/e2f22417f4618db5a7d9e5321bced3f065e9d704.jpg",
+     "duration": 2369,
+     "durationText": "39:29",
+     "pubdate": 1656208799,
+     "views": 1129233
+    },
+    {
+     "bvid": "BV15a411H7nE",
+     "title": "根据什么分类？17分钟学会数学分类讨论原理！",
+     "cover": "http://i0.hdslb.com/bfs/archive/049dfb428e7a33a27a3d72e4bb1c72878d2b8721.jpg",
+     "duration": 1015,
+     "durationText": "16:55",
+     "pubdate": 1657710610,
+     "views": 531353
+    },
+    {
+     "bvid": "BV1zG4y1v7Ev",
+     "title": "6分钟上手高考中泰勒展开运用",
+     "cover": "http://i0.hdslb.com/bfs/archive/17bb4bc1fcff930d7ae565ade6a7f70dbe7c9fcf.jpg",
+     "duration": 903,
+     "durationText": "15:03",
+     "pubdate": 1659787497,
+     "views": 5043062
+    },
+    {
+     "bvid": "BV1FR4y1o7J8",
+     "title": "基本不等式，解题靠运气？来学核心思想！",
+     "cover": "http://i0.hdslb.com/bfs/archive/290f89bb0a57af3e2704789ef68d2bcef80e557d.jpg",
+     "duration": 2013,
+     "durationText": "33:33",
+     "pubdate": 1664848800,
+     "views": 4094196
+    },
+    {
+     "bvid": "BV1gB4y1j7YY",
+     "title": "高考解三角形热点-化角消元思想，包教包会！",
+     "cover": "http://i2.hdslb.com/bfs/archive/a399d7fc92310d81f350a34e396d0b3c5922beb6.jpg",
+     "duration": 1787,
+     "durationText": "29:47",
+     "pubdate": 1665107100,
+     "views": 1267650
+    },
+    {
+     "bvid": "BV12e4y1E7AL",
+     "title": "【高考解三角形】几何法核心思路与结论",
+     "cover": "http://i0.hdslb.com/bfs/archive/7b81c2612a3b3ebbd8932c6f971a3be0acbdabc9.jpg",
+     "duration": 1894,
+     "durationText": "31:34",
+     "pubdate": 1665887700,
+     "views": 1189901
+    },
+    {
+     "bvid": "BV1zD4y1s76r",
+     "title": "越来越复杂的指对函数，一个视频打开思路！",
+     "cover": "http://i2.hdslb.com/bfs/archive/e5aff5f64ea26aa183042c40d9661f97f494be74.jpg",
+     "duration": 1833,
+     "durationText": "30:33",
+     "pubdate": 1668848400,
+     "views": 2366969
+    },
+    {
+     "bvid": "BV1pP4y1k79Q",
+     "title": "盘点高中数学有价值的二级结论！别学没用的！",
+     "cover": "http://i0.hdslb.com/bfs/archive/25e3a3ab4f1d016bc60ccd73744413a338b886fb.jpg",
+     "duration": 3061,
+     "durationText": "51:01",
+     "pubdate": 1673775090,
+     "views": 5248286
+    },
+    {
+     "bvid": "BV1bm4y1y7wt",
+     "title": "立体几何-核心辅助线大全总结！|小姚老师",
+     "cover": "http://i0.hdslb.com/bfs/archive/db51b5c3570ad90d1ca70271c6e09ffecca6dd60.jpg",
+     "duration": 2806,
+     "durationText": "46:46",
+     "pubdate": 1682082543,
+     "views": 1554966
+    },
+    {
+     "bvid": "BV1uz4y1475S",
+     "title": "【洛必达法则】高考使用指南",
+     "cover": "http://i0.hdslb.com/bfs/archive/b69b9880c2e4b3f81f27a43f5af992d84ff6690f.jpg",
+     "duration": 1049,
+     "durationText": "17:29",
+     "pubdate": 1690718400,
+     "views": 6442970
+    },
+    {
+     "bvid": "BV12u411H7df",
+     "title": "【解析几何】究竟有哪些“二级结论”要掌握？「上篇」| 小姚老师",
+     "cover": "http://i2.hdslb.com/bfs/archive/8525d9ec6511e7272d8302a501d95d2e35286bdd.jpg",
+     "duration": 3025,
+     "durationText": "50:25",
+     "pubdate": 1691238000,
+     "views": 1274440
+    }
+   ]
+  }
+ ]
+}

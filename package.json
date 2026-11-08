@@ -1,0 +1,26 @@
+{
+  "name": "yishu-review",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "description": "一数数学复习 · 目录型 PWA 进度本（点知识点跳 B站，看完回来一键打勾）",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "typecheck": "tsc --noEmit",
+    "preview": "vite preview",
+    "verify:data": "node scripts/verify-data.mjs"
+  },
+  "dependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.18",
+    "@types/react-dom": "^18.3.5",
+    "@vitejs/plugin-react": "^4.3.4",
+    "typescript": "^5.6.3",
+    "vite": "^5.4.11",
+    "vite-plugin-pwa": "^0.21.1"
+  }
+}
