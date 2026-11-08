@@ -22,8 +22,9 @@ export function JumpProvider({ children }: { children: ReactNode }) {
     (target: PlayTarget) => {
       // A 版灵魂：跳转前把 { key, name, at } 存进 pending（只留一条）
       setPending({ key: target.key, name: target.name, at: Date.now() })
-      const mode = openInBilibili(target)
-      showToast(mode === 'web' ? '已记录，看完回来点「打勾」即可' : '正在打开 B站 App…')
+      void openInBilibili(target).then((mode) => {
+        showToast(mode === 'web' ? '已记录，看完回来点「打勾」即可' : '正在打开 B站 App…')
+      })
     },
     [setPending, showToast],
   )

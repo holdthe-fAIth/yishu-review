@@ -11,9 +11,15 @@
     "preview": "vite preview",
     "verify:data": "node scripts/verify-data.mjs",
     "verify:ui": "node scripts/e2e-check.mjs",
-    "screenshot": "node scripts/screenshot.mjs"
+    "screenshot": "node scripts/screenshot.mjs",
+    "build:apk": "powershell -ExecutionPolicy Bypass -File scripts/build-apk.ps1"
   },
   "dependencies": {
+    "@capacitor/android": "^6.2.3",
+    "@capacitor/app": "^6.0.3",
+    "@capacitor/app-launcher": "^6.0.4",
+    "@capacitor/cli": "^6.2.3",
+    "@capacitor/core": "^6.2.3",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },

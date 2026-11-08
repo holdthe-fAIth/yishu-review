@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
+import { Capacitor } from '@capacitor/core'
+import { App as NativeApp } from '@capacitor/app'
 import { useApp } from '../store/AppStore'
 import { useToast } from './Toast'
 
@@ -38,11 +40,23 @@ export function ReturnPromptBar() {
     document.addEventListener('visibilitychange', check)
     window.addEventListener('focus', check)
     window.addEventListener('pageshow', check)
+
+    // APK（Capacitor）里额外监听原生前台切换，保证从 B站 切回来一定触发
+    let nativeListener: { remove: () => Promise<void> } | undefined
+    if (Capacitor.isNativePlatform()) {
+      void NativeApp.addListener('appStateChange', (appState) => {
+        if (appState.isActive) check()
+      }).then((listener) => {
+        nativeListener = listener
+      })
+    }
+
     check()
     return () => {
       document.removeEventListener('visibilitychange', check)
       window.removeEventListener('focus', check)
       window.removeEventListener('pageshow', check)
+      void nativeListener?.remove()
     }
   }, [clearPending])
 

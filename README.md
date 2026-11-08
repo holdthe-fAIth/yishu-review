@@ -94,18 +94,41 @@ pnpm dev --host        # 或 pnpm preview --host
 
 按上文「部署 PWA」把 `dist/` 部署到任意 HTTPS 静态托管（Cloudflare Pages / Vercel / Netlify / GitHub Pages 均可，免费），手机访问后安装即可长期使用、支持后续更新。子路径部署记得改 `vite.config.ts` 的 `base`。
 
-### 方案 D：APK（可选，需要 Android 工具链）
+### 方案 D：APK（已产出，可直接装手机）
 
-APK 与 PWA 功能一致，优势是不依赖浏览器/电脑、可直接微信传文件安装、彻底离线。但需要本机具备 **JDK 17 + Android SDK + Gradle**（约 1GB 依赖下载），再用 Capacitor 打包：
+本项目已内置 Capacitor 6 Android 工程，并已在本机打出**可直接安装的 debug APK**：
+
+| 项 | 值 |
+| --- | --- |
+| 文件 | `yishu-review-1.0.0-debug.apk`（项目根目录，约 4.1 MB） |
+| 包名 / 版本 | `com.yishu.review` / versionCode 1, versionName 1.0 |
+| 兼容 | minSdk 22（Android 5.1+），targetSdk 34 |
+| 签名 | Android Debug（v1+v2 签名，可直接安装，不可上架应用商店） |
+| 内容 | Web 产物全部内置（断网可用），图标/启动图已替换为「一数复习」 |
+
+**安装方法**：把 `.apk` 文件传到手机（微信「文件传输助手」→ 手机微信打开 → 右上角「用其他应用打开」→ 安装；或数据线/网盘），首次安装需允许「安装未知来源应用」；部分国产 ROM（MIUI/HarmonyOS）还需暂时关闭「纯净模式」。
+
+**重新打包**（改代码/改数据后）：
 
 ```bash
-pnpm add @capacitor/core @capacitor/cli @capacitor/app @capacitor/app-launcher
-npx cap init 一数复习 com.yishu.review --web-dir=dist
-npx cap add android
-pnpm build && npx cap sync android
-cd android && ./gradlew assembleDebug   # 产物：android/app/build/outputs/apk/debug/app-debug.apk
+pnpm build:apk        # = scripts/build-apk.ps1：vite build → cap sync → gradlew assembleDebug
 ```
-（深链写法与 Android 11+ 包可见性配置见文末「可选升级：Capacitor 打包 APK」。）
+首次打包需要本机有 JDK 17 + Android SDK（本项目用便携版放在 `.tools/`，已被 gitignore，不随仓库分发）：
+
+```bash
+# 一次性准备（Windows，约 1GB 下载，~25 分钟）
+# 1) JDK 17：https://aka.ms/download-jdk/microsoft-jdk-17.0.13-windows-x64.zip 解压到 .tools/jdk/
+# 2) Android cmdline-tools：https://dl.google.com/android/repository/commandlinetools-win-11076708_latest.zip
+#    解压到 .tools/android-sdk/cmdline-tools/latest/，然后：
+#    sdkmanager "platform-tools" "platforms;android-34" "build-tools;34.0.0"
+```
+`android/local.properties` 里的 `sdk.dir` 指向本机 `.tools/android-sdk`（该文件已 gitignore）。
+
+**原生能力说明**：
+- 点知识点走 `@capacitor/app-launcher` 唤起 B站 App（Android 11+ 包可见性已在 `AndroidManifest.xml` 的 `<queries>` 中声明 `tv.danmaku.bili` 与 `bilibili://` scheme）；没装 B站 自动用系统浏览器打开网页版。
+- 从 B站 切回时的「看完了？」浮条：除 `visibilitychange` 外还监听 `@capacitor/app` 的 `appStateChange`，保证原生环境一定触发。
+- APK 内不注册 PWA Service Worker（资源已本地化，注册会报错），只在浏览器 PWA 中注册。
+- 正式发布可将 `android/app/build.gradle` 的 release 配置改成自己的签名（`keytool` 生成 keystore + `signingConfigs`），然后 `./gradlew assembleRelease`；同签名的升级包可覆盖安装，换签名需先卸载旧版（本机会丢失 localStorage 进度，记得先「我的 → 导出 JSON」）。
 
 ---
 

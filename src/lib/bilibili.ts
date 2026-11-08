@@ -1,3 +1,5 @@
+import { Capacitor } from '@capacitor/core'
+import { AppLauncher } from '@capacitor/app-launcher'
 import type { PlayTarget } from '../types'
 
 /**
@@ -44,9 +46,26 @@ export function buildAndroidIntent(target: PlayTarget): { intent: string; web: s
   return { intent, web }
 }
 
+/** 是否运行在 Capacitor 原生容器（APK）里 */
+export function isNativeApp(): boolean {
+  try {
+    return Capacitor.isNativePlatform()
+  } catch {
+    return false
+  }
+}
+
 /** 打开浏览器版 B站（长按菜单「在浏览器打开」/ 桌面端兜底） */
-export function openInBrowser(target: PlayTarget): void {
+export async function openInBrowser(target: PlayTarget): Promise<void> {
   const { web } = buildPlayLinks(target)
+  if (isNativeApp()) {
+    try {
+      await AppLauncher.openUrl({ url: web })
+      return
+    } catch {
+      // 落到 window.open
+    }
+  }
   window.open(web, '_blank', 'noopener,noreferrer')
 }
 
@@ -62,22 +81,43 @@ export type OpenMode = 'app' | 'web'
 
 /**
  * 唤起 B站 App 播放对应视频：
- * - Android：优先 intent://（带浏览器兜底）
- * - iOS：优先 bilibili://，1.2s 内没切走则退化浏览器
- * - 桌面：直接新标签页打开网页版（方便验收时点开看 page 参数）
+ * - Capacitor APK：@capacitor/app-launcher 原生唤起（Android 11+ 需要 Manifest 包可见性）
+ * - Android 浏览器/PWA：intent://（带浏览器兜底）
+ * - iOS：bilibili://，1.2s 内没切走则退化浏览器
+ * - 桌面：直接新标签页打开网页版（方便验收 page 参数）
  */
-export function openInBilibili(target: PlayTarget): OpenMode {
+export async function openInBilibili(target: PlayTarget): Promise<OpenMode> {
   const { deep, web } = buildPlayLinks(target)
 
+  // 1) APK 原生容器：用 AppLauncher（WebView 里不能直接跳 intent://）
+  if (isNativeApp()) {
+    try {
+      const { value } = await AppLauncher.canOpenUrl({ url: deep })
+      if (value) {
+        await AppLauncher.openUrl({ url: deep })
+        return 'app'
+      }
+    } catch {
+      // canOpenUrl 异常时继续尝试网页兜底
+    }
+    try {
+      await AppLauncher.openUrl({ url: web })
+      return 'web'
+    } catch {
+      window.open(web, '_blank', 'noopener,noreferrer')
+      return 'web'
+    }
+  }
+
+  // 2) Android 浏览器 / PWA
   if (isAndroid()) {
     const { intent } = buildAndroidIntent(target)
-    // intent:// 自带 browser_fallback_url，未安装 App 时自动落到网页版
     window.location.href = intent
     return 'app'
   }
 
+  // 3) iOS / HarmonyOS 浏览器
   if (isMobile()) {
-    // iOS / HarmonyOS：自定义 scheme 唤起；未安装则 1.2s 后兜底
     window.location.href = deep
     window.setTimeout(() => {
       if (document.visibilityState === 'visible') {
@@ -87,7 +127,7 @@ export function openInBilibili(target: PlayTarget): OpenMode {
     return 'app'
   }
 
-  // 桌面浏览器：验收 / 调试时用网页版，避免误触发协议处理器
+  // 4) 桌面浏览器
   window.open(web, '_blank', 'noopener,noreferrer')
   return 'web'
 }

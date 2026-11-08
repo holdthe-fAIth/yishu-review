@@ -9,6 +9,8 @@ export default defineConfig({
   plugins: [
     react(),
     VitePWA({
+      // 手动在 main.tsx 里注册（Capacitor APK 内不注册，浏览器 PWA 内注册）
+      injectRegister: null,
       registerType: 'autoUpdate',
       includeAssets: [
         'favicon.svg',
