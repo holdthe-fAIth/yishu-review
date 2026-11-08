@@ -1,0 +1,313 @@
+/* ============================================================
+   课程首页（A 版 · 目录型）
+   class 统一加 cp- 前缀，避免与其他页面样式冲突。
+   颜色 / 圆角 / 阴影全部走 index.css 的 CSS 变量，暗色自动适配。
+   ============================================================ */
+
+.cp-page {
+  padding-bottom: 10px;
+}
+
+.cp-head {
+  padding-bottom: 12px;
+}
+
+.cp-head__text {
+  min-width: 0;
+}
+
+/* ---------------- Hero 卡：总进度 + 继续复习 ---------------- */
+
+.cp-hero {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px;
+  overflow: hidden;
+}
+
+/* 右上角粉色渐变装饰（B站风） */
+.cp-hero::before {
+  content: '';
+  position: absolute;
+  top: -42px;
+  right: -30px;
+  width: 152px;
+  height: 152px;
+  border-radius: 50%;
+  background: radial-gradient(circle at center, var(--pink-soft) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.cp-hero__ring {
+  position: relative;
+  z-index: 1;
+  flex: none;
+}
+
+.cp-hero__percent {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 1px;
+  color: var(--text);
+  font-size: 21px;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums;
+}
+
+.cp-hero__percent-unit {
+  color: var(--text-2);
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.cp-hero__info {
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.cp-hero__eyebrow {
+  color: var(--text-2);
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1.2;
+}
+
+.cp-hero__meta {
+  color: var(--text);
+  font-size: 13px;
+  line-height: 1.55;
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+}
+
+.cp-hero__meta strong {
+  color: var(--pink);
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.cp-hero__btn {
+  align-self: flex-start;
+  margin-top: 3px;
+  padding: 9px 20px;
+  border-radius: 999px;
+  font-size: 14px;
+}
+
+/* ---------------- 分段控件 ---------------- */
+
+.cp-seg {
+  padding: 12px 0;
+}
+
+/* ---------------- 系统课：模块折叠 ---------------- */
+
+.cp-modules {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.cp-module {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 0;
+}
+
+.cp-module__panel {
+  overflow: hidden;
+}
+
+.cp-module__head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 12px 14px 9px;
+  text-align: left;
+}
+
+.cp-module__head:active {
+  opacity: 0.62;
+}
+
+.cp-module__name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--text);
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.cp-module__count {
+  flex: none;
+  color: var(--text-2);
+  font-size: 12px;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.cp-module__chevron {
+  flex: none;
+  color: var(--text-2);
+  transition: transform 0.2s ease;
+}
+
+.cp-module__chevron.is-open {
+  transform: rotate(180deg);
+}
+
+.cp-module__bar {
+  margin: 0 14px 12px;
+}
+
+/* ---------------- 2 列卡片网格（系统课 / 专题课共用） ---------------- */
+
+.cp-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  min-width: 0;
+}
+
+/* ---------------- 卡片 ---------------- */
+
+.cp-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  min-width: 0;
+  padding: 6px 6px 9px;
+  overflow: hidden;
+  text-align: left;
+  cursor: pointer;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+  touch-action: manipulation;
+}
+
+.cp-card:focus-visible {
+  outline: 2px solid var(--pink);
+  outline-offset: 2px;
+}
+
+.cp-card__cover {
+  position: relative;
+  min-width: 0;
+}
+
+/* 右上角打勾热区：绝对定位，独立于卡片主体跳转 */
+.cp-card__check {
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 3;
+}
+
+.cp-card__body {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 0;
+  padding: 0 3px;
+}
+
+.cp-card__title {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+  transition: color 0.18s ease;
+}
+
+.cp-card__meta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  min-height: 18px;
+}
+
+.cp-card__views {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  color: var(--text-2);
+  font-size: 11px;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+/* 已完成：标题变灰 + 卡片底部一条满格粉线 */
+.cp-card.is-done .cp-card__title {
+  color: var(--text-2);
+}
+
+.cp-card.is-done::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 2px;
+  background: var(--pink);
+}
+
+.cp-card .cover__img {
+  -webkit-user-drag: none;
+  user-select: none;
+}
+
+/* ---------------- 专题课：横滑合集 tab ---------------- */
+
+.cp-topic {
+  min-width: 0;
+}
+
+.cp-tabs {
+  display: flex;
+  gap: 8px;
+  margin: 0 0 12px;
+  padding: 1px 1px 2px;
+}
+
+.cp-tab {
+  flex: none;
+  max-width: 74vw;
+  gap: 6px;
+  white-space: nowrap;
+}
+
+.cp-tab__title {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cp-tab__count {
+  flex: none;
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  opacity: 0.72;
+}

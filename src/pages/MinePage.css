@@ -1,0 +1,329 @@
+/* ============================================================
+   页面 · 我的（MinePage）
+   全部颜色取 src/index.css 的 CSS 变量，暗色自动适配
+   ============================================================ */
+
+/* ---------- 统计卡片 ---------- */
+
+.m-stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.m-stat {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  padding: 12px 10px;
+}
+
+.m-stat__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  margin-bottom: 7px;
+  border-radius: 9px;
+}
+
+.m-stat--video .m-stat__icon {
+  background: var(--pink-soft);
+  color: var(--pink);
+}
+
+.m-stat--time .m-stat__icon {
+  background: rgba(0, 174, 236, 0.12);
+  color: var(--blue);
+}
+
+.m-stat--streak .m-stat__icon {
+  background: rgba(255, 167, 38, 0.16);
+  color: var(--orange);
+}
+
+.m-stat__num {
+  overflow: hidden;
+  color: var(--text);
+  font-size: 20px;
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-variant-numeric: tabular-nums;
+}
+
+.m-stat__num i {
+  margin-left: 2px;
+  color: var(--text-2);
+  font-size: 11px;
+  font-style: normal;
+  font-weight: 600;
+  letter-spacing: 0;
+}
+
+.m-stat__label {
+  margin-top: 3px;
+  overflow: hidden;
+  color: var(--text-2);
+  font-size: 11px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+/* ---------- 模块完成率条形图 ---------- */
+
+.m-bars {
+  padding: 5px 14px 13px;
+}
+
+.m-bar {
+  padding: 9px 0 3px;
+}
+
+.m-bar__top {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+
+.m-bar__name {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 500;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.m-bar__pct {
+  flex: none;
+  color: var(--text-2);
+  font-size: 12px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.m-bar__pct.is-full {
+  color: var(--pink);
+}
+
+.m-bar__track {
+  height: 4px;
+}
+
+/* ---------- 数据管理 / 设置列表 ---------- */
+
+.m-list {
+  padding: 0 14px;
+}
+
+.m-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 13px 0;
+  text-align: left;
+}
+
+.m-row + .m-row {
+  border-top: 0.5px solid var(--line);
+}
+
+.m-row__label {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  color: var(--text);
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.m-row__label svg {
+  flex: none;
+  color: var(--text-2);
+}
+
+.m-row__label--stack {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1px;
+}
+
+.m-row__sub {
+  color: var(--text-2);
+  font-size: 11px;
+  font-weight: 400;
+  line-height: 1.5;
+}
+
+.m-row__hint {
+  flex: none;
+  color: var(--text-2);
+  font-size: 11px;
+}
+
+.m-row__chev {
+  flex: none;
+  color: var(--text-3);
+}
+
+.m-row--action {
+  transition: opacity 0.15s ease;
+}
+
+.m-row--action:active {
+  opacity: 0.6;
+}
+
+.m-row--danger .m-row__label,
+.m-row--danger .m-row__label svg {
+  color: var(--red);
+}
+
+.m-row--danger .m-row__chev {
+  color: var(--red);
+  opacity: 0.5;
+}
+
+/* ---------- 主题分段控件 ---------- */
+
+.m-row--theme {
+  flex-wrap: wrap;
+}
+
+.m-theme {
+  flex: 1 1 180px;
+  max-width: 270px;
+  margin-left: auto;
+}
+
+/* ---------- 开关（胶囊 + 圆点） ---------- */
+
+.m-switch {
+  position: relative;
+  flex: none;
+  width: 46px;
+  height: 26px;
+  border-radius: 13px;
+  background: var(--line-strong);
+  transition: background-color 0.18s ease, transform 0.12s ease;
+}
+
+.m-switch:active {
+  transform: scale(0.96);
+}
+
+.m-switch:focus-visible {
+  outline: 2px solid var(--pink);
+  outline-offset: 2px;
+}
+
+.m-switch.is-on {
+  background: var(--pink);
+}
+
+.m-switch__dot {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.22);
+  transition: transform 0.18s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.m-switch.is-on .m-switch__dot {
+  transform: translateX(20px);
+}
+
+/* ---------- 关于 ---------- */
+
+.m-about {
+  padding: 4px 14px 12px;
+}
+
+.m-about__row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 0;
+  border-bottom: 0.5px solid var(--line);
+  font-size: 12px;
+}
+
+.m-about__row span {
+  flex: none;
+  color: var(--text-2);
+}
+
+.m-about__row b {
+  color: var(--text);
+  font-weight: 500;
+  text-align: right;
+}
+
+.m-about__note {
+  margin-top: 9px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: var(--bg);
+  color: var(--text-2);
+  font-size: 11px;
+  line-height: 1.7;
+}
+
+/* ---------- 底部 Sheet 文案 ---------- */
+
+.m-sheet__text {
+  margin: 2px 0 4px;
+  padding: 0 2px;
+  color: var(--text-2);
+  font-size: 13px;
+  line-height: 1.75;
+  text-align: center;
+}
+
+.m-sheet__text b {
+  color: var(--red);
+  font-weight: 600;
+}
+
+/* ---------- 窄屏适配 ---------- */
+
+@media (max-width: 360px) {
+  .m-stats {
+    gap: 8px;
+  }
+
+  .m-stat {
+    padding: 10px 8px;
+  }
+
+  .m-stat__num {
+    font-size: 18px;
+  }
+
+  .m-row {
+    padding: 12px 0;
+  }
+
+  .m-row__label {
+    font-size: 13px;
+  }
+
+  .m-row__hint {
+    display: none;
+  }
+}

@@ -20,7 +20,8 @@ export function formatHours(seconds: number, digits = 1): string {
 /** 秒 → 「约 48 小时」/「约 35 分钟」 */
 export function formatHoursLabel(seconds: number): string {
   const totalMinutes = Math.max(0, Math.round(seconds / 60))
-  if (totalMinutes < 60) return `约 ${Math.max(1, totalMinutes)} 分钟`
+  if (totalMinutes <= 0) return '约 0 分钟'
+  if (totalMinutes < 60) return `约 ${totalMinutes} 分钟`
   const hours = totalMinutes / 60
   return `约 ${hours >= 100 ? Math.round(hours) : hours.toFixed(1).replace(/\.0$/, '')} 小时`
 }
