@@ -55,6 +55,16 @@ export default defineConfig({
       },
     }),
   ],
-  server: { host: true, port: 5173 },
-  preview: { host: true, port: 4173 },
+  // 允许通过局域网 IP / 临时内网穿透域名（serveo、localtunnel、pinggy、cloudflared）访问，
+  // 方便手机真机安装 PWA；正式部署到自己的域名后可按需删掉。
+  server: {
+    host: true,
+    port: 5173,
+    allowedHosts: ['.serveousercontent.com', '.loca.lt', '.pinggy.link', '.lhr.life', '.trycloudflare.com'],
+  },
+  preview: {
+    host: true,
+    port: 4173,
+    allowedHosts: ['.serveousercontent.com', '.loca.lt', '.pinggy.link', '.lhr.life', '.trycloudflare.com'],
+  },
 })

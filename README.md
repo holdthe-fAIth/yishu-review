@@ -58,6 +58,57 @@ node scripts/screenshot.mjs   # 终端 2：生成 screenshots/*.png 视觉验收
 
 ---
 
+## 手机真机安装（PWA，不需要 APK）
+
+> 关键前提：**PWA 安装 / 离线缓存必须 HTTPS**（`localhost` 除外）。HTTP 局域网地址只能当普通网页用，无法安装、无法离线。
+
+### 方案 A：临时 HTTPS 隧道（最快，无账号）
+
+```bash
+# 终端 1：预览构建产物（vite.config.ts 已允许 serveo / localtunnel / pinggy / cloudflared 域名）
+pnpm build && pnpm preview --host
+
+# 终端 2：起一条临时 HTTPS 隧道（需要本机有 ssh）
+ssh -tt -o StrictHostKeyChecking=no -R 80:localhost:4173 serveo.net
+# 输出形如：Forwarding HTTP traffic from https://xxxx.serveousercontent.com
+```
+
+手机浏览器打开该 `https://` 地址 →（Serveo 免费隧道首次会显示安全提示，点 **Continue to Site**）→ 等页面加载后：
+- **Chrome / Edge**：右上角菜单 →「安装应用 / 添加到主屏幕」
+- **国产浏览器**：菜单 →「添加到桌面」
+
+装好后桌面会出现「一数复习」图标，standalone 全屏、可离线打开，进度存在手机本地。
+
+> ⚠️ 隧道链接是临时的：电脑或隧道进程关掉就失效，重启会生成新链接。已安装的 App 因 Service Worker 已缓存资源，通常仍可离线启动；但换机 / 清缓存 / 需要更新时必须重新访问有效地址或正式部署。
+
+### 方案 B：同一 WiFi 局域网访问（只能网页用，不能安装）
+
+```bash
+pnpm dev --host        # 或 pnpm preview --host
+# 手机浏览器打开 http://<电脑局域网IP>:5173（或 :4173）
+```
+- 需要 Windows 防火墙放行 Node.js（首次监听端口时系统会弹「允许访问」，选专用网络）。
+- 非 HTTPS → 不能安装 PWA、不能离线，但点知识点跳 B站、打勾进度等全部功能正常。
+
+### 方案 C：正式部署（长期使用，推荐）
+
+按上文「部署 PWA」把 `dist/` 部署到任意 HTTPS 静态托管（Cloudflare Pages / Vercel / Netlify / GitHub Pages 均可，免费），手机访问后安装即可长期使用、支持后续更新。子路径部署记得改 `vite.config.ts` 的 `base`。
+
+### 方案 D：APK（可选，需要 Android 工具链）
+
+APK 与 PWA 功能一致，优势是不依赖浏览器/电脑、可直接微信传文件安装、彻底离线。但需要本机具备 **JDK 17 + Android SDK + Gradle**（约 1GB 依赖下载），再用 Capacitor 打包：
+
+```bash
+pnpm add @capacitor/core @capacitor/cli @capacitor/app @capacitor/app-launcher
+npx cap init 一数复习 com.yishu.review --web-dir=dist
+npx cap add android
+pnpm build && npx cap sync android
+cd android && ./gradlew assembleDebug   # 产物：android/app/build/outputs/apk/debug/app-debug.apk
+```
+（深链写法与 Android 11+ 包可见性配置见文末「可选升级：Capacitor 打包 APK」。）
+
+---
+
 ## 功能清单
 
 ### 页面 1 · 课程（首页）
