@@ -51,7 +51,7 @@ ssh -tt -o StrictHostKeyChecking=no -R 80:localhost:4173 serveo.net
 
 **方式 B：正式部署（推荐长期，见「二、GitHub 上传与部署」）**
 
-部署后手机打开 `https://<用户名>.github.io/<仓库名>/` → 安装 PWA。之后每次 push 自动更新，App 内「检查内容更新」可拉取最新课程数据。
+部署后手机打开 `https://yiweiima.github.io/yishu-review/` → 安装 PWA。之后每次 push 自动更新，App 内「检查内容更新」可拉取最新课程数据。
 
 **方式 C：同一 WiFi 局域网**：`pnpm dev --host` / `pnpm preview --host`，手机开 `http://<电脑IP>:5173`。非 HTTPS 只能当网页用（不能安装/离线），需放行 Windows 防火墙。
 
@@ -73,7 +73,7 @@ ssh -tt -o StrictHostKeyChecking=no -R 80:localhost:4173 serveo.net
 **APK 内更新内容**：APK 内置的是打包时快照。要更新课程数据，在「我的 → 内容更新源」填入 GitHub raw 地址（格式见下），再点「检查内容更新」即可不用重装 App 更新数据；功能更新则需要重新打包 APK。
 
 ```text
-https://raw.githubusercontent.com/<用户名>/<仓库名>/main/data/courses.json
+https://raw.githubusercontent.com/YiweiiMa/yishu-review/main/data/courses.json
 ```
 
 **重新打包**：
@@ -98,7 +98,7 @@ pnpm build:apk   # = scripts/build-apk.ps1：vite build → cap sync → gradlew
 
 cd D:\deepseek\cursor\yishu-review
 git branch -M main                      # 统一用 main 分支
-git remote add origin https://github.com/<用户名>/yishu-review.git
+git remote add origin https://github.com/YiweiiMa/yishu-review.git
 git push -u origin main
 ```
 
@@ -107,7 +107,7 @@ git push -u origin main
 1. 打开仓库 **Settings → Pages → Build and deployment**；
 2. **Source** 选择 **GitHub Actions**；
 3. 仓库自带的 [.github/workflows/deploy-pages.yml](.github/workflows/deploy-pages.yml) 会在每次 push main 时自动构建并部署（约 1–2 分钟）；
-4. 部署完成后地址是：`https://<用户名>.github.io/<仓库名>/`（Actions 页面 / Pages 设置页会显示）。
+4. 部署完成后地址是：`https://yiweiima.github.io/yishu-review/`（Actions 页面 / Pages 设置页会显示）。
 
 手机打开该地址 → 安装 PWA。**每次 `git push` 后线上自动更新**；App 打开时 Service Worker 自动更新版本。
 
@@ -123,7 +123,7 @@ git push -u origin main
 ### 用 SSH 推送（可选）
 
 ```bash
-git remote set-url origin git@github.com:<用户名>/yishu-review.git
+git remote set-url origin git@github.com:YiweiiMa/yishu-review.git
 git push -u origin main
 ```
 
