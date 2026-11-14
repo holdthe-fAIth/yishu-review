@@ -6,8 +6,9 @@
 
 - 数据：`data/courses.json`（静态 import，**运行时不请求 B站接口**）—— 一数（B站 mid `14229967`）系统课 **24 个模块 / 194 个知识点**（合集 `BV147411K7xu` 的 198 个分P，1 知识点 = 1 分P）+ **7 个专题合集 / 320 条独立视频**
 - 每条视频都带**发布时间**（系统课来自分P `ctime`，专题来自合集接口），卡片左下角显示，老视频（>2 年）黄色提示，方便判断是否适合当前高考趋势
-- v2 新增：**学习时间表 / 打卡热力图 / 内容更新检查（每天自动 + 手动）/ 已学内容自动排到最后 / B站跳转诊断**
+- v2 新增：**学习日历（月历打卡 + 点日期看当天学习内容）/ 内容更新检查（每天自动 + 手动）/ 已学内容自动排到最后 / B站跳转诊断**
 - 技术栈：**Vite 5 + React 18 + TypeScript + 原生 CSS（CSS 变量主题）**，零 UI 库、零图表库；PWA + Capacitor Android APK
+- 🌐 **线上版（GitHub Pages）**：<https://yiweiima.github.io/yishu-review/> · **GitHub 仓库**：<https://github.com/YiweiiMa/yishu-review>
 
 ---
 
@@ -57,11 +58,11 @@ ssh -tt -o StrictHostKeyChecking=no -R 80:localhost:4173 serveo.net
 
 ### 2）APK（完全离线，不依赖电脑）
 
-已产出：**`yishu-review-2.1.0-debug.apk`**（项目根目录，约 4 MB）
+已产出：**`yishu-review-2.1.1-debug.apk`**（项目根目录，约 4 MB）
 
 | 项 | 值 |
 | --- | --- |
-| 包名 / 版本 | `com.yishu.review` / versionCode 3, versionName **2.1.0** |
+| 包名 / 版本 | `com.yishu.review` / versionCode 4, versionName **2.1.1** |
 | 兼容 | Android 5.1+（minSdk 22，targetSdk 34） |
 | 签名 | Android Debug（v1+v2，可安装，不可上架应用商店） |
 | 能力 | Web 资源全部内置、断网可用；**点知识点直接唤起 B站 App**（`@capacitor/app-launcher`）；从 B站 切回来弹打勾浮条；支持学习时间表等全部 v2 功能 |
@@ -70,11 +71,14 @@ ssh -tt -o StrictHostKeyChecking=no -R 80:localhost:4173 serveo.net
 
 > v2 APK 与 v1 使用同一台机器生成的 debug 签名，**可直接覆盖安装，原有 localStorage 进度保留**。
 
-**APK 内更新内容**：APK 内置的是打包时快照。要更新课程数据，在「我的 → 内容更新源」填入 GitHub raw 地址（格式见下），再点「检查内容更新」即可不用重装 App 更新数据；功能更新则需要重新打包 APK。
+**APK 内更新内容**：APK 内置的是打包时快照。**默认更新源已内置**为 GitHub Pages 的数据地址（带 `CORS: *`），App 每天自动检查一次，也可以在「我的 → 检查内容更新」手动拉取——不用重装 APK 就能更新课程数据；只有功能更新才需要重新打包。默认地址：
 
 ```text
-https://raw.githubusercontent.com/YiweiiMa/yishu-review/main/data/courses.json
+https://yiweiima.github.io/yishu-review/data/courses.json
+# 备用镜像（Pages 打不开时）：https://cdn.jsdelivr.net/gh/YiweiiMa/yishu-review@main/data/courses.json
 ```
+
+> 注：`raw.githubusercontent.com` 在国内经常无法访问，所以不用它做更新源。
 
 **重新打包**：
 
@@ -173,7 +177,7 @@ data/courses.json（v2，含发布时间）
    ↓ 构建时复制
 public/data/courses.json → dist/data/courses.json（同源，PWA 可直接 fetch）
    ↓
-App：设置里「内容更新源」（留空 = 同源；APK 填 GitHub raw）
+App：设置里「内容更新源」（留空 = PWA 同源 / APK 默认 Pages 数据地址；也可自定义 jsDelivr 镜像）
    ↓
 启动自动检查（每天最多一次）+ 我的页「检查内容更新」
    ↓ 发现 generatedAt 更新 → 写 localStorage 覆盖数据 → 刷新
@@ -272,6 +276,7 @@ yishu-review/
 | v1.0.0 | A 版目录型 PWA + APK：课程/知识体系/我的、打勾进度、B站深链 + 返回浮条、搜索、暗色、离线 |
 | **v2.0.0** | 内容更新检查（手动 + 每日自动）、学习时间表 + 打卡热力图、卡片发布时间、已学内容自动排后（可关）、移除最弱模块、修复 APK 跳转 B站 App、重新抓取一数主页（7 合集/320 视频/发布时间/教辅多P 显示「N 讲」）、GitHub Pages 部署 + 每周数据刷新工作流 |
 | **v2.1.0** | 把「打卡热力图 + 学习时间表」合并为**学习日历**：月历标出有学习的日期，点日期查看当天学习内容，可切换月份 / 回到今天，全部记录可展开 |
+| **v2.1.1** | 上线 GitHub（仓库 + Pages）：线上 PWA 可安装；APK 默认内容更新源改为 Pages 数据地址（国内可访问）；修复 GitHub Actions 构建（PWA SW 改为手动注册） |
 
 ### 验收结果（本机实测）
 
@@ -279,7 +284,8 @@ yishu-review/
 - `pnpm verify:data`：版本/知识点/合集/视频/分P唯一/发布时间齐全/合集排序/public 副本一致等 20+ 项通过
 - `pnpm verify:ui`：Edge headless 功能验收全部通过（课程/知识体系/我的/搜索/深链 pending/返回浮条/排序/发布时间/学习日历/日期详情/内容更新/跳转诊断/PWA 离线/零 B站接口请求）
 - `pnpm screenshot`：视觉验收图
-- **APK**：`com.yishu.review` v2.1.0（versionCode 3），debug 签名验证通过，内置全部资源（约 4 MB）
+- **APK**：`com.yishu.review` v2.1.1（versionCode 4），debug 签名验证通过，内置全部资源（约 4 MB）
+- **线上 PWA**：<https://yiweiima.github.io/yishu-review/>（manifest / Service Worker / 离线可用）
 
 ---
 
@@ -290,7 +296,7 @@ yishu-review/
 | 点知识点没打开 B站 App，跳了浏览器 | 我的 → **测试 B站 跳转**：看「B站 App 是否检测到」。若显示未检测到，确认装了哔哩哔哩/HD/国际版；v2 已改为直接 `openUrl` 深链，若仍异常请把诊断页截图发来 |
 | 跳到 B站 但集数不对 | 校准 `PAGE_OFFSET`（见上），并用 3 个不同模块验收 |
 | 切回 App 没弹浮条 | 需离开 ≥30 秒且设置里「返回打勾提醒」开启 |
-| 检查内容更新失败 | APK 需先在「内容更新源」填 GitHub raw 地址；PWA 需同源部署 `data/courses.json`；确认地址能在浏览器直接打开 |
+| 检查内容更新失败 | APK 默认用 GitHub Pages 数据地址（`https://yiweiima.github.io/yishu-review/data/courses.json`），确认手机能打开该地址；打不开可在「内容更新源」换 jsDelivr 镜像；PWA 需同源部署 `data/courses.json` |
 | 封面不显示 | 首次需要网络；B站图床不可达时自动退化为渐变封面（会重试） |
 | 数据丢了 | 检查是否清站点数据；「我的 → 导出 JSON」定期备份 |
 | 页面空白/安装失败 | PWA 必须 HTTPS；GitHub Pages 子路径部署要用 `VITE_BASE`（工作流已处理） |

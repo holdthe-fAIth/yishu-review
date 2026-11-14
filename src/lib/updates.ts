@@ -1,3 +1,4 @@
+import { DEFAULT_UPDATE_URL } from '../config'
 import {
   DATA_GENERATED_AT,
   DATA_VERSION,
@@ -27,14 +28,14 @@ export interface UpdateCheckResult {
 
 /**
  * 更新源解析：
- * - 用户手动设置了「内容更新源」→ 用它（推荐 GitHub raw / Pages 上的 data/courses.json）
+ * - 用户手动设置了「内容更新源」→ 用它（可填 GitHub Pages / jsDelivr 等地址）
  * - 浏览器 PWA → 同源 data/courses.json（部署时由构建脚本拷贝进 dist）
- * - APK 内没有手动地址时无法在线更新（内置资源是打包时快照）
+ * - APK 内未手动设置 → 用内置默认的线上地址（Pages 数据文件）
  */
 export function resolveUpdateUrl(settings: Settings): string {
   const manual = settings.updateUrl.trim()
   if (manual) return manual
-  if (isNativeApp()) return ''
+  if (isNativeApp()) return DEFAULT_UPDATE_URL
   return 'data/courses.json'
 }
 
@@ -71,7 +72,7 @@ export async function checkContentUpdate(settings: Settings): Promise<UpdateChec
     return {
       ...base,
       status: 'unavailable',
-      message: 'APK 内需要先在「内容更新源」填入 GitHub raw 地址（如 https://raw.githubusercontent.com/用户名/仓库/main/data/courses.json）',
+      message: '未配置内容更新源，请到「我的 → 内容更新源」填写数据地址',
     }
   }
   try {

@@ -187,7 +187,7 @@ export function MinePage() {
   const streak = streakDays(state.done)
   const remoteUpdate = updateInfo?.remote ?? null
   const sourcePreview = resolveUpdateUrl({ ...settings, updateUrl: urlDraft })
-  const sourceLabel = settings.updateUrl.trim() || '同源 data/courses.json'
+  const sourceLabel = settings.updateUrl.trim() || resolveUpdateUrl(settings) || '未设置'
 
   function handleExport() {
     const payload = {
@@ -278,7 +278,7 @@ export function MinePage() {
     const next = urlDraft.trim()
     updateSettings({ updateUrl: next })
     setSourceOpen(false)
-    showToast(next ? '已保存内容更新源' : '已改为同源 data/courses.json')
+    showToast(next ? '已保存内容更新源' : '已恢复默认内容更新源')
   }
 
   function confirmRestore() {
@@ -776,22 +776,22 @@ export function MinePage() {
 
       <Sheet open={sourceOpen} onClose={() => setSourceOpen(false)} title="内容更新源">
         <p className="m-sheet__desc">
-          留空时读取同源的 data/courses.json（浏览器 PWA）；APK 内无法读取同源文件，请填写 GitHub
-          raw 地址。
+          留空时使用默认更新源：浏览器 PWA 读取同源 data/courses.json；APK 读取线上 GitHub Pages
+          的 data/courses.json。也可以填自定义地址（如 jsDelivr 镜像）。
         </p>
         <input
           type="url"
           inputMode="url"
           className="m-input"
           value={urlDraft}
-          placeholder="https://raw.githubusercontent.com/用户名/仓库/main/data/courses.json"
+          placeholder="https://yiweiima.github.io/yishu-review/data/courses.json"
           onChange={(event) => setUrlDraft(event.target.value)}
           spellCheck={false}
           autoComplete="off"
           aria-label="内容更新源地址"
         />
         <p className="m-field-hint">
-          当前生效：{sourcePreview || '未设置（APK 内需手动填写 GitHub raw 地址）'}
+          当前生效：{sourcePreview || '未设置（无法在线更新内容）'}
         </p>
         <div className="sheet-actions">
           <button type="button" className="btn btn--ghost" onClick={() => setSourceOpen(false)}>
