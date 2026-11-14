@@ -507,6 +507,25 @@ a {
   font-variant-numeric: tabular-nums;
 }
 
+/* 发布时间角标：左下角；老视频（>2 年）用黄色提示 */
+.cover__date {
+  position: absolute;
+  left: 6px;
+  bottom: 6px;
+  z-index: 2;
+  padding: 1px 5px;
+  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.6);
+  color: rgba(255, 255, 255, 0.92);
+  font-size: 11px;
+  line-height: 16px;
+  font-variant-numeric: tabular-nums;
+}
+
+.cover__date.is-old {
+  color: #ffd166;
+}
+
 /* ============================== 难度标签 & 胶囊 ============================== */
 
 .tag-level {
@@ -890,6 +909,63 @@ a {
     opacity: 1;
     transform: translate(-50%, 0);
   }
+}
+
+/* ============================== 内容更新浮条 ============================== */
+
+.update-bar {
+  position: fixed;
+  top: calc(env(safe-area-inset-top, 0px) + 8px);
+  left: 50%;
+  z-index: 95;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: calc(100% - 24px);
+  max-width: 456px;
+  padding: 10px 14px;
+  border: 0.5px solid var(--line);
+  border-radius: 14px;
+  background: var(--card);
+  box-shadow: var(--shadow-lift);
+  transform: translateX(-50%);
+  animation: return-in 0.24s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+.update-bar__text {
+  min-width: 0;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.update-bar__text span {
+  color: var(--text-2);
+  font-weight: 400;
+}
+
+.update-bar__actions {
+  display: flex;
+  gap: 8px;
+  flex: none;
+}
+
+.update-bar__later {
+  padding: 7px 12px;
+  border-radius: 8px;
+  background: var(--bg);
+  color: var(--text-2);
+  font-size: 13px;
+}
+
+.update-bar__apply {
+  padding: 7px 14px;
+  border-radius: 8px;
+  background: var(--pink);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
 }
 
 /* ============================== 无障碍：减少动效 ============================== */

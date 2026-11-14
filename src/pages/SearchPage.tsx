@@ -217,7 +217,11 @@ export function SearchPage({ open, onClose }: SearchPageProps) {
                         fallbackChar={video.topicTitle.charAt(0)}
                         from={gradient.from}
                         to={gradient.to}
-                        durationText={video.durationText}
+                        durationText={
+                          video.partCount && video.partCount > 1
+                            ? `${video.partCount} 讲`
+                            : video.durationText
+                        }
                       />
                     </div>
                     <div className="search-result__info">

@@ -2,10 +2,16 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
 
+// GitHub Pages 等子路径部署：VITE_BASE=/仓库名/ pnpm build
+const base = process.env.VITE_BASE || '/'
+const appBase = base.endsWith('/') ? base : `${base}/`
+const isRoot = appBase === '/'
+// PWA 在子路径部署时用相对 start_url / scope，scope 会落在仓库子路径下
+const pwaRelative = isRoot ? '/' : './'
+
 // https://vitejs.dev/config/
 export default defineConfig({
-  // 部署到子路径时改成 '/yishu-review/' 之类的值即可
-  base: '/',
+  base: appBase,
   plugins: [
     react(),
     VitePWA({
@@ -29,8 +35,8 @@ export default defineConfig({
         background_color: '#F6F7F8',
         display: 'standalone',
         orientation: 'portrait',
-        start_url: '/',
-        scope: '/',
+        start_url: pwaRelative,
+        scope: pwaRelative,
         icons: [
           { src: 'icons/icon-192.png', sizes: '192x192', type: 'image/png' },
           { src: 'icons/icon-512.png', sizes: '512x512', type: 'image/png' },
@@ -39,7 +45,7 @@ export default defineConfig({
       },
       workbox: {
         globPatterns: ['**/*.{js,css,html,svg,png,ico,json,webmanifest}'],
-        navigateFallback: '/index.html',
+        navigateFallback: `${appBase}index.html`,
         navigateFallbackDenylist: [/^\/api\//],
         cleanupOutdatedCaches: true,
         runtimeCaching: [
@@ -49,7 +55,7 @@ export default defineConfig({
             handler: 'CacheFirst',
             options: {
               cacheName: 'bilibili-covers',
-              expiration: { maxEntries: 300, maxAgeSeconds: 30 * 24 * 60 * 60 },
+              expiration: { maxEntries: 400, maxAgeSeconds: 30 * 24 * 60 * 60 },
               cacheableResponse: { statuses: [0, 200] },
             },
           },
@@ -57,8 +63,7 @@ export default defineConfig({
       },
     }),
   ],
-  // 允许通过局域网 IP / 临时内网穿透域名（serveo、localtunnel、pinggy、cloudflared）访问，
-  // 方便手机真机安装 PWA；正式部署到自己的域名后可按需删掉。
+  // 允许通过局域网 IP / 临时内网穿透域名访问，方便手机真机安装 PWA
   server: {
     host: true,
     port: 5173,

@@ -1,0 +1,48 @@
+name: Refresh course data
+
+# 可选：每周自动从 B站 重新抓取一数主页数据并提交（需要 GitHub Actions 能访问 B站 API，
+# 部分网络环境下可能失败，可手动在 Actions 页面点 Run workflow 重试）。
+on:
+  schedule:
+    - cron: '0 2 * * 1' # 每周一 02:00 UTC（北京时间 10:00）
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --no-frozen-lockfile
+
+      - name: Fetch latest course data
+        continue-on-error: true
+        run: pnpm fetch:data
+
+      - name: Commit if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/courses.json
+          if git diff --cached --quiet; then
+            echo "课程数据无变化"
+          else
+            git commit -m "chore(data): 自动更新一数课程数据"
+            git push
+          fi

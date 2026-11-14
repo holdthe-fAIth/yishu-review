@@ -73,6 +73,205 @@
   text-overflow: ellipsis;
 }
 
+/* ---------- 打卡热力图（12 周 × 7 天，纯 CSS grid） ---------- */
+
+.m-heat {
+  padding: 13px 14px 14px;
+}
+
+.m-heat__head {
+  margin-bottom: 11px;
+  color: var(--text-2);
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+}
+
+.m-heat__grid {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  grid-template-rows: repeat(7, auto);
+  grid-auto-flow: column;
+  gap: 4px;
+}
+
+.m-heat__cell {
+  aspect-ratio: 1 / 1;
+  border-radius: 3px;
+  background: var(--line);
+}
+
+.m-heat__cell.is-1 {
+  background: rgba(251, 114, 153, 0.28);
+}
+
+.m-heat__cell.is-2 {
+  background: rgba(251, 114, 153, 0.55);
+}
+
+.m-heat__cell.is-3 {
+  background: var(--pink);
+}
+
+.m-heat__cell.is-today {
+  outline: 1.5px solid var(--pink);
+  outline-offset: 2px;
+}
+
+.m-heat__cell.is-future {
+  opacity: 0.4;
+}
+
+:root[data-theme='dark'] .m-heat__cell.is-1 {
+  background: rgba(251, 114, 153, 0.34);
+}
+
+:root[data-theme='dark'] .m-heat__cell.is-2 {
+  background: rgba(251, 114, 153, 0.62);
+}
+
+.m-heat__legend {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 4px;
+  margin-top: 11px;
+  color: var(--text-3);
+  font-size: 10px;
+}
+
+.m-heat__swatch {
+  width: 10px;
+  height: 10px;
+  aspect-ratio: auto;
+  border-radius: 3px;
+}
+
+/* ---------- 学习时间表 ---------- */
+
+.m-study {
+  padding: 2px 14px 10px;
+}
+
+.m-day + .m-day {
+  border-top: 0.5px solid var(--line);
+}
+
+.m-day__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 11px 0 2px;
+}
+
+.m-day__date {
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.m-day__meta {
+  flex: none;
+  color: var(--text-2);
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+}
+
+.m-day__list {
+  padding-bottom: 5px;
+}
+
+.m-rec {
+  display: grid;
+  grid-template-columns: 38px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 9px;
+  padding: 7px 0;
+}
+
+.m-rec__time {
+  color: var(--text-2);
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+}
+
+.m-rec__main {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.m-rec__name {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.35;
+}
+
+.m-rec__name b {
+  min-width: 0;
+  overflow: hidden;
+  font-weight: 500;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.m-rec__tag {
+  flex: none;
+  padding: 0 5px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 15px;
+}
+
+.m-rec__tag.is-system {
+  background: var(--pink-soft);
+  color: var(--pink);
+}
+
+.m-rec__tag.is-topic {
+  background: rgba(0, 174, 236, 0.12);
+  color: var(--blue);
+}
+
+:root[data-theme='dark'] .m-rec__tag.is-topic {
+  background: rgba(0, 174, 236, 0.2);
+}
+
+.m-rec__group {
+  overflow: hidden;
+  color: var(--text-2);
+  font-size: 11px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.m-rec__dur {
+  flex: none;
+  color: var(--text-2);
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+}
+
+.m-study__more {
+  display: block;
+  width: 100%;
+  padding: 12px 0 4px;
+  border-top: 0.5px solid var(--line);
+  color: var(--pink);
+  font-size: 13px;
+  font-weight: 600;
+  text-align: center;
+}
+
 /* ---------- 模块完成率条形图 ---------- */
 
 .m-bars {
@@ -158,11 +357,29 @@
   gap: 1px;
 }
 
+.m-row__title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  color: var(--text);
+  font-size: 14px;
+  font-weight: 500;
+}
+
 .m-row__sub {
+  display: block;
+  max-width: 100%;
   color: var(--text-2);
   font-size: 11px;
   font-weight: 400;
   line-height: 1.5;
+}
+
+.m-row__sub--url {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .m-row__hint {
@@ -182,6 +399,10 @@
 
 .m-row--action:active {
   opacity: 0.6;
+}
+
+.m-row--action:disabled {
+  opacity: 0.55;
 }
 
 .m-row--danger .m-row__label,
@@ -272,6 +493,7 @@
   color: var(--text);
   font-weight: 500;
   text-align: right;
+  word-break: break-word;
 }
 
 .m-about__note {
@@ -300,6 +522,105 @@
   font-weight: 600;
 }
 
+.m-sheet__desc {
+  margin: 2px 2px 12px;
+  color: var(--text-2);
+  font-size: 12px;
+  line-height: 1.75;
+}
+
+/* ---------- 内容更新 / 跳转诊断信息 ---------- */
+
+.m-kv {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.m-kv__row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: var(--bg);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.m-kv__row span {
+  flex: none;
+  color: var(--text-2);
+}
+
+.m-kv__row b {
+  color: var(--text);
+  font-weight: 600;
+  text-align: right;
+  word-break: break-word;
+}
+
+.m-diag {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.m-diag__row {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.m-diag__label {
+  color: var(--text-2);
+  font-size: 11px;
+}
+
+.m-diag__url {
+  display: block;
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: var(--bg);
+  color: var(--text);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, 'Courier New', monospace;
+  font-size: 11px;
+  line-height: 1.6;
+  word-break: break-all;
+}
+
+.m-input {
+  display: block;
+  width: 100%;
+  padding: 12px;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 13px;
+  line-height: 1.5;
+  transition: border-color 0.15s ease;
+}
+
+.m-input::placeholder {
+  color: var(--text-3);
+}
+
+.m-input:focus {
+  border-color: var(--pink);
+}
+
+.m-field-hint {
+  margin-top: 8px;
+  color: var(--text-3);
+  font-size: 11px;
+  line-height: 1.6;
+  word-break: break-all;
+}
+
 /* ---------- 窄屏适配 ---------- */
 
 @media (max-width: 360px) {
@@ -325,5 +646,22 @@
 
   .m-row__hint {
     display: none;
+  }
+
+  .m-heat {
+    padding: 12px 12px 13px;
+  }
+
+  .m-heat__grid {
+    gap: 3px;
+  }
+
+  .m-rec {
+    grid-template-columns: 34px minmax(0, 1fr) auto;
+    gap: 8px;
+  }
+
+  .m-rec__name {
+    font-size: 12px;
   }
 }

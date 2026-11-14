@@ -4,6 +4,7 @@ import { ToastProvider } from './components/Toast'
 import { JumpProvider } from './lib/jump'
 import { TabBar } from './components/TabBar'
 import { ReturnPromptBar } from './components/ReturnPromptBar'
+import { UpdateBanner } from './components/UpdateBanner'
 import { CoursePage } from './pages/CoursePage'
 import { KnowledgePage } from './pages/KnowledgePage'
 import { MinePage } from './pages/MinePage'
@@ -25,6 +26,7 @@ function AppShell() {
           {tab === 'knowledge' ? <KnowledgePage /> : null}
           {tab === 'mine' ? <MinePage /> : null}
         </main>
+        <UpdateBanner />
         <ReturnPromptBar />
         <TabBar tab={tab} onChange={setTab} />
         <SearchPage open={searchOpen} onClose={closeSearch} />

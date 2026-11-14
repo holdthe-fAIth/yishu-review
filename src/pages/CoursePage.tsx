@@ -20,15 +20,20 @@ import { Segmented, type SegmentedItem } from '../components/Segmented'
 import { ActionSheet, type ActionSheetItem } from '../components/Sheet'
 import { useToast } from '../components/Toast'
 import {
+  DATA_GENERATED_AT,
   MODULES,
   SYSTEM_BVID,
   SYSTEM_ITEMS,
   TOPICS,
+  TOPIC_BY_ID,
   TOPIC_VIDEOS,
   TOTAL_KP,
   UP,
+  formatPubdate,
+  isStaleVideo,
   moduleChar,
   moduleColor,
+  pubdateRelative,
   topicGradient,
   type GradientPair,
 } from '../data'
@@ -42,6 +47,7 @@ import {
   totalSystemProgress,
   type ModuleStat,
 } from '../lib/progress'
+import { isTopicComplete, orderItems, orderTopicVideos, orderTopics } from '../lib/sort'
 import { useApp } from '../store/AppStore'
 import type { DoneEntry, FlatSystemItem, FlatTopicVideo, PlayTarget } from '../types'
 import './CoursePage.css'
@@ -217,6 +223,10 @@ function SystemCard({
     [onPlay, target],
   )
 
+  // v2：卡片上显示发布时间（封面左下角完整日期 + 标题下「3 年前」小字）
+  const pubdateText = formatPubdate(item.pubdate)
+  const pubdateHint = pubdateRelative(item.pubdate)
+
   return (
     <article
       className={`cp-card card pressable ${done ? 'is-done' : ''}`}
@@ -233,6 +243,8 @@ function SystemCard({
           from={colors.from}
           to={colors.to}
           durationText={item.durationText}
+          dateText={pubdateText}
+          dateOld={isStaleVideo(item.pubdate)}
         />
         <CheckButton
           className="cp-card__check"
@@ -246,6 +258,11 @@ function SystemCard({
         <h3 className="cp-card__title">{item.name}</h3>
         <div className="cp-card__meta">
           <LevelTag level={item.level} difficulty={item.difficulty} />
+          {pubdateHint ? (
+            <span className="cp-card__pubdate" title={pubdateText || undefined}>
+              {pubdateHint}
+            </span>
+          ) : null}
         </div>
       </div>
     </article>
@@ -258,6 +275,8 @@ interface SystemModuleProps {
   stat: ModuleStat
   expanded: boolean
   done: Record<string, DoneEntry>
+  /** 已学完的模块 / 知识点自动排到最后（设置项） */
+  sortCompletedLast: boolean
   onToggleModule: (id: string) => void
   onToggleDone: (key: string) => void
   onPlay: (target: PlayTarget) => void
@@ -268,18 +287,27 @@ function SystemModule({
   stat,
   expanded,
   done,
+  sortCompletedLast,
   onToggleModule,
   onToggleDone,
   onPlay,
   onMenu,
 }: SystemModuleProps) {
   const module = stat.module
+  // 配色必须用模块的原始下标（stat.index），它在列表排序后不会变
   const colors = useMemo(() => moduleColor(stat.index), [stat.index])
+  // 模块内：未学在前、已学在后（稳定排序，未学内容相对顺序不变）
   const items = useMemo(
-    () => SYSTEM_ITEMS.filter((item) => item.moduleId === module.id),
-    [module.id],
+    () =>
+      orderItems(
+        SYSTEM_ITEMS.filter((item) => item.moduleId === module.id),
+        done,
+        sortCompletedLast,
+      ),
+    [module.id, done, sortCompletedLast],
   )
   const donePercent = percent(stat.ratio)
+  const complete = stat.total > 0 && stat.done >= stat.total
   const gridId = `cp-module-${module.id}`
 
   return (
@@ -293,7 +321,8 @@ function SystemModule({
           aria-controls={gridId}
         >
           <span className="cp-module__name">{module.name}</span>
-          <span className="cp-module__count">
+          <span className={`cp-module__count ${complete ? 'is-complete' : ''}`.trim()}>
+            {complete ? '✓ ' : ''}
             {stat.done}/{stat.total}
           </span>
           <ChevronDownIcon
@@ -376,6 +405,10 @@ function TopicVideoCard({
     [onPlay, target],
   )
 
+  // v2：封面左下角完整发布日期 + 标题下「3 年前」小字
+  const pubdateText = formatPubdate(video.pubdate)
+  const pubdateHint = pubdateRelative(video.pubdate)
+
   return (
     <article
       className={`cp-card card pressable ${done ? 'is-done' : ''}`}
@@ -393,7 +426,11 @@ function TopicVideoCard({
           fallbackChar={video.topicTitle.charAt(0) || '数'}
           from={colors.from}
           to={colors.to}
-          durationText={video.durationText}
+          durationText={
+            video.partCount && video.partCount > 1 ? `${video.partCount} 讲` : video.durationText
+          }
+          dateText={pubdateText}
+          dateOld={isStaleVideo(video.pubdate)}
         />
         <CheckButton
           className="cp-card__check"
@@ -412,6 +449,11 @@ function TopicVideoCard({
               {formatCount(video.views)}
             </span>
           ) : null}
+          {pubdateHint ? (
+            <span className="cp-card__pubdate" title={pubdateText || undefined}>
+              {pubdateHint}
+            </span>
+          ) : null}
         </div>
       </div>
     </article>
@@ -421,46 +463,74 @@ function TopicVideoCard({
 /* ============================== 专题课视图 ============================== */
 
 interface TopicViewProps {
-  activeIndex: number
-  onSelectTopic: (index: number) => void
+  activeTopicId: string
+  onSelectTopic: (topicId: string) => void
   done: Record<string, DoneEntry>
+  /** 已刷完的合集 / 视频自动排到最后（设置项） */
+  sortCompletedLast: boolean
   onToggleDone: (key: string) => void
   onPlay: (target: PlayTarget) => void
   onMenu: (menu: CardMenuState) => void
 }
 
 function TopicView({
-  activeIndex,
+  activeTopicId,
   onSelectTopic,
   done,
+  sortCompletedLast,
   onToggleDone,
   onPlay,
   onMenu,
 }: TopicViewProps) {
-  const activeTopic = TOPICS[activeIndex]
-  const videos = useMemo(
-    () => (activeTopic ? TOPIC_VIDEOS.filter((video) => video.topicId === activeTopic.id) : []),
-    [activeTopic],
+  // 合集 tab：全部刷完的合集排到最后，未刷完的保持原始顺序
+  const topics = useMemo(
+    () => orderTopics(TOPICS, done, sortCompletedLast),
+    [done, sortCompletedLast],
   )
-  const colors = useMemo(() => topicGradient(activeIndex), [activeIndex])
+  // 合集主题色固定按「原始下标」取，tab 重排后颜色不跟着换
+  const topicColors = useMemo(() => {
+    const map = new Map<string, GradientPair>()
+    TOPICS.forEach((topic, index) => map.set(topic.id, topicGradient(index)))
+    return map
+  }, [])
+
+  // 选中态按合集 id 记录（不能按下标，否则排序后选中项会跑到别的合集）
+  const activeTopic = TOPIC_BY_ID.get(activeTopicId) ?? topics[0]
+  const colors = (activeTopic && topicColors.get(activeTopic.id)) || topicGradient(0)
+  // 当前合集内：未看在前、已看在后，未看视频相对顺序不变
+  const videos = useMemo(
+    () =>
+      activeTopic
+        ? orderTopicVideos(
+            TOPIC_VIDEOS.filter((video) => video.topicId === activeTopic.id),
+            done,
+            sortCompletedLast,
+          )
+        : [],
+    [activeTopic, done, sortCompletedLast],
+  )
 
   return (
     <div className="cp-topic">
       <div className="cp-tabs hscroll" role="tablist" aria-label="专题合集">
-        {TOPICS.map((topic, index) => {
+        {topics.map((topic) => {
           const stat = topicStat(done, topic.seasonId)
-          const active = index === activeIndex
+          const active = topic.id === activeTopic?.id
+          const complete = isTopicComplete(topic, done)
           return (
             <button
               key={topic.id}
               type="button"
               role="tab"
               aria-selected={active}
-              className={`chip cp-tab ${active ? 'is-active' : ''}`}
-              onClick={() => onSelectTopic(index)}
+              className={`chip cp-tab ${active ? 'is-active' : ''} ${
+                complete ? 'is-complete' : ''
+              }`.trim()}
+              onClick={() => onSelectTopic(topic.id)}
             >
               <span className="cp-tab__title">{topic.title}</span>
               <span className="cp-tab__count">
+                {complete ? '✓ ' : ''}
                 {stat.done}/{stat.total}
               </span>
             </button>
@@ -494,21 +564,49 @@ function TopicView({
 
 /* ============================== 页面 ============================== */
 
+/** 模块是否已全部学完 */
+function isModuleComplete(stat: ModuleStat): boolean {
+  return stat.total > 0 && stat.done >= stat.total
+}
+
+/**
+ * 系统课模块列表排序（v2）：
+ * 全部学完的模块排到最后；未学完的保持原始复习顺序。
+ * 注意 stat.index 仍是原始模块下标，配色 / 展开状态都用它，不受列表排序影响。
+ */
+function orderModuleStats(stats: ModuleStat[], enabled: boolean): ModuleStat[] {
+  if (!enabled) return stats
+  return [...stats].sort(
+    (a, b) => Number(isModuleComplete(a)) - Number(isModuleComplete(b)),
+  )
+}
+
 export function CoursePage({ onOpenSearch }: { onOpenSearch: () => void }) {
-  const { state, toggleDone } = useApp()
+  const { state, settings, toggleDone } = useApp()
   const { play } = useJump()
   const { showToast } = useToast()
 
   const [view, setView] = useState<CourseView>('system')
   const [expanded, setExpanded] = useState<Set<string>>(() => {
-    const first = MODULES[0]
-    return new Set(first ? [first.id] : [])
+    // 默认展开列表中第一个模块（学完的模块会被排到后面）
+    const first = orderModuleStats(moduleStats(state.done), settings.sortCompletedLast)[0]
+    const module = first?.module ?? MODULES[0]
+    return new Set(module ? [module.id] : [])
   })
-  const [topicIndex, setTopicIndex] = useState(0)
+  // 选中合集按 id 记录：tab 排序后不会选错合集
+  const [topicId, setTopicId] = useState<string>(
+    () =>
+      orderTopics(TOPICS, state.done, settings.sortCompletedLast)[0]?.id ??
+      TOPICS[0]?.id ??
+      '',
+  )
   const [menu, setMenu] = useState<CardMenuState | null>(null)
 
   const progress = useMemo(() => totalSystemProgress(state.done), [state.done])
-  const stats = useMemo(() => moduleStats(state.done), [state.done])
+  const stats = useMemo(
+    () => orderModuleStats(moduleStats(state.done), settings.sortCompletedLast),
+    [state.done, settings.sortCompletedLast],
+  )
   const nextTarget = useMemo(() => firstUnfinished(state.done), [state.done])
   const progressPercent = percent(progress.ratio)
 
@@ -599,7 +697,10 @@ export function CoursePage({ onOpenSearch }: { onOpenSearch: () => void }) {
         <div className="cp-head__text">
           <h1 className="page-title">一数复习</h1>
           <p className="page-subtitle">
-            {UP.name} · 高中数学 · {TOTAL_KP} 个知识点
+            {UP.name} · 高中数学 · {TOTAL_KP} 个知识点 ·{' '}
+            <span className="cp-head__updated">
+              内容更新于 {DATA_GENERATED_AT.slice(0, 10)}
+            </span>
           </p>
         </div>
         <button type="button" className="icon-btn" onClick={onOpenSearch} aria-label="搜索知识点">
@@ -659,6 +760,7 @@ export function CoursePage({ onOpenSearch }: { onOpenSearch: () => void }) {
                 stat={stat}
                 expanded={expanded.has(stat.module.id)}
                 done={state.done}
+                sortCompletedLast={settings.sortCompletedLast}
                 onToggleModule={toggleModule}
                 onToggleDone={toggleDone}
                 onPlay={play}
@@ -671,9 +773,10 @@ export function CoursePage({ onOpenSearch }: { onOpenSearch: () => void }) {
         )
       ) : (
         <TopicView
-          activeIndex={topicIndex}
-          onSelectTopic={setTopicIndex}
+          activeTopicId={topicId}
+          onSelectTopic={setTopicId}
           done={state.done}
+          sortCompletedLast={settings.sortCompletedLast}
           onToggleDone={toggleDone}
           onPlay={play}
           onMenu={openMenu}

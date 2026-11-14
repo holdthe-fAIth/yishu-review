@@ -142,7 +142,10 @@ async function main() {
     await cdp.evaluate(`(() => {
       window.__opened = []
       window.open = (url) => { window.__opened.push(url); return null }
-      document.querySelectorAll('.cp-card')[1]?.click()
+      const card = [...document.querySelectorAll('.cp-card')].find((item) =>
+        (item.querySelector('.cp-card__title')?.textContent || '').includes('不等式解法梳理'),
+      )
+      card?.click()
       return true
     })()`)
     await sleep(500)
@@ -170,8 +173,10 @@ async function main() {
     })()`)
     await sleep(500)
     await cdp.evaluate(`(() => {
-      const cards = [...document.querySelectorAll('.cp-card')]
-      cards[cards.length - 1]?.click()
+      const card = [...document.querySelectorAll('.cp-card')].find((item) =>
+        (item.querySelector('.cp-card__title')?.textContent || '').includes('全称与存在量词'),
+      )
+      card?.click()
       return true
     })()`)
     await sleep(500)
@@ -228,12 +233,11 @@ async function main() {
       rows: document.querySelectorAll('.k-module__head').length,
       hero: document.querySelector('.k-hero')?.innerText ?? '',
       noHScroll: document.documentElement.scrollWidth <= window.innerWidth + 1,
-      weakest: document.querySelector('.k-weak')?.innerText ?? '',
       pageText: document.querySelector('.page')?.innerText ?? '',
     }))()`)
     check('24 个模块行', knowledge.rows === 24, `实际 ${knowledge.rows}`)
     check('顶部显示已完成 2 / 194', knowledge.hero.includes('已完成 2 / 194'), knowledge.hero.replace(/\s+/g, ' ').slice(0, 60))
-    check('底部有最弱模块建议', knowledge.weakest.length > 0 && knowledge.pageText.includes('建议先复习'))
+    check('最弱模块区块已移除', !knowledge.pageText.includes('最弱模块'))
     check('知识体系页无横向滚动', knowledge.noHScroll)
 
     await cdp.evaluate(`document.querySelectorAll('.k-module__head')[1]?.click(); true`)
@@ -264,7 +268,7 @@ async function main() {
     )
 
     /* ---------------- 7. 专题课 ---------------- */
-    section('7) 专题课（6 个合集 / 真实封面卡片）')
+    section('7) 专题课（7 个合集 / 真实封面卡片）')
     await cdp.evaluate(`document.querySelectorAll('.tabbar__item')[0]?.click(); true`)
     await sleep(600)
     await cdp.evaluate(`document.querySelectorAll('.segmented__item')[1]?.click(); true`)
@@ -274,7 +278,7 @@ async function main() {
       cards: document.querySelectorAll('.cp-card').length,
       firstTab: document.querySelector('.cp-tab .cp-tab__title')?.textContent ?? '',
     }))()`)
-    check('专题课有 6 个合集 tab', topicView.tabs === TOPIC_COUNT, `实际 ${topicView.tabs}`)
+    check('专题课有 7 个合集 tab', topicView.tabs === TOPIC_COUNT, `实际 ${topicView.tabs}`)
     check('默认合集 13 条视频卡片', topicView.cards === 13, `实际 ${topicView.cards}`)
     check('合集标题正确（新高考一轮复习）', topicView.firstTab.includes('新高考一轮复习'))
 
@@ -326,7 +330,17 @@ async function main() {
     check('3 张统计卡', mine.stats === 3, `实际 ${mine.stats}`)
     check('24 行模块完成率条形图', mine.bars === 24, `实际 ${mine.bars}`)
     check('数据管理入口齐全', ['导出 JSON', '导入 JSON', '重置所有进度'].every((label) => mine.text.includes(label)))
-    check('设置项齐全（确认跳转 / 返回提醒 / 主题）', mine.text.includes('跳转前先确认') && mine.text.includes('从 B站回来提醒打勾') && mine.text.includes('主题'))
+    check(
+      '设置项齐全（确认跳转 / 返回提醒 / 主题 / 已学排后 / 自动检查更新）',
+      mine.text.includes('跳转前先确认') &&
+        mine.text.includes('从 B站回来提醒打勾') &&
+        mine.text.includes('主题') &&
+        mine.text.includes('已学内容自动排到最后') &&
+        mine.text.includes('自动检查'),
+    )
+    check('我的页有学习时间表区块', mine.text.includes('学习时间表'))
+    check('我的页有打卡热力图', /热力图|打卡图/.test(mine.text))
+    check('内容更新相关入口齐全', mine.text.includes('检查内容更新') && mine.text.includes('内容更新源'))
     check('我的页无横向滚动', mine.noHScroll)
 
     // 主题切换
@@ -340,7 +354,7 @@ async function main() {
 
     /* ---------------- 10. 重置二次确认 ---------------- */
     section('10) 重置（二次确认）')
-    await cdp.evaluate(`document.querySelector('.m-row--danger')?.click(); true`)
+    await cdp.evaluate(`[...document.querySelectorAll('button')].find((btn) => (btn.textContent || '').includes('重置所有进度'))?.click(); true`)
     await sleep(500)
     const resetSheet = await cdp.evaluate(`(() => ({
       open: Boolean(document.querySelector('.sheet-panel')),
@@ -374,8 +388,102 @@ async function main() {
     const allCards = await cdp.evaluate(`document.querySelectorAll('.cp-card').length`)
     check('展开全部模块后卡片总数 = 194', allCards === 194, `实际 ${allCards}`)
 
-    /* ---------------- 12. PWA ---------------- */
-    section('12) PWA（manifest / Service Worker / 离线打开）')
+    /* ---------------- 12. v2 新功能 ---------------- */
+    section('12) v2 新功能（发布时间 / 已学排后 / 学习时间表 / 内容更新 / B站诊断）')
+
+    // 12.1 卡片发布时间角标（当前课程页全部模块已展开）
+    const pubdates = await cdp.evaluate(
+      `[...document.querySelectorAll('.cp-card .cover__date')].map((el) => el.textContent || '')`,
+    )
+    check(
+      '卡片封面显示发布时间角标',
+      pubdates.length > 0 && /^\d{4}-\d{2}-\d{2}$/.test(pubdates[0]),
+      `${pubdates[0] ?? ''} / 共 ${pubdates.length} 个`,
+    )
+
+    // 12.2 已学内容自动排到最后：造数据后刷新
+    await cdp.evaluate(`(() => {
+      const state = JSON.parse(localStorage.getItem(${JSON.stringify(STORAGE_KEY)}) || '{}')
+      state.done = { ...(state.done || {}) }
+      const base = Date.now() - 3600000
+      ;['s:2', 's:3', 's:5'].forEach((key, index) => { state.done[key] = { at: base + index * 60000 } })
+      state.settings = { ...state.settings, sortCompletedLast: true }
+      delete state.pending
+      localStorage.setItem(${JSON.stringify(STORAGE_KEY)}, JSON.stringify(state))
+      return true
+    })()`)
+    await cdp.reload()
+    await sleep(750)
+    const moduleOrder = await cdp.evaluate(`(() => {
+      const names = [...document.querySelectorAll('.cp-module__name')].map((el) => (el.textContent || '').trim())
+      return { first: names[0] ?? '', last: names[names.length - 1] ?? '' }
+    })()`)
+    check('学完的模块排到最后（初高衔接）', moduleOrder.last === '初高衔接', `首=${moduleOrder.first} 末=${moduleOrder.last}`)
+    check('未学完模块顺序不变（集合在首位）', moduleOrder.first === '集合', moduleOrder.first)
+
+    // 先收起默认展开的模块，再展开集合，检查模块内已学知识点是否排后
+    await cdp.evaluate(`(() => {
+      ;[...document.querySelectorAll('.cp-module__head')].forEach((head) => {
+        if (head.getAttribute('aria-expanded') === 'true') head.click()
+      })
+      return true
+    })()`)
+    await sleep(450)
+    await cdp.evaluate(`document.querySelectorAll('.cp-module__head')[0]?.click(); true`)
+    await sleep(550)
+    const moduleCards = await cdp.evaluate(`(() => {
+      const cards = [...document.querySelectorAll('.cp-card')]
+      return {
+        titles: cards.map((card) => (card.querySelector('.cp-card__title')?.textContent || '').trim()),
+        count: cards.length,
+      }
+    })()`)
+    check(
+      '模块内已学知识点排到最后（集合的概念）',
+      moduleCards.count === 6 && moduleCards.titles[moduleCards.titles.length - 1] === '集合的概念',
+      `末项=${moduleCards.titles[moduleCards.titles.length - 1] ?? ''} 共${moduleCards.count}项`,
+    )
+
+    // 12.3 学习时间表 + 打卡热力图
+    await cdp.evaluate(`document.querySelectorAll('.tabbar__item')[2]?.click(); true`)
+    await sleep(700)
+    const mineV2 = await cdp.evaluate(`(() => ({
+      text: document.querySelector('.page')?.innerText ?? '',
+      hasDateLabel: /\\d+月\\d+日/.test(document.querySelector('.page')?.innerText ?? ''),
+    }))()`)
+    check('学习时间表有记录（按日期分组）', mineV2.text.includes('学习时间表') && mineV2.hasDateLabel)
+    check('学习时间表包含已学知识点', mineV2.text.includes('集合的概念') || mineV2.text.includes('子集的概念'))
+    check('打卡热力图已渲染', /热力|最近 12 周/.test(mineV2.text))
+    check('我的页显示数据版本 v2', /v2|数据版本/.test(mineV2.text))
+
+    // 12.4 检查内容更新（PWA 同源 data/courses.json，应为已是最新）
+    await cdp.evaluate(
+      `[...document.querySelectorAll('button')].find((btn) => (btn.textContent || '').includes('检查内容更新'))?.click(); true`,
+    )
+    await sleep(1600)
+    const updateToast = await cdp.evaluate(`document.querySelector('.toast')?.textContent ?? ''`)
+    check(
+      '检查内容更新可用（同源数据 = 已是最新）',
+      /已是最新|发现新内容|检查失败|缺少/.test(updateToast),
+      updateToast,
+    )
+
+    // 12.5 B站跳转诊断
+    await cdp.evaluate(
+      `[...document.querySelectorAll('button')].find((btn) => (btn.textContent || '').includes('测试 B站 跳转'))?.click(); true`,
+    )
+    await sleep(900)
+    const diagSheet = await cdp.evaluate(`document.querySelector('.sheet-panel')?.innerText ?? ''`)
+    check(
+      'B站跳转诊断可用（展示深链与检测结果）',
+      diagSheet.includes('bilibili://') && /环境|APK|浏览器/.test(diagSheet),
+      diagSheet.replace(/\s+/g, ' ').slice(0, 80),
+    )
+    await cdp.evaluate(`document.querySelector('.sheet-backdrop')?.click(); true`)
+    await sleep(400)
+
+    /* ---------------- 13. PWA ---------------- */
+    section('13) PWA（manifest / Service Worker / 离线打开）')
     const pwa = await cdp.evaluate(`(async () => {
       const link = document.querySelector('link[rel="manifest"]')
       const manifest = link ? await fetch(link.href).then((r) => r.json()).catch(() => null) : null
@@ -433,8 +541,8 @@ async function main() {
       uploadThroughput: -1,
     })
 
-    /* ---------------- 13. 运行时零 B站接口请求 / 无 console 报错 ---------------- */
-    section('13) 运行时请求与 console 检查')
+    /* ---------------- 14. 运行时零 B站接口请求 / 无 console 报错 ---------------- */
+    section('14) 运行时请求与 console 检查')
     const apiRequests = requests.filter((url) => {
       try {
         return /(^|\.)bilibili\.com$/.test(new URL(url).hostname)

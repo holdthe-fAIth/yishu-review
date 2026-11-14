@@ -55,16 +55,26 @@ export function isNativeApp(): boolean {
   }
 }
 
+/**
+ * 原生端尝试用 AppLauncher 打开 URL。
+ * 注意：@capacitor/app-launcher v6 的 canOpenUrl 内部是 `getPackageInfo(url)`，
+ * 只接受**包名**；传 bilibili:// URL 永远返回 false。
+ * 所以这里直接 openUrl，并用返回的 completed 判断是否成功。
+ */
+async function tryOpenNative(url: string): Promise<boolean> {
+  try {
+    const result = await AppLauncher.openUrl({ url })
+    return Boolean((result as { completed?: boolean } | undefined)?.completed)
+  } catch {
+    return false
+  }
+}
+
 /** 打开浏览器版 B站（长按菜单「在浏览器打开」/ 桌面端兜底） */
 export async function openInBrowser(target: PlayTarget): Promise<void> {
   const { web } = buildPlayLinks(target)
   if (isNativeApp()) {
-    try {
-      await AppLauncher.openUrl({ url: web })
-      return
-    } catch {
-      // 落到 window.open
-    }
+    if (await tryOpenNative(web)) return
   }
   window.open(web, '_blank', 'noopener,noreferrer')
 }
@@ -81,7 +91,7 @@ export type OpenMode = 'app' | 'web'
 
 /**
  * 唤起 B站 App 播放对应视频：
- * - Capacitor APK：@capacitor/app-launcher 原生唤起（Android 11+ 需要 Manifest 包可见性）
+ * - Capacitor APK：直接 AppLauncher.openUrl(深链)，失败再试简化深链，最后浏览器
  * - Android 浏览器/PWA：intent://（带浏览器兜底）
  * - iOS：bilibili://，1.2s 内没切走则退化浏览器
  * - 桌面：直接新标签页打开网页版（方便验收 page 参数）
@@ -89,24 +99,15 @@ export type OpenMode = 'app' | 'web'
 export async function openInBilibili(target: PlayTarget): Promise<OpenMode> {
   const { deep, web } = buildPlayLinks(target)
 
-  // 1) APK 原生容器：用 AppLauncher（WebView 里不能直接跳 intent://）
+  // 1) APK 原生容器：不依赖 canOpenUrl（它对 URL 永远返回 false），直接尝试打开
   if (isNativeApp()) {
-    try {
-      const { value } = await AppLauncher.canOpenUrl({ url: deep })
-      if (value) {
-        await AppLauncher.openUrl({ url: deep })
-        return 'app'
-      }
-    } catch {
-      // canOpenUrl 异常时继续尝试网页兜底
+    const candidates = [deep, `bilibili://video/${target.bvid}`]
+    for (const url of candidates) {
+      if (await tryOpenNative(url)) return 'app'
     }
-    try {
-      await AppLauncher.openUrl({ url: web })
-      return 'web'
-    } catch {
-      window.open(web, '_blank', 'noopener,noreferrer')
-      return 'web'
-    }
+    if (await tryOpenNative(web)) return 'web'
+    window.open(web, '_blank', 'noopener,noreferrer')
+    return 'web'
   }
 
   // 2) Android 浏览器 / PWA
@@ -135,4 +136,49 @@ export async function openInBilibili(target: PlayTarget): Promise<OpenMode> {
 /** 复制用文本：系统课带 page，专题只有 BV 号 */
 export function copyTextFor(target: PlayTarget): string {
   return target.bvid
+}
+
+/* ============ 跳转诊断（「我的 → 设置 → 测试 B站 跳转」用） ============ */
+
+export interface DeepLinkDiagnostics {
+  environment: 'APK' | '浏览器 / PWA'
+  biliInstalled: boolean | null
+  deepUrl: string
+  webUrl: string
+  detail: string
+}
+
+export async function diagnoseBilibiliJump(target: PlayTarget): Promise<DeepLinkDiagnostics> {
+  const { deep, web } = buildPlayLinks(target)
+  if (!isNativeApp()) {
+    return {
+      environment: '浏览器 / PWA',
+      biliInstalled: null,
+      deepUrl: deep,
+      webUrl: web,
+      detail:
+        isAndroid()
+          ? '当前是浏览器/PWA 环境，会使用 intent:// 尝试唤起 B站 App（未安装则回退网页版）。若被浏览器拦截，请用系统浏览器打开。'
+          : '当前不是 Android 环境，点视频会打开网页版 B站（桌面端行为）。手机安装 APK 后可直接跳 B站 App。',
+    }
+  }
+
+  let biliInstalled: boolean | null = null
+  try {
+    // 这里的参数是**包名**，canOpenUrl 实际检查该包是否安装
+    const result = await AppLauncher.canOpenUrl({ url: 'tv.danmaku.bili' })
+    biliInstalled = Boolean((result as { value?: boolean } | undefined)?.value)
+  } catch {
+    biliInstalled = null
+  }
+
+  return {
+    environment: 'APK',
+    biliInstalled,
+    deepUrl: deep,
+    webUrl: web,
+    detail: biliInstalled
+      ? '已检测到 B站 App（tv.danmaku.bili）。点视频时会直接打开 B站对应分P；如仍跳浏览器，请把此页截图发给开发者。'
+      : '未检测到 B站 App 包名 tv.danmaku.bili。请确认已安装「哔哩哔哩」；未安装时会打开网页版。',
+  }
 }

@@ -13,9 +13,11 @@ export interface SystemItem {
   name: string
   difficulty: string
   level: string
-  /** 秒 */
+  /** 时长（秒） */
   duration: number
   durationText: string
+  /** 该分P的发布时间（Unix 秒），来自 B站 pages[].ctime */
+  pubdate?: number
 }
 
 export interface ModuleInfo {
@@ -43,8 +45,11 @@ export interface TopicVideo {
   cover: string
   duration: number
   durationText: string
+  /** 发布时间（Unix 秒） */
   pubdate?: number
   views?: number
+  /** 多P 合集视频的分P数（如「100讲」教辅），卡片显示「N 讲」而不是超长时长 */
+  partCount?: number
 }
 
 export interface TopicInfo {
@@ -108,6 +113,12 @@ export interface Settings {
   /** 从 B站 切回来是否弹「看完了？」浮条 */
   returnPrompt: boolean
   theme: ThemeMode
+  /** 已学完的模块/视频自动排到最后 */
+  sortCompletedLast: boolean
+  /** 启动时自动检查内容更新（每天最多一次） */
+  autoCheckUpdate: boolean
+  /** 内容更新源；留空则使用同源 data/courses.json（APK 内需手动填 GitHub raw 地址） */
+  updateUrl: string
 }
 
 export interface AppState {

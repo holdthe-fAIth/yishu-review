@@ -2,12 +2,19 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <!-- Android 11+ 包可见性：@capacitor/app-launcher 的 canOpenUrl 需要声明 B站 包名，
-         否则 isNativeApp 里深链检测永远返回 false（表现为点了没反应） -->
+         否则深链检测会失败（表现为点了没反应/跳浏览器）。
+         覆盖：哔哩哔哩手机版 / HD 版 / 国际版；以及 bilibili:// scheme。 -->
     <queries>
         <package android:name="tv.danmaku.bili" />
+        <package android:name="tv.danmaku.bilibilihd" />
+        <package android:name="com.bilibili.app.in" />
         <intent>
             <action android:name="android.intent.action.VIEW" />
             <data android:scheme="bilibili" />
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:scheme="https" android:host="www.bilibili.com" />
         </intent>
     </queries>
 

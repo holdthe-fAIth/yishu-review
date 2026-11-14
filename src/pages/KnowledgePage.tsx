@@ -3,11 +3,21 @@ import './KnowledgePage.css'
 import { CheckIcon, ChevronDownIcon, ClockIcon } from '../components/Icons'
 import { normalizeLevel } from '../components/LevelTag'
 import { ProgressRing } from '../components/ProgressRing'
-import { MODULES, SYSTEM_BVID, TOTAL_KP, TOTAL_MODULES, UP, systemKey } from '../data'
+import {
+  DATA_GENERATED_AT,
+  MODULES,
+  SYSTEM_BVID,
+  TOTAL_KP,
+  TOTAL_MODULES,
+  UP,
+  systemKey,
+} from '../data'
 import { formatHoursLabel, percent } from '../lib/format'
 import { useJump } from '../lib/jump'
-import { moduleStats, totalSystemProgress, weakestModules } from '../lib/progress'
+import { moduleStats, totalSystemProgress } from '../lib/progress'
+import { orderItems, orderModules } from '../lib/sort'
 import { useApp } from '../store/AppStore'
+import type { SystemItem } from '../types'
 
 /** 难度 → 未点亮 chip 的边框色（基础绿 / 中档橙 / 拔高红） */
 const LEVEL_CHIP_CLASS: Record<string, string> = {
@@ -16,22 +26,57 @@ const LEVEL_CHIP_CLASS: Record<string, string> = {
   拔高: 'k-chip--hard',
 }
 
+/** 展开后的知识点 chip 行（带存储 key 与打勾状态，供排序复用） */
+interface ChipRow extends SystemItem {
+  key: string
+  done: boolean
+}
+
 /**
  * 页面 2 · 知识体系
- * 总进度大环 + 24 个模块折叠列表（模块 24px 小环、知识点 chip 点击直达 B站）+ 最弱模块。
- * 模块顺序严格取 courses.json 原顺序（MODULES），绝不重排。
+ * 总进度大环 + 24 个模块折叠列表（模块 24px 小环、知识点 chip 点击直达 B站）。
+ * 开启「已学内容排到最后」时：全部学完的模块排到列表末尾、已打勾的 chip 排到模块末尾；
+ * 未学内容保持 courses.json 原复习顺序。
  */
 export function KnowledgePage() {
-  const { state } = useApp()
+  const { state, settings } = useApp()
   const { play } = useJump()
 
   const progress = useMemo(() => totalSystemProgress(state.done), [state.done])
   const stats = useMemo(() => moduleStats(state.done), [state.done])
-  const weakest = useMemo(() => weakestModules(state.done, 3), [state.done])
   const [expanded, setExpanded] = useState<Set<number>>(() => new Set<number>())
 
+  /**
+   * 模块顺序：全部学完的模块排到最后（受设置项 sortCompletedLast 控制）。
+   * moduleStats 的 index 对应 MODULES 原顺序，排序后仍按 index 取回原始 stat。
+   */
+  const orderedStats = useMemo(() => {
+    const statByIndex = new Map(stats.map((stat) => [stat.index, stat]))
+    const ordered = orderModules(
+      stats.map((stat) => ({ ...stat.module, index: stat.index })),
+      state.done,
+      settings.sortCompletedLast,
+    )
+    return ordered.flatMap((module) => {
+      const stat = statByIndex.get(module.index)
+      return stat ? [stat] : []
+    })
+  }, [stats, state.done, settings.sortCompletedLast])
+
+  /** 每个模块展开后的 chip 顺序：已打勾的排到末尾，未学保持原顺序 */
+  const chipsByModule = useMemo(() => {
+    const map = new Map<number, ChipRow[]>()
+    for (const stat of stats) {
+      const rows: ChipRow[] = stat.module.items.map((item) => {
+        const key = systemKey(item.p)
+        return { ...item, key, done: Boolean(state.done[key]) }
+      })
+      map.set(stat.index, orderItems(rows, state.done, settings.sortCompletedLast))
+    }
+    return map
+  }, [stats, state.done, settings.sortCompletedLast])
+
   const allExpanded = expanded.size >= MODULES.length
-  const allDone = progress.total > 0 && progress.done >= progress.total
   const watchedLabel =
     progress.secondsDone > 0 ? formatHoursLabel(progress.secondsDone) : '约 0 分钟'
 
@@ -68,7 +113,8 @@ export function KnowledgePage() {
         <div>
           <h1 className="page-title">知识体系</h1>
           <p className="page-subtitle">
-            {UP.name} · {TOTAL_MODULES} 个模块 · {TOTAL_KP} 个知识点
+            {UP.name} · {TOTAL_MODULES} 个模块 · {TOTAL_KP} 个知识点 · 内容更新于{' '}
+            {DATA_GENERATED_AT.slice(0, 10)}
           </p>
         </div>
       </header>
@@ -101,9 +147,10 @@ export function KnowledgePage() {
       </div>
 
       <section className="card k-modules">
-        {stats.map((stat) => {
+        {orderedStats.map((stat) => {
           const module = stat.module
           const open = expanded.has(stat.index)
+          const chips = chipsByModule.get(stat.index) ?? []
           return (
             <article className={`k-module ${open ? 'is-open' : ''}`.trim()} key={module.id}>
               <button
@@ -131,19 +178,18 @@ export function KnowledgePage() {
 
               {open ? (
                 <div className="k-module__items" id={`k-items-${module.id}`}>
-                  {module.items.map((item) => {
-                    const done = Boolean(state.done[systemKey(item.p)])
+                  {chips.map((item) => {
                     const level = normalizeLevel(item.level, item.difficulty)
-                    const levelClass = done ? '' : LEVEL_CHIP_CLASS[level] ?? ''
+                    const levelClass = item.done ? '' : LEVEL_CHIP_CLASS[level] ?? ''
                     return (
                       <button
                         key={item.p}
                         type="button"
-                        className={`chip k-chip ${done ? 'is-active' : ''} ${levelClass}`.trim()}
+                        className={`chip k-chip ${item.done ? 'is-active' : ''} ${levelClass}`.trim()}
                         title={`${module.name} · ${item.name} · ${item.durationText}`}
                         onClick={() => jumpToItem(module.name, item.p, item.name)}
                       >
-                        {done ? <CheckIcon size={12} strokeWidth={3} /> : null}
+                        {item.done ? <CheckIcon size={12} strokeWidth={3} /> : null}
                         <span className="k-chip__text">{item.name}</span>
                       </button>
                     )
@@ -154,36 +200,6 @@ export function KnowledgePage() {
           )
         })}
       </section>
-
-      {weakest.length > 0 ? (
-        <>
-          <div className="section-title">
-            <span>最弱模块</span>
-            <span className="section-title__extra">
-              {allDone ? '全部已完成 🎉' : '建议先复习'}
-            </span>
-          </div>
-          <section className="card k-weak">
-            {weakest.map((stat) => (
-              <div className="k-weak__row" key={stat.module.id}>
-                <div className="k-weak__top">
-                  <span className="k-weak__name">{stat.module.name}</span>
-                  <span className="k-weak__pct">{percent(stat.ratio)}%</span>
-                </div>
-                <div className="progress-bar k-weak__bar">
-                  <div
-                    className="progress-bar__fill"
-                    style={{ width: `${percent(stat.ratio)}%` }}
-                  />
-                </div>
-                <p className="k-weak__meta">
-                  已看 {stat.done} / {stat.total} 个知识点
-                </p>
-              </div>
-            ))}
-          </section>
-        </>
-      ) : null}
     </div>
   )
 }

@@ -16,6 +16,11 @@
   min-width: 0;
 }
 
+/* 页头「内容更新于 YYYY-MM-DD」：跟在副标题后面，尽量不拆行 */
+.cp-head__updated {
+  white-space: nowrap;
+}
+
 /* ---------------- Hero 卡：总进度 + 继续复习 ---------------- */
 
 .cp-hero {
@@ -161,6 +166,11 @@
   font-variant-numeric: tabular-nums;
 }
 
+/* 模块全部学完：计数变绿 + 勾，提示它已被排到后面 */
+.cp-module__count.is-complete {
+  color: var(--green);
+}
+
 .cp-module__chevron {
   flex: none;
   color: var(--text-2);
@@ -259,6 +269,18 @@
   font-variant-numeric: tabular-nums;
 }
 
+/* v2：标题下「发布时间」次要文本（如「3 年前」），靠右放，不挤占左侧标签/播放量 */
+.cp-card__pubdate {
+  flex: none;
+  margin-left: auto;
+  padding-left: 4px;
+  color: var(--text-2);
+  font-size: 11px;
+  line-height: 1;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
 /* 已完成：标题变灰 + 卡片底部一条满格粉线 */
 .cp-card.is-done .cp-card__title {
   color: var(--text-2);
@@ -288,13 +310,17 @@
 .cp-tabs {
   display: flex;
   gap: 8px;
-  margin: 0 0 12px;
-  padding: 1px 1px 2px;
+  /* 全宽横滑：左右各借一点页面内边距，滑到边缘时不会被 12px 内边距截断 */
+  margin: 0 calc(-1 * var(--page-x)) 12px;
+  padding: 1px var(--page-x) 2px;
+  overscroll-behavior-x: contain;
+  scroll-padding-inline: var(--page-x);
 }
 
 .cp-tab {
   flex: none;
-  max-width: 74vw;
+  /* 标题较长（如「高中数学大合集」）时先截断，不允许单个 tab 撑破 480px 容器 */
+  max-width: min(74vw, 300px);
   gap: 6px;
   white-space: nowrap;
 }
@@ -310,4 +336,10 @@
   font-size: 11px;
   font-variant-numeric: tabular-nums;
   opacity: 0.72;
+}
+
+/* 合集全部刷完：计数变绿 + 勾（它已被排到 tab 末尾） */
+.cp-tab.is-complete:not(.is-active) .cp-tab__count {
+  color: var(--green);
+  opacity: 1;
 }

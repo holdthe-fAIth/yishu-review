@@ -3,6 +3,10 @@ import { useEffect, useRef, useState } from 'react'
 interface CommonCoverProps {
   durationText: string
   className?: string
+  /** 发布时间文本（2023-08-25） */
+  dateText?: string
+  /** 老视频（>2 年）用醒目颜色提示 */
+  dateOld?: boolean
 }
 
 interface GeneratedCoverProps extends CommonCoverProps {
@@ -14,6 +18,15 @@ interface GeneratedCoverProps extends CommonCoverProps {
   label?: string
 }
 
+function CoverDate({ dateText, dateOld }: { dateText?: string; dateOld?: boolean }) {
+  if (!dateText) return null
+  return (
+    <span className={`cover__date ${dateOld ? 'is-old' : ''}`.trim()} title={dateOld ? '较早的视频' : '发布时间'}>
+      {dateText}
+    </span>
+  )
+}
+
 /** 系统课没有封面图：用模块主题色渐变 + 模块名首字自己生成 */
 export function GeneratedCover({
   char,
@@ -21,6 +34,8 @@ export function GeneratedCover({
   to,
   label,
   durationText,
+  dateText,
+  dateOld,
   className = '',
 }: GeneratedCoverProps) {
   return (
@@ -31,6 +46,7 @@ export function GeneratedCover({
     >
       <span className="cover__char">{char}</span>
       {label ? <span className="cover__label">{label}</span> : null}
+      <CoverDate dateText={dateText} dateOld={dateOld} />
       <span className="cover__dur">{durationText}</span>
     </div>
   )
@@ -52,6 +68,8 @@ export function RemoteCover({
   from,
   to,
   durationText,
+  dateText,
+  dateOld,
   className = '',
 }: RemoteCoverProps) {
   const [failed, setFailed] = useState(false)
@@ -97,6 +115,7 @@ export function RemoteCover({
           onError={handleError}
         />
       )}
+      <CoverDate dateText={dateText} dateOld={dateOld} />
       <span className="cover__dur">{durationText}</span>
     </div>
   )

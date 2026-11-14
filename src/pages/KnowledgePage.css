@@ -221,61 +221,6 @@
   border-color: rgba(255, 92, 92, 0.5);
 }
 
-/* ---------- 最弱模块 ---------- */
-
-.k-weak {
-  padding: 3px 14px 5px;
-}
-
-.k-weak__row {
-  padding: 12px 0;
-}
-
-.k-weak__row + .k-weak__row {
-  border-top: 0.5px solid var(--line);
-}
-
-.k-weak__top {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 10px;
-  margin-bottom: 8px;
-}
-
-.k-weak__name {
-  min-width: 0;
-  overflow: hidden;
-  color: var(--text);
-  font-size: 14px;
-  font-weight: 600;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.k-weak__pct {
-  flex: none;
-  color: var(--pink);
-  font-size: 13px;
-  font-weight: 700;
-  font-variant-numeric: tabular-nums;
-}
-
-.k-weak__bar {
-  height: 5px;
-  border-radius: 3px;
-}
-
-.k-weak__bar .progress-bar__fill {
-  border-radius: 3px;
-}
-
-.k-weak__meta {
-  margin-top: 7px;
-  color: var(--text-2);
-  font-size: 11px;
-}
-
 /* ---------- 窄屏适配（360px 以下仍然不横滚） ---------- */
 
 @media (max-width: 360px) {

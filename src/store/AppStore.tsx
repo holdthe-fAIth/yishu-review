@@ -16,6 +16,9 @@ export const DEFAULT_SETTINGS: Settings = {
   confirmBeforeJump: false,
   returnPrompt: true,
   theme: 'auto',
+  sortCompletedLast: true,
+  autoCheckUpdate: true,
+  updateUrl: '',
 }
 
 export function createDefaultState(): AppState {
@@ -70,6 +73,16 @@ export function normalizeState(raw: unknown): AppState {
           ? settings.returnPrompt
           : DEFAULT_SETTINGS.returnPrompt,
       theme: isThemeMode(settings.theme) ? settings.theme : DEFAULT_SETTINGS.theme,
+      sortCompletedLast:
+        typeof settings.sortCompletedLast === 'boolean'
+          ? settings.sortCompletedLast
+          : DEFAULT_SETTINGS.sortCompletedLast,
+      autoCheckUpdate:
+        typeof settings.autoCheckUpdate === 'boolean'
+          ? settings.autoCheckUpdate
+          : DEFAULT_SETTINGS.autoCheckUpdate,
+      updateUrl:
+        typeof settings.updateUrl === 'string' ? settings.updateUrl : DEFAULT_SETTINGS.updateUrl,
     },
   }
 }

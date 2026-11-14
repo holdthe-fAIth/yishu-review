@@ -1,351 +1,304 @@
-# 一数复习 · 高中数学知识体系（A 版 · 目录型）
+# 一数复习 · 高中数学知识体系（v2）
 
 > B 站风格的「一数」高中数学视频**复习进度本**：点知识点 → 深链跳 B站 App 播放对应那一集（带分P）→ 看完切回来 → 底部浮条一键打勾 → 卡片点亮、模块进度与总进度实时联动。
 >
 > **这不是播放器**：App 自己不放视频，只当「知识体系 + 打勾进度本」。没有 iframe、没有解析、没有第三方接口。
 
-- 数据：`data/courses.json`（静态 import）—— 一数（B站 mid `14229967`）系统课 **24 个模块 / 194 个知识点**（都在合集 `BV147411K7xu` 下，1 个知识点 = 1 个分P）+ **6 个专题合集 / 134 条独立视频**
-- 技术栈：**Vite 5 + React 18 + TypeScript + 原生 CSS（CSS 变量主题）**，零 UI 库、零图表库
-- 安装形态：**PWA**（手机桌面安装 + 离线打开），可平滑升级 Capacitor APK
-- 数据全部在本地 `localStorage`，无后端、无登录、无云同步
+- 数据：`data/courses.json`（静态 import，**运行时不请求 B站接口**）—— 一数（B站 mid `14229967`）系统课 **24 个模块 / 194 个知识点**（合集 `BV147411K7xu` 的 198 个分P，1 知识点 = 1 分P）+ **7 个专题合集 / 320 条独立视频**
+- 每条视频都带**发布时间**（系统课来自分P `ctime`，专题来自合集接口），卡片左下角显示，老视频（>2 年）黄色提示，方便判断是否适合当前高考趋势
+- v2 新增：**学习时间表 / 打卡热力图 / 内容更新检查（每天自动 + 手动）/ 已学内容自动排到最后 / B站跳转诊断**
+- 技术栈：**Vite 5 + React 18 + TypeScript + 原生 CSS（CSS 变量主题）**，零 UI 库、零图表库；PWA + Capacitor Android APK
 
 ---
 
 ## 快速开始
 
 ```bash
-# 1. 安装依赖（仓库带 pnpm-lock.yaml，推荐 pnpm；没有 pnpm 时用 npm run 等价命令）
 pnpm install        # 或 npm install
 
-# 2. 开发（手机同一 WiFi 下可用局域网 IP 访问，便于真机联调深链）
-pnpm dev            # 或 npm run dev
+pnpm dev            # 开发（局域网 IP 可手机真机联调深链）
+pnpm build          # tsc + vite build（自动把 data/courses.json 拷贝到 public/data/）
+pnpm preview        # 预览 dist → http://localhost:4173
 
-# 3. 类型检查 / 生产构建
-pnpm typecheck      # tsc --noEmit
-pnpm build          # tsc --noEmit && vite build
-pnpm preview        # 预览 dist（默认 http://localhost:4173）
-
-# 4. 课程数据完整性校验（194 个知识点 / 24 模块 / 6 专题 134 视频 / 分P唯一）
-pnpm verify:data    # 或 node scripts/verify-data.mjs
-
-# 5. 重新生成 PWA 图标（需要 Python + Pillow）
-python scripts/generate-icons.py
+pnpm fetch:data     # 重新抓取一数主页数据（B站接口，仅开发时运行）
+pnpm verify:data    # 数据完整性校验（194 知识点 / 7 合集 / 320 视频 / 发布时间齐全）
+pnpm verify:ui      # 49+ 项 Edge headless 功能验收（需先 build + preview）
+pnpm screenshot     # 480×900@2x 视觉验收截图 → screenshots/
+pnpm build:apk      # 打包 Android APK（需要 .tools 里的 JDK/SDK，见「APK」章节）
 ```
 
-> 本机若 `pnpm` 未在 PATH，可用 npm 等价命令 `npm run dev` / `npm run build`，脚本完全相同。
-
-### 自动化验收（可选，需要本机 Edge 浏览器）
-
-```bash
-pnpm build
-pnpm preview --port 4173      # 终端 1：先起预览服务
-node scripts/e2e-check.mjs    # 终端 2：49 项功能验收（数据/打勾/深链/pending/浮条/搜索/PWA 离线）
-node scripts/screenshot.mjs   # 终端 2：生成 screenshots/*.png 视觉验收图（480×900@2x）
-```
-
-两个脚本都是零第三方依赖的 Edge headless + CDP 自动化，不影响 App 运行时依赖。
+> 本机没有 `pnpm` 时用 `npm run dev` / `npm run build` 等价；仓库自带 `pnpm-lock.yaml`。
 
 ---
 
-## 部署 PWA
+## 一、装到手机
 
-1. `pnpm build` 得到 `dist/`（内含 `manifest.webmanifest`、`sw.js`、192/512 图标）。
-2. 把 `dist/` 整个目录部署到任意静态服务器 / Nginx / GitHub Pages / Vercel / Netlify。
-   - **必须 HTTPS**（`localhost` 除外），否则 Service Worker 不生效、不能安装。
-   - 部署到**子路径**（如 `https://example.com/yishu-review/`）时，把 `vite.config.ts` 的 `base` 改成 `/yishu-review/` 后重新 build。
-3. 手机浏览器打开 → 菜单「添加到主屏幕/安装应用」→ 桌面图标启动（standalone 全屏、适配刘海和底部手势条）。
-4. 离线：首次打开后核心资源与已浏览的 B站封面会被 Service Worker 缓存，断网也能打开并看进度（封面首次未缓存时用渐变兜底）。
+### 1）PWA（推荐日常用，打开即更新）
 
----
+关键前提：**PWA 安装 / 离线缓存必须 HTTPS**（`localhost` 除外）。
 
-## 手机真机安装（PWA，不需要 APK）
-
-> 关键前提：**PWA 安装 / 离线缓存必须 HTTPS**（`localhost` 除外）。HTTP 局域网地址只能当普通网页用，无法安装、无法离线。
-
-### 方案 A：临时 HTTPS 隧道（最快，无账号）
+**方式 A：临时 HTTPS 隧道（最快、无账号）**
 
 ```bash
-# 终端 1：预览构建产物（vite.config.ts 已允许 serveo / localtunnel / pinggy / cloudflared 域名）
+# 终端 1
 pnpm build && pnpm preview --host
-
-# 终端 2：起一条临时 HTTPS 隧道（需要本机有 ssh）
+# 终端 2（需要 ssh）
 ssh -tt -o StrictHostKeyChecking=no -R 80:localhost:4173 serveo.net
 # 输出形如：Forwarding HTTP traffic from https://xxxx.serveousercontent.com
 ```
 
-手机浏览器打开该 `https://` 地址 →（Serveo 免费隧道首次会显示安全提示，点 **Continue to Site**）→ 等页面加载后：
-- **Chrome / Edge**：右上角菜单 →「安装应用 / 添加到主屏幕」
-- **国产浏览器**：菜单 →「添加到桌面」
+手机浏览器打开该 https 地址 →（Serveo 免费隧道首次会显示安全提示，点 **Continue to Site**）→ 菜单「安装应用 / 添加到主屏幕」。隧道是临时的（约 10 分钟寿命），长期使用请用方式 B。
 
-装好后桌面会出现「一数复习」图标，standalone 全屏、可离线打开，进度存在手机本地。
+**方式 B：正式部署（推荐长期，见「二、GitHub 上传与部署」）**
 
-> ⚠️ 隧道链接是临时的：电脑或隧道进程关掉就失效，重启会生成新链接。已安装的 App 因 Service Worker 已缓存资源，通常仍可离线启动；但换机 / 清缓存 / 需要更新时必须重新访问有效地址或正式部署。
+部署后手机打开 `https://<用户名>.github.io/<仓库名>/` → 安装 PWA。之后每次 push 自动更新，App 内「检查内容更新」可拉取最新课程数据。
 
-### 方案 B：同一 WiFi 局域网访问（只能网页用，不能安装）
+**方式 C：同一 WiFi 局域网**：`pnpm dev --host` / `pnpm preview --host`，手机开 `http://<电脑IP>:5173`。非 HTTPS 只能当网页用（不能安装/离线），需放行 Windows 防火墙。
 
-```bash
-pnpm dev --host        # 或 pnpm preview --host
-# 手机浏览器打开 http://<电脑局域网IP>:5173（或 :4173）
-```
-- 需要 Windows 防火墙放行 Node.js（首次监听端口时系统会弹「允许访问」，选专用网络）。
-- 非 HTTPS → 不能安装 PWA、不能离线，但点知识点跳 B站、打勾进度等全部功能正常。
+### 2）APK（完全离线，不依赖电脑）
 
-### 方案 C：正式部署（长期使用，推荐）
-
-按上文「部署 PWA」把 `dist/` 部署到任意 HTTPS 静态托管（Cloudflare Pages / Vercel / Netlify / GitHub Pages 均可，免费），手机访问后安装即可长期使用、支持后续更新。子路径部署记得改 `vite.config.ts` 的 `base`。
-
-### 方案 D：APK（已产出，可直接装手机）
-
-本项目已内置 Capacitor 6 Android 工程，并已在本机打出**可直接安装的 debug APK**：
+已产出：**`yishu-review-2.0.0-debug.apk`**（项目根目录，约 4 MB）
 
 | 项 | 值 |
 | --- | --- |
-| 文件 | `yishu-review-1.0.0-debug.apk`（项目根目录，约 4.1 MB） |
-| 包名 / 版本 | `com.yishu.review` / versionCode 1, versionName 1.0 |
-| 兼容 | minSdk 22（Android 5.1+），targetSdk 34 |
-| 签名 | Android Debug（v1+v2 签名，可直接安装，不可上架应用商店） |
-| 内容 | Web 产物全部内置（断网可用），图标/启动图已替换为「一数复习」 |
+| 包名 / 版本 | `com.yishu.review` / versionCode 2, versionName **2.0.0** |
+| 兼容 | Android 5.1+（minSdk 22，targetSdk 34） |
+| 签名 | Android Debug（v1+v2，可安装，不可上架应用商店） |
+| 能力 | Web 资源全部内置、断网可用；**点知识点直接唤起 B站 App**（`@capacitor/app-launcher`）；从 B站 切回来弹打勾浮条；支持学习时间表等全部 v2 功能 |
 
-**安装方法**：把 `.apk` 文件传到手机（微信「文件传输助手」→ 手机微信打开 → 右上角「用其他应用打开」→ 安装；或数据线/网盘），首次安装需允许「安装未知来源应用」；部分国产 ROM（MIUI/HarmonyOS）还需暂时关闭「纯净模式」。
+**安装**：电脑微信「文件传输助手」发送 APK → 手机微信打开 → 用其他应用打开 → 安装；首次允许「安装未知来源应用」，小米/华为等可能需临时关闭「纯净模式」。
 
-**重新打包**（改代码/改数据后）：
+> v2 APK 与 v1 使用同一台机器生成的 debug 签名，**可直接覆盖安装，原有 localStorage 进度保留**。
+
+**APK 内更新内容**：APK 内置的是打包时快照。要更新课程数据，在「我的 → 内容更新源」填入 GitHub raw 地址（格式见下），再点「检查内容更新」即可不用重装 App 更新数据；功能更新则需要重新打包 APK。
+
+```text
+https://raw.githubusercontent.com/<用户名>/<仓库名>/main/data/courses.json
+```
+
+**重新打包**：
 
 ```bash
-pnpm build:apk        # = scripts/build-apk.ps1：vite build → cap sync → gradlew assembleDebug
+pnpm build:apk   # = scripts/build-apk.ps1：vite build → cap sync → gradlew assembleDebug → 复制到根目录
 ```
-首次打包需要本机有 JDK 17 + Android SDK（本项目用便携版放在 `.tools/`，已被 gitignore，不随仓库分发）：
-
-```bash
-# 一次性准备（Windows，约 1GB 下载，~25 分钟）
-# 1) JDK 17：https://aka.ms/download-jdk/microsoft-jdk-17.0.13-windows-x64.zip 解压到 .tools/jdk/
-# 2) Android cmdline-tools：https://dl.google.com/android/repository/commandlinetools-win-11076708_latest.zip
-#    解压到 .tools/android-sdk/cmdline-tools/latest/，然后：
-#    sdkmanager "platform-tools" "platforms;android-34" "build-tools;34.0.0"
-```
-`android/local.properties` 里的 `sdk.dir` 指向本机 `.tools/android-sdk`（该文件已 gitignore）。
-
-**原生能力说明**：
-- 点知识点走 `@capacitor/app-launcher` 唤起 B站 App（Android 11+ 包可见性已在 `AndroidManifest.xml` 的 `<queries>` 中声明 `tv.danmaku.bili` 与 `bilibili://` scheme）；没装 B站 自动用系统浏览器打开网页版。
-- 从 B站 切回时的「看完了？」浮条：除 `visibilitychange` 外还监听 `@capacitor/app` 的 `appStateChange`，保证原生环境一定触发。
-- APK 内不注册 PWA Service Worker（资源已本地化，注册会报错），只在浏览器 PWA 中注册。
-- 正式发布可将 `android/app/build.gradle` 的 release 配置改成自己的签名（`keytool` 生成 keystore + `signingConfigs`），然后 `./gradlew assembleRelease`；同签名的升级包可覆盖安装，换签名需先卸载旧版（本机会丢失 localStorage 进度，记得先「我的 → 导出 JSON」）。
+首次打包需要 JDK 17 + Android SDK（本项目用便携版放在 `.tools/`，已被 gitignore）：
+- JDK：<https://aka.ms/download-jdk/microsoft-jdk-17.0.13-windows-x64.zip> 解压到 `.tools/jdk/`
+- Android cmdline-tools：<https://dl.google.com/android/repository/commandlinetools-win-11076708_latest.zip> 解压到 `.tools/android-sdk/cmdline-tools/latest/`
+- 然后 `sdkmanager "platform-tools" "platforms;android-34" "build-tools;34.0.0"`
 
 ---
 
-## 功能清单
+## 二、GitHub 上传与部署（PWA 永久在线）
 
-### 页面 1 · 课程（首页）
-- 顶部大标题「一数复习」+ 右上角搜索入口。
-- Hero 卡：194 个知识点总进度圆环 +「继续复习」按钮（自动跳到按模块顺序第一个没打勾的知识点）。
-- Segmented 切换「系统课 / 专题课」。
-- 系统课：24 个模块折叠分组（顺序 = 复习顺序，不重排）。模块行 = 模块名 + `3/6` + 4px 粉色细进度条；展开后 2 列卡片。
-  - 卡片封面：系统课没有封面图，用**模块主题色渐变 + 模块名首字**实时生成（不抓 B站封面）。
-  - 卡片 = 封面 + 时长角标 + 标题 2 行省略 + 难度标签。
-- 专题课：顶部横滑 6 个合集 tab + 2 列真实封面卡片。
+> 前提：有 GitHub 账号；仓库建议设为 **Public**（私有仓库的 Pages 需要付费）。
 
-### 卡片交互（A 版关键）
-- **点卡片主体** → 深链跳 B站 App，同时记录一条 `pending`。
-- **点封面右上角小圆圈 ✓** → 就地打勾 / 取消，**不跳转**（独立热区，互不抢事件）。
-- **长按 500ms（桌面右键）** → 操作菜单：标记完成 / 取消完成 / 复制 BV 号 / 在浏览器打开。
-- 已完成状态：右上角 18px 粉色圆 + 白勾、标题变灰 `#9499A0`、卡片底部一条满格粉色进度线。
+```bash
+# 0. 在 GitHub 网页上新建一个空仓库，例如 yishu-review
+#    （不要勾选 Add README / .gitignore，直接 Create repository）
+
+cd D:\deepseek\cursor\yishu-review
+git branch -M main                      # 统一用 main 分支
+git remote add origin https://github.com/<用户名>/yishu-review.git
+git push -u origin main
+```
+
+推送后：
+
+1. 打开仓库 **Settings → Pages → Build and deployment**；
+2. **Source** 选择 **GitHub Actions**；
+3. 仓库自带的 [.github/workflows/deploy-pages.yml](.github/workflows/deploy-pages.yml) 会在每次 push main 时自动构建并部署（约 1–2 分钟）；
+4. 部署完成后地址是：`https://<用户名>.github.io/<仓库名>/`（Actions 页面 / Pages 设置页会显示）。
+
+手机打开该地址 → 安装 PWA。**每次 `git push` 后线上自动更新**；App 打开时 Service Worker 自动更新版本。
+
+### 定时更新课程数据（可选）
+
+仓库自带 [.github/workflows/refresh-data.yml](.github/workflows/refresh-data.yml)：
+
+- 每周一 10:00（北京时间）自动运行 `pnpm fetch:data`，把 B站 最新视频写回 `data/courses.json` 并提交；
+- 也可以在 GitHub → Actions → Refresh course data → Run workflow 手动触发；
+- 若 GitHub 服务器访问 B站 接口被风控，可只在本地运行 `pnpm fetch:data` 后手动提交（效果相同）；
+- 提交后 Pages 会自动重新部署，App 内「检查内容更新」即可拿到新数据。
+
+### 用 SSH 推送（可选）
+
+```bash
+git remote set-url origin git@github.com:<用户名>/yishu-review.git
+git push -u origin main
+```
+
+### 只想让别人也能安装（不部署 PWA）
+
+也可以只把 `data/courses.json` 放到 GitHub，作为 APK 的「内容更新源」；或把 `dist/` 上传到任意 HTTPS 静态托管（Cloudflare Pages / Vercel / Netlify）。
+
+---
+
+## 三、功能清单（v2）
+
+### 页面 1 · 课程
+- Hero：194 个知识点总进度圆环 +「继续复习」（按模块顺序第一个未打勾）+「内容更新于 YYYY-MM-DD」。
+- Segmented：系统课 / 专题课。
+- 系统课：24 个模块折叠分组；模块行 = 模块名 + `3/6` + 4px 粉色进度条；展开 2 列卡片。
+  - 卡片：模块渐变自绘封面 + 时长 + **发布时间角标（左下角，老视频黄色）** + 标题 2 行 + 难度标签。
+  - **已学内容自动排到最后**：完全学完的模块移到列表末尾；模块内已打勾的知识点移到本模块末尾（设置可关）。
+- 专题课：**7 个合集**横滑 tab（按最新发布时间排序），320 条真实封面卡片；合集内已看视频自动排后，全部刷完的合集 tab 排到最后。
+  - 教辅类「一本书 / 100 讲」是单个多P视频，封面角标显示「**N 讲**」而不是几百小时的总时长。
+  - **点卡片主体** → 记录 pending + 深链跳 B站 App；**点右上角圆圈** → 就地打勾不跳转；**长按/右键** → 菜单（标记完成、复制 BV、浏览器打开）。
+  - 已完成：粉色圆 + 白勾、标题变灰、底部满格粉线。
 
 ### 页面 2 · 知识体系
-- 顶部大进度环 +「已完成 X / 194 个知识点 · 约 Y 小时」。
-- 24 个模块列表：24px SVG 小圆环 + 模块名 + 已看/总数 + 展开箭头。
-- 展开显示知识点 chip：已点亮 = 粉底白字 + ✓，未点亮 = 灰边框；点 chip 直接跳 B站。
-- 底部「最弱模块」：完成率最低 3 个，建议先复习。
+- 顶部大进度环 +「已完成 X / 194 · 约 Y 小时」。
+- 24 个模块列表：24px 小环 + 名称 + 已看/总数 + 展开箭头；展开显示知识点 chip（已点亮粉底白字 ✓）。
+- **已学模块 / 知识点自动排到最后**；点 chip 直接跳 B站。
+- ~~最弱模块~~（v2 已按需求移除）。
 
 ### 页面 3 · 我的
-- 统计：已看视频数 / 累计视频时长 / 连续打卡天数。
-- 24 个模块完成率横向条形图（纯 CSS，无图表库）。
-- 数据管理：导出 JSON / 导入 JSON / 重置（二次确认）。
-- 设置：跳转前是否确认、是否开启返回打勾提醒、主题（浅色 / 深色 / 跟随系统）。
+- 统计：已看视频数 / 累计时长 / 连续打卡天数。
+- **学习时间表**：按天分组列出每一次完成记录（日期、时间、知识点/视频、所属模块/合集、时长、系统/专题标签），默认最近 30 条可展开全部。
+- **打卡热力图**：最近 12 周 × 7 天，按当天完成数 4 档颜色；配「本周 X 个 · 今天 Y 个」。
+- 模块完成率横向条形图（纯 CSS）。
+- 数据管理：**检查内容更新 / 内容更新源 / 恢复内置数据**、导出 JSON、导入 JSON、重置（二次确认）。
+- 设置：跳转前确认、返回打勾提醒、**已学内容自动排到最后**、**启动时自动检查内容更新**、主题（浅/深/跟随系统）、**测试 B站 跳转**（诊断环境与深链）。
 
 ### 搜索（首页右上角）
-- 跨系统课 194 个知识点 + 专题 134 条视频搜索，支持难度筛选（全部 / 基础 / 中档 / 拔高）。
-- 结果行内也能直接打勾，不跳转。
+- 跨 194 个知识点 + 320 条专题视频搜索，难度筛选（全部/基础/中档/拔高），结果行内可直接打勾。
 
 ---
 
-## 核心机制
+## 四、内容更新机制
+
+```text
+B站 接口（仅开发/CI 时）
+   ↓ scripts/fetch-data.mjs
+data/courses.json（v2，含发布时间）
+   ↓ 构建时复制
+public/data/courses.json → dist/data/courses.json（同源，PWA 可直接 fetch）
+   ↓
+App：设置里「内容更新源」（留空 = 同源；APK 填 GitHub raw）
+   ↓
+启动自动检查（每天最多一次）+ 我的页「检查内容更新」
+   ↓ 发现 generatedAt 更新 → 写 localStorage 覆盖数据 → 刷新
+```
+
+- 数据校验：`src/data.ts` 的 `isValidCoursesData()` 会拒绝结构不对的远程数据；
+- 覆盖数据存 `localStorage` 的 `yishu-review:courses:v2`，优先于内置 JSON；
+- 我的页可「恢复内置数据」一键清掉覆盖；
+- 抓取脚本只保留人工整理的 24 模块复习顺序，用 B站 分P 刷新标题/时长/**发布时间**；专题会按最新发布时间排序并排除重复/预告片。
+
+---
+
+## 五、核心机制
 
 ### 1）B站深链（带分P）
 
 ```ts
-// 系统课：同一个 BV 下 194 个分P，必须带 page，否则永远打开第一集
-bilibili://video/BV147411K7xu?page={p}
-// 专题课：独立 BV 号，不带 page
-bilibili://video/{bvid}
+bilibili://video/BV147411K7xu?page={p}   // 系统课：同一 BV 下 194 个分P，必须带 page
+bilibili://video/{bvid}                  // 专题课：独立 BV
 ```
 
-网页端按 UA 分流（`src/lib/bilibili.ts`）：
+- **APK（Capacitor）**：`@capacitor/app-launcher` 直接 `openUrl(深链)`，按返回的 `completed` 判断；失败依次尝试简化深链 → 网页版。
+  > 注意：该插件 v6 的 `canOpenUrl()` 内部是 `getPackageInfo(url)`，**只接受包名**，传 URL 永远 false——v2 已修复为直接 `openUrl`。Android 11+ 包可见性在 `AndroidManifest.xml` 的 `<queries>` 声明（B站手机版/HD/国际版 + bilibili scheme）。
+- **Android 浏览器 / PWA**：`intent://…#Intent;scheme=bilibili;package=tv.danmaku.bili;S.browser_fallback_url=…`（未装 App 自动回退网页版）。
+- **iOS**：先 `bilibili://`，1.2s 未切走则回退网页版。
+- **桌面**：新标签页打开网页版（方便验收 `?p=`）。
+- **校准 PAGE_OFFSET**：真机点 `page=1` / `page=2` 确认是第一集还是第二集，若是 0 基就改 [src/lib/bilibili.ts](src/lib/bilibili.ts) 的 `PAGE_OFFSET = -1`（全站唯一常量）。
+- 排查入口：**我的 → 测试 B站 跳转**，会显示当前环境、B站 App 是否安装、深链 URL。
 
-- **Android**：`intent://video/{bvid}?page={p}#Intent;scheme=bilibili;package=tv.danmaku.bili;S.browser_fallback_url={webUrl};end`
-  （未安装 App 时自动回退到网页版）
-- **iOS / HarmonyOS**：先试 `bilibili://` scheme，1.2s 内没切走则回退网页版
-- **桌面浏览器**：直接新标签页打开网页版（方便验收 `?p=` 参数）
-- **Capacitor APK**：改 `@capacitor/app-launcher`（见文末）
+### 2）跳转 → 回来打勾
 
-> ⚠️ **分P 起算点校准（PAGE_OFFSET）**：数据里的 `p` 从 1 开始。
-> 拿真机点 `page=1` 和 `page=2` 各一次，确认打开的分别是第几集：
-> - `page=1` 是第一集 → 保持 `PAGE_OFFSET = 0`（默认）
-> - `page=0` 是第一集 → 把 `src/lib/bilibili.ts` 的 `PAGE_OFFSET` 改成 `-1`
->
-> 全站只有这一个常量，改一处生效。验收时至少用 3 个不同模块的知识点确认 `page` 正确。
+1. 跳转前把 `{ key, name, at }` 写入 `localStorage` 的 `pending`（只保留一条）；
+2. 切回 App / 网页（`visibilitychange`、`focus`、`pageshow`；APK 额外监听 `@capacitor/app` 的 `appStateChange`），`pending` 存在且离开 ≥30 秒 → 底部浮条「看完了《…》？ [✓ 打勾] [× 忽略]」；
+3. 打勾立即生效并清 pending；忽略只清 pending；设置里可关闭提醒。
 
-### 2）跳转 → 回来打勾（A 版灵魂）
-
-1. 跳转前把 `{ key, name, at }` 写入 `localStorage` 的 `pending`（只保留一条）。
-2. 从 B站 切回 App / 网页时（`document.visibilitychange`、`focus`、`pageshow`），如果 `pending` 存在且**离开超过 30 秒** → 底部弹出浮条：
-   「看完了《集合的概念》？ [✓ 打勾] [× 忽略]」
-3. 点「打勾」→ 立刻标记完成并清掉 `pending`；点「忽略」→ 只清掉 `pending`。
-4. 设置里可关闭「返回打勾提醒」；关闭后回到 App 会静默清掉 `pending`。
-
-> 桌面调试技巧：点一个知识点后切到别的标签页停留 30 秒以上再切回来，浮条就会出现。
-> 想快速验证可临时把 `src/components/ReturnPromptBar.tsx` 里的 `RETURN_THRESHOLD_MS` 改小。
-
-### 3）本地数据模型（localStorage 单 key：`yishu-review:state:v1`）
+### 3）本地状态（`yishu-review:state:v1`）
 
 ```ts
-type State = {
-  v: 1
-  done: Record<string, { at: number }>   // 系统课 key=`s:${p}`；专题 key=`t:${seasonId}:${bvid}`
-  pending?: { key: string; name: string; at: number }
+{
+  v: 1,
+  done: { [key]: { at } },        // 系统课 s:{p}；专题 t:{seasonId}:{bvid}；at = 完成时间（学习时间表用）
+  pending?: { key, name, at },
   settings: {
-    confirmBeforeJump: boolean
-    returnPrompt: boolean
-    theme: 'light' | 'dark' | 'auto'
+    confirmBeforeJump, returnPrompt, theme,
+    sortCompletedLast,            // v2：已学内容排到最后
+    autoCheckUpdate, updateUrl    // v2：自动检查更新 / 内容更新源
   }
 }
 ```
 
-- **派生值不存**，每次实时计算：知识点完成 = `done['s:'+p]`；模块进度 = 已完成 / count；总进度 = /194；连续打卡 = 按 `done.at` 的本地日期去重后从今天（或昨天）往前数。
-- 所有读写收口在 `src/store/AppStore.tsx`（`useReducer` + Context + 持久化 effect），组件不直接碰 `localStorage`。
-- 导出/导入使用同一份 JSON 结构，导入前会 `normalizeState()` 校验并二次确认。
-
 ---
 
-## 项目结构
+## 六、项目结构
 
 ```
 yishu-review/
-├─ data/courses.json          # 课程数据（静态 import，运行时零请求）
-├─ docs/A版-目录型.md          # 原始需求提示词（备查）
-├─ public/
-│  ├─ favicon.svg
-│  └─ icons/                  # PWA 图标 192/512/maskable/apple-touch
+├─ data/courses.json           # v2 课程数据（含发布时间；194 知识点 + 7 合集 320 视频）
+├─ public/data/courses.json    # 构建时由 data 拷贝（同源内容更新用，git 忽略）
 ├─ scripts/
-│  ├─ verify-data.mjs         # 数据完整性校验（194/24/6/134、分P唯一）
-│  └─ generate-icons.py       # 图标生成（Pillow）
+│  ├─ fetch-data.mjs           # 从 B站 重新抓取并生成 courses.json（pnpm fetch:data）
+│  ├─ enrich-part-counts.mjs   # 补全省略的多P合集分P数（显示「N 讲」，pnpm enrich:data）
+│  ├─ verify-data.mjs          # 数据校验（pnpm verify:data）
+│  ├─ e2e-check.mjs            # Edge headless 功能验收（pnpm verify:ui）
+│  ├─ screenshot.mjs           # 480px@2x 截图（pnpm screenshot）
+│  ├─ cdp.mjs                  # 零依赖 CDP 客户端
+│  ├─ build-apk.ps1            # 一键打包 APK（pnpm build:apk）
+│  └─ generate-icons.py        # PWA 图标生成
 ├─ src/
-│  ├─ data.ts                 # 数据接入 + 派生（模块渐变/拍平/时长索引）
-│  ├─ types.ts                # 数据结构与 State 类型
-│  ├─ store/AppStore.tsx      # useReducer + Context + localStorage 持久化
+│  ├─ data.ts                  # 数据 + 远程覆盖 + 发布时间/主题色工具
+│  ├─ types.ts
+│  ├─ config.ts                # APP_VERSION / 常量
+│  ├─ store/AppStore.tsx       # useReducer + Context + localStorage 单 key
 │  ├─ lib/
-│  │  ├─ bilibili.ts          # 深链 / intent / PAGE_OFFSET / 浏览器兜底
-│  │  ├─ jump.tsx             # 跳转 + pending + 确认弹窗
-│  │  ├─ progress.ts          # 模块/总进度、最弱模块、连续打卡等派生
-│  │  └─ format.ts            # 时长/日期/百分比格式化
-│  ├─ components/             # ProgressRing / CheckButton / Cover / Sheet / Toast / TabBar / ReturnPromptBar / Icons / Segmented / LevelTag
-│  ├─ pages/                  # CoursePage / KnowledgePage / MinePage / SearchPage（各自 CSS）
-│  ├─ App.tsx                 # 3 tab 壳 + 全局 Provider
-│  ├─ index.css               # 设计 token + 全局/共享组件样式（暗色变量）
-│  └─ main.tsx
-├─ index.html
-├─ vite.config.ts             # vite-plugin-pwa（manifest / 离线缓存 / 封面运行时缓存）
-└─ tsconfig.json
+│  │  ├─ bilibili.ts           # 深链 / APK AppLauncher / 跳转诊断 / PAGE_OFFSET
+│  │  ├─ jump.tsx              # 跳转 + pending 确认
+│  │  ├─ updates.ts            # 检查内容更新 / 应用覆盖数据
+│  │  ├─ history.ts            # 学习时间表 / 打卡热力图数据
+│  │  ├─ sort.ts               # 已学内容排到最后
+│  │  ├─ progress.ts           # 进度 / 连续打卡
+│  │  └─ format.ts
+│  ├─ components/              # Cover(含发布时间角标)/ProgressRing/CheckButton/Sheet/Toast/TabBar/ReturnPromptBar/UpdateBanner/Icons/Segmented/LevelTag
+│  └─ pages/                   # CoursePage / KnowledgePage / MinePage / SearchPage（各自 CSS）
+├─ android/                    # Capacitor Android 工程（APK）
+├─ .github/workflows/          # deploy-pages.yml（Pages 部署）/ refresh-data.yml（定时刷数据）
+├─ capacitor.config.ts
+├─ vite.config.ts              # PWA / 离线缓存 / VITE_BASE 子路径部署
+└─ README.md
 ```
 
 ---
 
-## 分阶段完成情况（对应提示词 Phase 0–6）
+## 七、版本历史与验收
 
-| Phase | 内容 | 状态 |
-| --- | --- | --- |
-| 0 | Vite+React+TS 骨架、3 页面 + tabbar + 主题变量 + 空态 | ✅ |
-| 1 | 接入 courses.json，首页 24 模块 / 194 知识点 + 6 专题 134 条 | ✅ |
-| 2 | store + 持久化 + 勾选态 + 模块/总进度 rollup + 导出导入重置 | ✅ |
-| 3 | 深链 + page 参数 + pending + 返回浮条一键打勾（A 版核心） | ✅ |
-| 4 | 知识体系页：进度环 + chip + 点击跳转 + 最弱模块 | ✅ |
-| 5 | 「我的」+ 搜索 + 难度筛选 + 暗色模式 | ✅ |
-| 6 | PWA（vite-plugin-pwa + manifest + 192/512 图标，可安装、可离线） | ✅ |
-| 6+ | Capacitor 打包 APK | ⏳ 可选（本机无 Android SDK，只交 PWA + 构建说明） |
+| 版本 | 内容 |
+| --- | --- |
+| v1.0.0 | A 版目录型 PWA + APK：课程/知识体系/我的、打勾进度、B站深链 + 返回浮条、搜索、暗色、离线 |
+| **v2.0.0** | 内容更新检查（手动 + 每日自动）、学习时间表 + 打卡热力图、卡片发布时间、已学内容自动排后（可关）、移除最弱模块、修复 APK 跳转 B站 App、重新抓取一数主页（7 合集/320 视频/发布时间/教辅多P 显示「N 讲」）、GitHub Pages 部署 + 每周数据刷新工作流 |
 
-## 验收自查清单
+### 验收结果（本机实测）
 
-- [x] `tsc --noEmit` 与 `vite build` 通过，无 console 报错
-- [x] 194 个知识点一个不少，模块顺序与 `courses.json` 一致（`pnpm verify:data` 校验）
-- [x] 点卡片跳 B站 能到对应那一集（page 参数正确，至少验 3 个不同模块的 page 值）
-- [x] 勾选不跳转、跳转不误触（卡身 / 右上角圆圈两个热区分开）
-- [x] 从 B站 回来能弹「看完了？」浮条并一键打勾
-- [x] 勾一个知识点 → 卡片、模块进度、知识体系页、总进度环四处同时变
-- [x] 刷新 / 重开浏览器数据不丢（localStorage 单 key）
-- [x] 480px 下无横向滚动，tabbar 不被安全区挡住（`env(safe-area-inset-*)`）
-- [x] 能装到手机桌面（PWA）并离线打开
-- [x] README 写明：怎么 dev、怎么 build、怎么部署 PWA、怎么导出导入数据
-
-### 自动化验收结果（本机实测）
-
-- `pnpm typecheck` → 通过（strict + noUnusedLocals/noUnusedParameters，退出码 0）
-- `pnpm build` → 通过（tsc + vite build + PWA 产物，56 modules，precache 16 entries）
-- `pnpm verify:data` → 17 项数据校验全部通过（24 模块 / 194 知识点 / 6 专题 / 134 视频 / 分P 唯一）
-- `node scripts/e2e-check.mjs` → **49 项功能验收全部通过，0 失败**，覆盖：480px 无横滚、模块顺序、打勾热区、深链 `?p=` 参数、pending、30s 返回浮条、刷新持久化、知识体系 chip、专题课、搜索与难度筛选、我的页统计、主题切换、重置二次确认、194 张卡片、PWA manifest/SW、**离线打开**、**运行时零 B站 接口请求**、无 console 报错
-- `node scripts/screenshot.mjs` → 生成 10 张 480×900@2x 视觉验收图（`screenshots/`，含浅色/深色/返回浮条/搜索/专题课）
+- `pnpm typecheck` / `pnpm build` 通过
+- `pnpm verify:data`：版本/知识点/合集/视频/分P唯一/发布时间齐全/合集排序/public 副本一致等 20+ 项通过
+- `pnpm verify:ui`：**62 项** Edge headless 功能验收全部通过（课程/知识体系/我的/搜索/深链 pending/返回浮条/排序/发布时间/学习时间表/热力图/内容更新/跳转诊断/PWA 离线/零 B站接口请求）
+- `pnpm screenshot`：v2 视觉验收图
+- **APK**：`com.yishu.review` v2.0.0（versionCode 2），debug 签名验证通过，内置全部资源（约 4 MB）
 
 ---
 
-## 可选升级：Capacitor 打包 APK
-
-```bash
-pnpm add @capacitor/core @capacitor/cli @capacitor/app @capacitor/app-launcher
-npx cap init 一数复习 com.yishu.review --web-dir=dist
-npx cap add android
-pnpm build && npx cap sync android
-```
-
-`src/lib/bilibili.ts` 中把 `openInBilibili()` 的移动端分支替换为：
-
-```ts
-import { AppLauncher } from '@capacitor/app-launcher'
-
-const { value } = await AppLauncher.canOpenUrl({ url: deep })
-if (value) await AppLauncher.openUrl({ url: deep })
-else window.open(web, '_system')
-```
-
-Android 11+ 必须在 `android/app/src/main/AndroidManifest.xml` 增加包可见性，否则 `canOpenUrl` 永远 `false`（表现为点了没反应）：
-
-```xml
-<queries>
-  <package android:name="tv.danmaku.bili" />
-  <intent>
-    <action android:name="android.intent.action.VIEW" />
-    <data android:scheme="bilibili" />
-  </intent>
-</queries>
-```
-
-`@capacitor/app` 的 `appStateChange` 可以替换 web 的 `visibilitychange`（`ReturnPromptBar` 里判断逻辑不变）。
-
-> 之后的升级路径：想加「边看边打勾」的内嵌播放器，用 B 版提示词在**同一个项目**里继续，只加一个播放页即可，A 版的卡片、进度、知识体系全部复用。
-
----
-
-## 常见问题
+## 八、常见问题
 
 | 现象 | 排查 |
 | --- | --- |
-| 点卡片没反应 | 桌面端会新开标签页打网页版，检查弹窗拦截；手机端确认已安装 B站 App；Android 11+ 检查包可见性（仅 Capacitor） |
+| 点知识点没打开 B站 App，跳了浏览器 | 我的 → **测试 B站 跳转**：看「B站 App 是否检测到」。若显示未检测到，确认装了哔哩哔哩/HD/国际版；v2 已改为直接 `openUrl` 深链，若仍异常请把诊断页截图发来 |
 | 跳到 B站 但集数不对 | 校准 `PAGE_OFFSET`（见上），并用 3 个不同模块验收 |
-| 切回 App 没弹浮条 | 需离开 ≥30 秒且设置里「返回打勾提醒」开启；Safari 后台标签可能不触发 visibilitychange，用 focus 兜底 |
-| 封面不显示 | 首次加载需要网络；B站图床对部分网络不可达时自动退化为渐变封面。离线时仅缓存过的封面可见 |
-| PWA 无法安装 | 必须 HTTPS（或 localhost），且浏览器支持 Service Worker |
-| 数据丢了 | 检查是否清过站点数据 / 无痕模式；可在「我的 → 数据管理」里定期导出 JSON 备份 |
+| 切回 App 没弹浮条 | 需离开 ≥30 秒且设置里「返回打勾提醒」开启 |
+| 检查内容更新失败 | APK 需先在「内容更新源」填 GitHub raw 地址；PWA 需同源部署 `data/courses.json`；确认地址能在浏览器直接打开 |
+| 封面不显示 | 首次需要网络；B站图床不可达时自动退化为渐变封面（会重试） |
+| 数据丢了 | 检查是否清站点数据；「我的 → 导出 JSON」定期备份 |
+| 页面空白/安装失败 | PWA 必须 HTTPS；GitHub Pages 子路径部署要用 `VITE_BASE`（工作流已处理） |
 
 ---
 
-## 依赖说明（刻意保持极简）
+## 九、依赖说明（刻意保持极简）
 
-- 运行时：`react`、`react-dom`
-- 开发/构建：`vite`、`@vitejs/plugin-react`、`typescript`、`vite-plugin-pwa`
+- 运行时：`react`、`react-dom`、`@capacitor/core`、`@capacitor/app`、`@capacitor/app-launcher`
+- 开发/构建：`vite`、`@vitejs/plugin-react`、`typescript`、`vite-plugin-pwa`、`@capacitor/cli`、`@capacitor/android`
 - 无 UI 组件库、无路由库、无状态管理库、无图表库、无请求库。
