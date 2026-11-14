@@ -94,47 +94,134 @@ export function groupRecordsByDay(records: StudyRecord[]): StudyDay[] {
   return [...map.values()].sort((a, b) => (a.date < b.date ? 1 : -1))
 }
 
-export interface HeatCell {
+/* ============ 学习日历（月历 + 按天查看学习内容） ============ */
+
+export interface CalendarCell {
+  /** YYYY-MM-DD */
   date: string
+  day: number
+  month: number
+  year: number
   count: number
   seconds: number
   isToday: boolean
+  /** 是否属于当前展示的月份（前后月补位的格子为 false） */
+  isCurrentMonth: boolean
+  /** 今天之后的日期 */
+  isFuture: boolean
 }
 
-/**
- * 最近 N 周的打卡热力图数据：一维数组，每 7 个为一列（周一起始），最后一天是今天。
- * 前面不足的格子用该周之前的日期填充（热力图上显示为空格）。
- */
-export function buildHeatmap(done: Record<string, DoneEntry>, weeks = 12): HeatCell[] {
-  const counts = new Map<string, { count: number; seconds: number }>()
+export interface MonthCalendar {
+  year: number
+  /** 1-12 */
+  month: number
+  /** 2026年11月 */
+  label: string
+  /** 42 个格子：6 行 × 7 列，周一为一周起点 */
+  cells: CalendarCell[]
+  /** 本月有学习记录的天数 */
+  studyDays: number
+  /** 本月完成的知识点/视频数 */
+  studyCount: number
+  /** 本月学习时长（秒） */
+  studySeconds: number
+}
+
+/** 某天的学习量统计（从 done 记录聚合） */
+export interface DayStat {
+  count: number
+  seconds: number
+}
+
+export function dayStats(done: Record<string, DoneEntry>): Map<string, DayStat> {
+  const stats = new Map<string, DayStat>()
   for (const [key, entry] of Object.entries(done)) {
     if (!entry?.at) continue
     const date = localDateKey(entry.at)
     const duration = SYSTEM_ITEM_BY_KEY.get(key)?.duration ?? TOPIC_VIDEO_BY_KEY.get(key)?.duration ?? 0
-    const current = counts.get(date) ?? { count: 0, seconds: 0 }
+    const current = stats.get(date) ?? { count: 0, seconds: 0 }
     current.count += 1
     current.seconds += duration
-    counts.set(date, current)
+    stats.set(date, current)
   }
-
-  const today = new Date()
-  today.setHours(0, 0, 0, 0)
-  const todayKey = localDateKey(today.getTime())
-  // 找到本周周一，再从 weeks 周前开始
-  const weekday = (today.getDay() + 6) % 7 // 周一=0
-  const start = new Date(today.getTime() - (weekday + (weeks - 1) * 7) * 86_400_000)
-
-  const cells: HeatCell[] = []
-  for (let i = 0; i < weeks * 7; i += 1) {
-    const day = new Date(start.getTime() + i * 86_400_000)
-    const date = localDateKey(day.getTime())
-    const stat = counts.get(date) ?? { count: 0, seconds: 0 }
-    cells.push({ date, count: stat.count, seconds: stat.seconds, isToday: date === todayKey })
-  }
-  return cells
+  return stats
 }
 
-/** 最近 N 天每天的学习量（用于「本周/本月」统计） */
+/**
+ * 生成某个月的日历网格（周一起始，6 周 = 42 格，前后月补位，用于点日期查看当天学习内容）。
+ */
+export function buildMonthCalendar(
+  done: Record<string, DoneEntry>,
+  year: number,
+  month: number,
+  now = Date.now(),
+): MonthCalendar {
+  const stats = dayStats(done)
+  const todayKey = localDateKey(now)
+  const firstOfMonth = new Date(year, month - 1, 1)
+  firstOfMonth.setHours(0, 0, 0, 0)
+  const mondayOffset = (firstOfMonth.getDay() + 6) % 7 // 周一=0
+  const start = new Date(firstOfMonth.getTime() - mondayOffset * 86_400_000)
+
+  const cells: CalendarCell[] = []
+  let studyDays = 0
+  let studyCount = 0
+  let studySeconds = 0
+
+  for (let i = 0; i < 42; i += 1) {
+    const day = new Date(start.getTime() + i * 86_400_000)
+    const date = localDateKey(day.getTime())
+    const stat = stats.get(date) ?? { count: 0, seconds: 0 }
+    const isCurrentMonth = day.getMonth() === month - 1
+    const cell: CalendarCell = {
+      date,
+      day: day.getDate(),
+      month: day.getMonth() + 1,
+      year: day.getFullYear(),
+      count: stat.count,
+      seconds: stat.seconds,
+      isToday: date === todayKey,
+      isCurrentMonth,
+      isFuture: date > todayKey,
+    }
+    if (isCurrentMonth) {
+      if (stat.count > 0) studyDays += 1
+      studyCount += stat.count
+      studySeconds += stat.seconds
+    }
+    cells.push(cell)
+  }
+
+  return {
+    year,
+    month,
+    label: `${year}年${month}月`,
+    cells,
+    studyDays,
+    studyCount,
+    studySeconds,
+  }
+}
+
+/** 月份加减（返回规范化后的 { year, month }） */
+export function shiftMonth(year: number, month: number, delta: number): { year: number; month: number } {
+  const date = new Date(year, month - 1 + delta, 1)
+  return { year: date.getFullYear(), month: date.getMonth() + 1 }
+}
+
+/** YYYY-MM-DD → 「11月14日 · 周六」 */
+export function formatDayTitle(date: string): string {
+  const [y, m, d] = date.split('-').map((part) => Number(part))
+  const value = new Date(y, m - 1, d)
+  return `${value.getMonth() + 1}月${value.getDate()}日 · ${WEEKDAY_LABELS[value.getDay()]}`
+}
+
+/** 从学习记录里筛出某一天的全部记录（保持传入顺序：时间倒序） */
+export function recordsForDate(records: StudyRecord[], date: string): StudyRecord[] {
+  return records.filter((record) => localDateKey(record.at) === date)
+}
+
+/** 最近 N 天每天的学习量（用于「本周/今天」统计） */
 export function studySummary(done: Record<string, DoneEntry>, now = Date.now()) {
   const records = buildStudyRecords(done)
   const startOfToday = new Date(now)

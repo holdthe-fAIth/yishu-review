@@ -338,9 +338,21 @@ async function main() {
         mine.text.includes('已学内容自动排到最后') &&
         mine.text.includes('自动检查'),
     )
-    check('我的页有学习时间表区块', mine.text.includes('学习时间表'))
-    check('我的页有打卡热力图', /热力图|打卡图/.test(mine.text))
+    check('我的页有学习日历区块', mine.text.includes('学习日历'))
+    const calendarPanel = await cdp.evaluate(`(() => ({
+      cells: document.querySelectorAll('.m-cal__cell').length,
+      selected: document.querySelectorAll('.m-cal__cell.is-selected').length,
+      today: document.querySelectorAll('.m-cal__cell.is-today').length,
+      records: document.querySelectorAll('.m-dayview .m-rec').length,
+    }))()`)
+    check('学习日历渲染完整月份（42 个日期格）', calendarPanel.cells === 42, `实际 ${calendarPanel.cells}`)
+    check(
+      '默认选中今天并展示当天学习内容',
+      calendarPanel.selected === 1 && calendarPanel.today === 1 && calendarPanel.records > 0,
+      `selected=${calendarPanel.selected} records=${calendarPanel.records}`,
+    )
     check('内容更新相关入口齐全', mine.text.includes('检查内容更新') && mine.text.includes('内容更新源'))
+    check('数据版本信息可见', /v2|数据版本/.test(mine.text))
     check('我的页无横向滚动', mine.noHScroll)
 
     // 主题切换
@@ -444,17 +456,42 @@ async function main() {
       `末项=${moduleCards.titles[moduleCards.titles.length - 1] ?? ''} 共${moduleCards.count}项`,
     )
 
-    // 12.3 学习时间表 + 打卡热力图
+    // 12.3 学习日历 + 点日期查看当天内容
     await cdp.evaluate(`document.querySelectorAll('.tabbar__item')[2]?.click(); true`)
     await sleep(700)
-    const mineV2 = await cdp.evaluate(`(() => ({
+    const calendarV2 = await cdp.evaluate(`(() => ({
       text: document.querySelector('.page')?.innerText ?? '',
-      hasDateLabel: /\\d+月\\d+日/.test(document.querySelector('.page')?.innerText ?? ''),
+      cells: document.querySelectorAll('.m-cal__cell').length,
+      selected: document.querySelectorAll('.m-cal__cell.is-selected').length,
+      selectedRecords: document.querySelectorAll('.m-dayview .m-rec').length,
+      monthLabel: document.querySelector('.m-cal__title b')?.textContent ?? '',
     }))()`)
-    check('学习时间表有记录（按日期分组）', mineV2.text.includes('学习时间表') && mineV2.hasDateLabel)
-    check('学习时间表包含已学知识点', mineV2.text.includes('集合的概念') || mineV2.text.includes('子集的概念'))
-    check('打卡热力图已渲染', /热力|最近 12 周/.test(mineV2.text))
-    check('我的页显示数据版本 v2', /v2|数据版本/.test(mineV2.text))
+    check(
+      '学习日历按月份渲染（42 格 + 月份标题）',
+      calendarV2.cells === 42 && /^\d{4}年\d{1,2}月$/.test(calendarV2.monthLabel),
+      `${calendarV2.cells} 格 / ${calendarV2.monthLabel}`,
+    )
+    check('选中日期显示当天学习内容', calendarV2.selected === 1 && calendarV2.selectedRecords >= 1, `${calendarV2.selectedRecords} 条`)
+    check('日历详情包含已学知识点', calendarV2.text.includes('集合的概念') || calendarV2.text.includes('子集的概念'))
+
+    // 点一个没有记录的日期 → 显示空态；再点回今天
+    const pickedEmpty = await cdp.evaluate(`(() => {
+      const cells = [...document.querySelectorAll('.m-cal__cell')]
+      const target = cells.find((cell) =>
+        !cell.classList.contains('is-selected') &&
+        !cell.classList.contains('is-outside') &&
+        !(cell.getAttribute('aria-label') || '').includes('完成'),
+      )
+      target?.click()
+      return target?.getAttribute('aria-label') ?? ''
+    })()`)
+    await sleep(450)
+    const emptyDetail = await cdp.evaluate(`document.querySelector('.m-dayview .empty__title')?.textContent ?? ''`)
+    check('点没有记录的日期显示当天空态', pickedEmpty !== '' && emptyDetail.includes('没有学习记录'), pickedEmpty)
+    await cdp.evaluate(`document.querySelector('.m-cal__cell.is-today')?.click(); true`)
+    await sleep(450)
+    const backToToday = await cdp.evaluate(`document.querySelectorAll('.m-dayview .m-rec').length`)
+    check('点回今天恢复当天记录', backToToday >= 1, `${backToToday} 条`)
 
     // 12.4 检查内容更新（PWA 同源 data/courses.json，应为已是最新）
     await cdp.evaluate(

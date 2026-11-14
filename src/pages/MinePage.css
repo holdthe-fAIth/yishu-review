@@ -73,80 +73,188 @@
   text-overflow: ellipsis;
 }
 
-/* ---------- 打卡热力图（12 周 × 7 天，纯 CSS grid） ---------- */
+/* ---------- 学习日历（月历：日期标点，点日期看当天学习内容） ---------- */
 
-.m-heat {
-  padding: 13px 14px 14px;
+.m-cal {
+  padding: 13px 14px 12px;
 }
 
-.m-heat__head {
-  margin-bottom: 11px;
+.m-cal__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.m-cal__nav {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  color: var(--text-2);
+  transition: background-color 0.15s ease, transform 0.12s ease;
+}
+
+.m-cal__nav:active {
+  background: var(--line);
+  transform: scale(0.94);
+}
+
+.m-cal__title {
+  flex: 1;
+  min-width: 0;
+  text-align: center;
+}
+
+.m-cal__title b {
+  display: block;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.m-cal__title small {
+  display: block;
+  margin-top: 2px;
   color: var(--text-2);
   font-size: 11px;
   font-variant-numeric: tabular-nums;
 }
 
-.m-heat__grid {
+.m-cal__week {
   display: grid;
-  grid-template-columns: repeat(12, minmax(0, 1fr));
-  grid-template-rows: repeat(7, auto);
-  grid-auto-flow: column;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  margin-bottom: 4px;
+  color: var(--text-3);
+  font-size: 10px;
+  text-align: center;
+}
+
+.m-cal__week span {
+  padding: 2px 0;
+}
+
+.m-cal__grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
   gap: 4px;
 }
 
-.m-heat__cell {
+.m-cal__cell {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
   aspect-ratio: 1 / 1;
-  border-radius: 3px;
-  background: var(--line);
+  border-radius: 8px;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  transition: background-color 0.15s ease, color 0.15s ease, transform 0.12s ease;
 }
 
-.m-heat__cell.is-1 {
-  background: rgba(251, 114, 153, 0.28);
+.m-cal__cell:active {
+  transform: scale(0.94);
 }
 
-.m-heat__cell.is-2 {
-  background: rgba(251, 114, 153, 0.55);
+.m-cal__cell.is-outside {
+  background: transparent;
+  color: var(--text-3);
 }
 
-.m-heat__cell.is-3 {
+.m-cal__cell.is-future {
+  opacity: 0.45;
+}
+
+.m-cal__cell.is-1 {
+  background: rgba(251, 114, 153, 0.16);
+}
+
+.m-cal__cell.is-2 {
+  background: rgba(251, 114, 153, 0.38);
+  color: var(--pink-strong);
+  font-weight: 600;
+}
+
+.m-cal__cell.is-3 {
   background: var(--pink);
+  color: #fff;
+  font-weight: 600;
 }
 
-.m-heat__cell.is-today {
-  outline: 1.5px solid var(--pink);
-  outline-offset: 2px;
+.m-cal__cell.is-today {
+  box-shadow: inset 0 0 0 1px var(--pink);
 }
 
-.m-heat__cell.is-future {
-  opacity: 0.4;
+.m-cal__cell.is-selected {
+  box-shadow: 0 0 0 2px var(--pink);
+  color: var(--pink-strong);
+  font-weight: 700;
 }
 
-:root[data-theme='dark'] .m-heat__cell.is-1 {
-  background: rgba(251, 114, 153, 0.34);
+.m-cal__cell.is-selected.is-3 {
+  color: #fff;
 }
 
-:root[data-theme='dark'] .m-heat__cell.is-2 {
-  background: rgba(251, 114, 153, 0.62);
+.m-cal__day {
+  line-height: 1;
 }
 
-.m-heat__legend {
+.m-cal__dot {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: 0.9;
+}
+
+.m-cal__cell.is-3 .m-cal__dot {
+  background: #fff;
+}
+
+.m-cal__foot {
   display: flex;
   align-items: center;
-  justify-content: flex-end;
-  gap: 4px;
-  margin-top: 11px;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 10px;
   color: var(--text-3);
   font-size: 10px;
 }
 
-.m-heat__swatch {
-  width: 10px;
-  height: 10px;
-  aspect-ratio: auto;
-  border-radius: 3px;
+.m-cal__today {
+  flex: none;
+  padding: 4px 9px;
+  border-radius: 10px;
+  background: var(--bg);
+  color: var(--text-2);
+  font-size: 11px;
 }
 
-/* ---------- 学习时间表 ---------- */
+:root[data-theme='dark'] .m-cal__cell.is-1 {
+  background: rgba(251, 114, 153, 0.2);
+}
+
+:root[data-theme='dark'] .m-cal__cell.is-2 {
+  background: rgba(251, 114, 153, 0.44);
+}
+
+/* ---------- 选中日期的学习详情 ---------- */
+
+.m-dayview {
+  padding: 2px 14px 7px;
+}
+
+.m-dayview .m-day__list {
+  padding-bottom: 6px;
+}
 
 .m-study {
   padding: 2px 14px 10px;
@@ -261,15 +369,11 @@
   font-variant-numeric: tabular-nums;
 }
 
-.m-study__more {
-  display: block;
-  width: 100%;
-  padding: 12px 0 4px;
-  border-top: 0.5px solid var(--line);
+.m-study__toggle {
+  padding: 2px 4px;
   color: var(--pink);
-  font-size: 13px;
+  font-size: 11px;
   font-weight: 600;
-  text-align: center;
 }
 
 /* ---------- 模块完成率条形图 ---------- */
@@ -648,12 +752,17 @@
     display: none;
   }
 
-  .m-heat {
-    padding: 12px 12px 13px;
+  .m-cal {
+    padding: 12px 12px 11px;
   }
 
-  .m-heat__grid {
+  .m-cal__grid {
     gap: 3px;
+  }
+
+  .m-cal__cell {
+    border-radius: 7px;
+    font-size: 11px;
   }
 
   .m-rec {

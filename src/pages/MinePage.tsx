@@ -30,11 +30,16 @@ import {
 import { diagnoseBilibiliJump, type DeepLinkDiagnostics } from '../lib/bilibili'
 import { formatCount, formatHoursLabel, formatStamp, percent } from '../lib/format'
 import {
-  buildHeatmap,
+  buildMonthCalendar,
   buildStudyRecords,
+  formatDayTitle,
   formatRecordTime,
   groupRecordsByDay,
-  studySummary,
+  localDateKey,
+  recordsForDate,
+  shiftMonth,
+  type CalendarCell,
+  type StudyRecord,
 } from '../lib/history'
 import { moduleStats, streakDays, watchedCount, watchedSeconds } from '../lib/progress'
 import {
@@ -55,10 +60,8 @@ const THEME_ITEMS: SegmentedItem<ThemeMode>[] = [
 ]
 
 const EXPORT_APP = 'yishu-review'
-/** 学习时间表默认展示的记录条数（跨天截断） */
-const STUDY_PAGE_SIZE = 30
-/** 热力图周数：12 周 × 7 天 */
-const HEATMAP_WEEKS = 12
+/** 一周的中文表头（周一为一周起点，与日历网格一致） */
+const WEEKDAY_HEAD = ['一', '二', '三', '四', '五', '六', '日']
 
 /** 「测试 B站 跳转」用的诊断目标（系统课第 5 个分P） */
 const TEST_JUMP_TARGET: PlayTarget = {
@@ -80,12 +83,31 @@ function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value)
 }
 
-/** 当天完成数 → 热力图 4 档（0 / 1 / 2 / 3+） */
-function heatTier(count: number): 0 | 1 | 2 | 3 {
+/** 当天完成数 → 日历 4 档（0 / 1 / 2 / 3+） */
+function dayTier(count: number): 0 | 1 | 2 | 3 {
   if (!Number.isFinite(count) || count <= 0) return 0
   if (count === 1) return 1
   if (count === 2) return 2
   return 3
+}
+
+/** 一天的学习记录行（学习日历详情 / 全部记录共用） */
+function StudyRecordRow({ record }: { record: StudyRecord }) {
+  return (
+    <li className="m-rec">
+      <span className="m-rec__time">{formatRecordTime(record.at)}</span>
+      <span className="m-rec__main">
+        <span className="m-rec__name">
+          <i className={`m-rec__tag ${record.kind === 'system' ? 'is-system' : 'is-topic'}`}>
+            {record.kind === 'system' ? '系统课' : '专题'}
+          </i>
+          <b>{record.name}</b>
+        </span>
+        <span className="m-rec__group">{record.groupName}</span>
+      </span>
+      <span className="m-rec__dur">{record.durationText}</span>
+    </li>
+  )
 }
 
 /** 当天完成时长（秒）→ 「75 分钟」 */
@@ -120,8 +142,11 @@ export function MinePage() {
   const [pendingImport, setPendingImport] = useState<AppState | null>(null)
   const [resetOpen, setResetOpen] = useState(false)
 
-  // 学习时间表：默认最近 30 条，可展开全部
-  const [expanded, setExpanded] = useState(false)
+  /** 学习日历：当前展示的年月 + 选中的日期（YYYY-MM-DD） */
+  const [calYear, setCalYear] = useState(() => new Date().getFullYear())
+  const [calMonth, setCalMonth] = useState(() => new Date().getMonth() + 1)
+  const [selectedDate, setSelectedDate] = useState(() => localDateKey(Date.now()))
+  const [showAllRecords, setShowAllRecords] = useState(false)
 
   // 数据管理 · 检查内容更新
   const [checking, setChecking] = useState(false)
@@ -141,18 +166,25 @@ export function MinePage() {
 
   const stats = useMemo(() => moduleStats(state.done), [state.done])
   const records = useMemo(() => buildStudyRecords(state.done), [state.done])
-  const heatCells = useMemo(() => buildHeatmap(state.done, HEATMAP_WEEKS), [state.done])
-  const summary = useMemo(() => studySummary(state.done), [state.done])
-
-  const visibleRecords = expanded ? records : records.slice(0, STUDY_PAGE_SIZE)
-  const studyDays = groupRecordsByDay(visibleRecords)
+  const calendar = useMemo(
+    () => buildMonthCalendar(state.done, calYear, calMonth),
+    [state.done, calYear, calMonth],
+  )
+  const selectedRecords = useMemo(
+    () => recordsForDate(records, selectedDate),
+    [records, selectedDate],
+  )
+  const selectedSeconds = useMemo(
+    () => selectedRecords.reduce((sum, record) => sum + record.duration, 0),
+    [selectedRecords],
+  )
+  const allDays = useMemo(() => groupRecordsByDay(records), [records])
 
   const doneCount = Object.keys(state.done).length
   const videoCount = watchedCount(state.done)
   const secondsWatched = watchedSeconds(state.done)
   const duration = splitDurationLabel(secondsWatched)
   const streak = streakDays(state.done)
-  const todayKey = heatCells.find((cell) => cell.isToday)?.date ?? ''
   const remoteUpdate = updateInfo?.remote ?? null
   const sourcePreview = resolveUpdateUrl({ ...settings, updateUrl: urlDraft })
   const sourceLabel = settings.updateUrl.trim() || '同源 data/courses.json'
@@ -257,6 +289,27 @@ export function MinePage() {
     reloadSoon()
   }
 
+  function goMonth(delta: number) {
+    const next = shiftMonth(calYear, calMonth, delta)
+    setCalYear(next.year)
+    setCalMonth(next.month)
+  }
+
+  function goToday() {
+    const now = new Date()
+    setCalYear(now.getFullYear())
+    setCalMonth(now.getMonth() + 1)
+    setSelectedDate(localDateKey(now.getTime()))
+  }
+
+  function selectCell(cell: CalendarCell) {
+    if (!cell.isCurrentMonth) {
+      setCalYear(cell.year)
+      setCalMonth(cell.month)
+    }
+    setSelectedDate(cell.date)
+  }
+
   async function handleDiagnose() {
     setDiag(null)
     setDiagLoading(true)
@@ -314,92 +367,114 @@ export function MinePage() {
       </section>
 
       <div className="section-title">
-        <span>打卡热力图</span>
+        <span>学习日历</span>
+        <span className="section-title__extra">点日期看当天学习内容</span>
       </div>
-      <section className="card m-heat">
-        <p className="m-heat__head">
-          最近 {HEATMAP_WEEKS} 周 · 本周 {summary.week} 个 · 今天 {summary.today} 个
-        </p>
-        <div
-          className="m-heat__grid"
-          role="img"
-          aria-label={`最近 ${HEATMAP_WEEKS} 周打卡热力图，本周 ${summary.week} 个，今天 ${summary.today} 个`}
-        >
-          {heatCells.map((cell) => (
-            <span
-              key={cell.date}
-              className={`m-heat__cell is-${heatTier(cell.count)} ${
-                cell.isToday ? 'is-today' : ''
-              } ${todayKey && cell.date > todayKey ? 'is-future' : ''}`.trim()}
-              title={`${cell.date} · ${cell.count} 个`}
-            />
+      <section className="card m-cal">
+        <div className="m-cal__head">
+          <button type="button" className="m-cal__nav" onClick={() => goMonth(-1)} aria-label="上个月">
+            <ArrowLeftIcon size={18} />
+          </button>
+          <div className="m-cal__title">
+            <b>{calendar.label}</b>
+            <small>
+              打卡 {calendar.studyDays} 天 · {calendar.studyCount} 个 ·{' '}
+              {formatDayMinutes(calendar.studySeconds)}
+            </small>
+          </div>
+          <button type="button" className="m-cal__nav" onClick={() => goMonth(1)} aria-label="下个月">
+            <ChevronRightIcon size={18} />
+          </button>
+        </div>
+        <div className="m-cal__week" aria-hidden="true">
+          {WEEKDAY_HEAD.map((label) => (
+            <span key={label}>{label}</span>
           ))}
         </div>
-        <div className="m-heat__legend" aria-hidden="true">
-          <span>少</span>
-          <span className="m-heat__swatch m-heat__cell is-0" />
-          <span className="m-heat__swatch m-heat__cell is-1" />
-          <span className="m-heat__swatch m-heat__cell is-2" />
-          <span className="m-heat__swatch m-heat__cell is-3" />
-          <span>多</span>
+        <div className="m-cal__grid" role="grid" aria-label={`${calendar.label}学习日历`}>
+          {calendar.cells.map((cell) => (
+            <button
+              key={cell.date}
+              type="button"
+              role="gridcell"
+              aria-selected={selectedDate === cell.date}
+              aria-label={`${cell.date}${cell.count > 0 ? `，完成 ${cell.count} 个` : ''}`}
+              className={`m-cal__cell is-${dayTier(cell.count)} ${
+                cell.isCurrentMonth ? '' : 'is-outside'
+              } ${cell.isToday ? 'is-today' : ''} ${
+                selectedDate === cell.date ? 'is-selected' : ''
+              } ${cell.isFuture ? 'is-future' : ''}`.trim()}
+              onClick={() => selectCell(cell)}
+            >
+              <span className="m-cal__day">{cell.day}</span>
+              {cell.count > 0 ? <span className="m-cal__dot" aria-hidden="true" /> : null}
+            </button>
+          ))}
+        </div>
+        <div className="m-cal__foot">
+          <span>有学习的日期会点亮，颜色越深完成越多</span>
+          <button type="button" className="m-cal__today" onClick={goToday}>
+            回到今天
+          </button>
         </div>
       </section>
 
       <div className="section-title">
-        <span>学习时间表</span>
+        <span>{formatDayTitle(selectedDate)}</span>
         <span className="section-title__extra">
-          {records.length > 0 ? `共 ${records.length} 条` : '按完成时间倒序'}
+          {selectedRecords.length > 0
+            ? `${selectedRecords.length} 个 · ${formatDayMinutes(selectedSeconds)}`
+            : '暂无记录'}
         </span>
       </div>
-      <section className="card m-study">
-        {records.length === 0 ? (
+      <section className="card m-dayview">
+        {selectedRecords.length === 0 ? (
           <div className="empty">
-            <p className="empty__title">还没有学习记录</p>
-            <p>去课程页给看完的视频打勾试试。</p>
+            <p className="empty__title">这天没有学习记录</p>
+            <p>换一天看看，或去课程页给看完的视频打勾。</p>
           </div>
         ) : (
-          studyDays.map((day) => (
-            <div className="m-day" key={day.date}>
-              <div className="m-day__head">
-                <span className="m-day__date">{day.label}</span>
-                <span className="m-day__meta">
-                  {day.count} 个 · {formatDayMinutes(day.seconds)}
-                </span>
-              </div>
-              <ul className="m-day__list">
-                {day.records.map((record) => (
-                  <li className="m-rec" key={record.key}>
-                    <span className="m-rec__time">{formatRecordTime(record.at)}</span>
-                    <span className="m-rec__main">
-                      <span className="m-rec__name">
-                        <i
-                          className={`m-rec__tag ${
-                            record.kind === 'system' ? 'is-system' : 'is-topic'
-                          }`}
-                        >
-                          {record.kind === 'system' ? '系统课' : '专题'}
-                        </i>
-                        <b>{record.name}</b>
-                      </span>
-                      <span className="m-rec__group">{record.groupName}</span>
-                    </span>
-                    <span className="m-rec__dur">{record.durationText}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))
+          <ul className="m-day__list">
+            {selectedRecords.map((record) => (
+              <StudyRecordRow key={record.key} record={record} />
+            ))}
+          </ul>
         )}
-        {records.length > STUDY_PAGE_SIZE ? (
-          <button
-            type="button"
-            className="m-study__more"
-            onClick={() => setExpanded((value) => !value)}
-          >
-            {expanded ? '收起' : `展开全部 (${records.length})`}
-          </button>
-        ) : null}
       </section>
+
+      {records.length > 0 ? (
+        <>
+          <div className="section-title">
+            <span>全部记录</span>
+            <button
+              type="button"
+              className="m-study__toggle"
+              onClick={() => setShowAllRecords((value) => !value)}
+            >
+              {showAllRecords ? '收起' : `展开全部 (${records.length})`}
+            </button>
+          </div>
+          {showAllRecords ? (
+            <section className="card m-study">
+              {allDays.map((day) => (
+                <div className="m-day" key={day.date}>
+                  <div className="m-day__head">
+                    <span className="m-day__date">{day.label}</span>
+                    <span className="m-day__meta">
+                      {day.count} 个 · {formatDayMinutes(day.seconds)}
+                    </span>
+                  </div>
+                  <ul className="m-day__list">
+                    {day.records.map((record) => (
+                      <StudyRecordRow key={record.key} record={record} />
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </section>
+          ) : null}
+        </>
+      ) : null}
 
       <div className="section-title">
         <span>模块完成率</span>

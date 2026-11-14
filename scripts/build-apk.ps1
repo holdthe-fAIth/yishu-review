@@ -42,7 +42,7 @@ try {
 
     $apk = Join-Path $root 'android\app\build\outputs\apk\debug\app-debug.apk'
     if (-not (Test-Path $apk)) { throw "APK not found: $apk" }
-    $out = Join-Path $root 'yishu-review-2.0.0-debug.apk'
+    $out = Join-Path $root 'yishu-review-2.1.0-debug.apk'
     Copy-Item $apk $out -Force
     Write-Host ''
     Write-Host "APK generated: $out"
