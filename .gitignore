@@ -16,3 +16,9 @@ screenshots/
 .tools/
 *.apk
 public/data/
+video/audio/
+video/stills/
+video/check/
+video/*.mp4
+video/qr.png
+video/cover.png
