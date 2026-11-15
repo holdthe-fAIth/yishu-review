@@ -22,3 +22,5 @@ video/check/
 video/*.mp4
 video/qr.png
 video/cover.png
+video/素材包/
+video/*.zip
