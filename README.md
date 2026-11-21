@@ -24,7 +24,7 @@ pnpm preview        # 预览 dist → http://localhost:4173
 pnpm fetch:data     # 重新抓取一数主页数据（B站接口，仅开发时运行）
 pnpm verify:data    # 数据完整性校验（194 知识点 / 7 合集 / 320 视频 / 发布时间齐全）
 pnpm check          # 一键：复制数据 + tsc + 数据校验 + build（提交前跑这个）
-pnpm verify:ui      # 49+ 项 Edge headless 功能验收（需先 build + preview）
+pnpm verify:ui      # 77 项 Edge headless 功能验收（需先 build + preview）
 pnpm screenshot     # 480×900@2x 视觉验收截图 → screenshots/
 pnpm build:apk      # 打包 Android APK（需要 .tools 里的 JDK/SDK，见「APK」章节）
 ```
@@ -73,11 +73,11 @@ ssh -tt -o StrictHostKeyChecking=no -R 80:localhost:4173 serveo.net
 
 ### 2）APK（完全离线，不依赖电脑）
 
-已产出：**`yishu-review-2.1.1-debug.apk`**（项目根目录，约 4 MB）
+已产出：**`yishu-review-2.1.2-debug.apk`**（项目根目录，约 4 MB）
 
 | 项 | 值 |
 | --- | --- |
-| 包名 / 版本 | `com.yishu.review` / versionCode 4, versionName **2.1.1** |
+| 包名 / 版本 | `com.yishu.review` / versionCode 5, versionName **2.1.2** |
 | 兼容 | Android 5.1+（minSdk 22，targetSdk 34） |
 | 签名 | Android Debug（v1+v2，可安装，不可上架应用商店） |
 | 能力 | Web 资源全部内置、断网可用；**点知识点直接唤起 B站 App**（`@capacitor/app-launcher`）；从 B站 切回来弹打勾浮条；支持学习时间表等全部 v2 功能 |
@@ -159,7 +159,7 @@ git push -u origin main
 - Segmented：系统课 / 专题课。
 - 系统课：24 个模块折叠分组；模块行 = 模块名 + `3/6` + 4px 粉色进度条；展开 2 列卡片。
   - 卡片：模块渐变自绘封面 + 时长 + **发布时间角标（左下角，老视频黄色）** + 标题 2 行 + 难度标签。
-  - **已学内容自动排到最后**：完全学完的模块移到列表末尾；模块内已打勾的知识点移到本模块末尾（设置可关）。
+  - **已学内容自动排到最后**：完全学完的模块移到列表末尾并自动收起；模块内已打勾的知识点移到本模块末尾（设置可关）。
 - 专题课：**7 个合集**横滑 tab（按最新发布时间排序），320 条真实封面卡片；合集内已看视频自动排后，全部刷完的合集 tab 排到最后。
   - 教辅类「一本书 / 100 讲」是单个多P视频，封面角标显示「**N 讲**」而不是几百小时的总时长。
   - **点卡片主体** → 记录 pending + 深链跳 B站 App；**点右上角圆圈** → 就地打勾不跳转；**长按/右键** → 菜单（标记完成、复制 BV、浏览器打开）。
@@ -292,6 +292,7 @@ yishu-review/
 | **v2.0.0** | 内容更新检查（手动 + 每日自动）、学习时间表 + 打卡热力图、卡片发布时间、已学内容自动排后（可关）、移除最弱模块、修复 APK 跳转 B站 App、重新抓取一数主页（7 合集/320 视频/发布时间/教辅多P 显示「N 讲」）、GitHub Pages 部署 + 每周数据刷新工作流 |
 | **v2.1.0** | 把「打卡热力图 + 学习时间表」合并为**学习日历**：月历标出有学习的日期，点日期查看当天学习内容，可切换月份 / 回到今天，全部记录可展开 |
 | **v2.1.1** | 上线 GitHub（仓库 + Pages）：线上 PWA 可安装；APK 默认内容更新源改为 Pages 数据地址（国内可访问）；修复 GitHub Actions 构建（PWA SW 改为手动注册） |
+| **v2.1.2** | 课程页系统课模块学完后自动排到列表末尾并收起；手动展开不误关；全部完成时默认全部收起 |
 
 ### 验收结果（本机实测）
 
@@ -299,7 +300,7 @@ yishu-review/
 - `pnpm verify:data`：版本/知识点/合集/视频/分P唯一/发布时间齐全/合集排序/public 副本一致等 20+ 项通过
 - `pnpm verify:ui`：Edge headless 功能验收全部通过（课程/知识体系/我的/搜索/深链 pending/返回浮条/排序/发布时间/学习日历/日期详情/内容更新/跳转诊断/PWA 离线/零 B站接口请求）
 - `pnpm screenshot`：视觉验收图
-- **APK**：`com.yishu.review` v2.1.1（versionCode 4），debug 签名验证通过，内置全部资源（约 4 MB）
+- **APK**：`com.yishu.review` v2.1.2（versionCode 5），debug 签名验证通过，内置全部资源（约 4 MB）
 - **线上 PWA**：<https://yiweiima.github.io/yishu-review/>（manifest / Service Worker / 离线可用）
 
 ---

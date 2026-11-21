@@ -7,7 +7,7 @@
 
 ## 1. 项目是什么
 
-- **名称**：一数复习（v2.1.1）
+- **名称**：一数复习（v2.1.2）
 - **定位**：把 B站 UP 主「一数」（mid `14229967`）的高中数学视频，整理成「知识体系 + 打勾进度本」的 App；**不是播放器**，App 内不放视频。
 - **核心循环**：点知识点 → 深链唤起 B站 App 对应分P → 看完切回 → 浮条「看完了？」→ 一键打勾 → 卡片/模块/总进度/学习日历联动。
 - **线上**：<https://yiweiima.github.io/yishu-review/>（GitHub Pages，自动部署）
@@ -64,7 +64,7 @@ pnpm check               # copy-data + tsc + verify:data + vite build（提交�
 pnpm preview             # 预览 dist
 # UI 功能验收（需要先起 preview，且本机有 Edge）：
 pnpm preview --port 4173
-pnpm verify:ui           # Edge headless 65 项功能验收（CDP 脚本 scripts/e2e-check.mjs）
+pnpm verify:ui           # Edge headless 77 项功能验收（CDP 脚本 scripts/e2e-check.mjs）
 pnpm screenshot          # 480×900@2x 视觉验收图 → screenshots/
 pnpm fetch:data          # 从 B站 重新抓课程数据（仅开发/CI 时用）
 pnpm build:apk           # 打 Android APK（需要 .tools 便携 JDK/SDK，见 README）
@@ -81,7 +81,7 @@ pnpm build:apk           # 打 Android APK（需要 .tools 便携 JDK/SDK，见 
 3. **本地状态**：`yishu-review:state:v1`（唯一 key）；`done` 的 key：系统课 `s:{p}`、专题 `t:{seasonId}:{bvid}`；`at` 是完成时间（学习日历用）。所有进度/进度条/连续打卡都是派生态，不落库。
 4. **内容更新**：`src/lib/updates.ts`。PWA 默认拉同源 `data/courses.json`；APK 默认拉 `src/config.ts` 里的 Pages 数据地址（`raw.githubusercontent.com` 国内不可用）。远程数据校验通过后写入 `localStorage` 的 `yishu-review:courses:v2` 并刷新；「恢复内置数据」清除覆盖。
 5. **学习日历**：`src/lib/history.ts`（月历网格、按天记录、热力统计）。
-6. **已学排后**：`src/lib/sort.ts`，由设置 `sortCompletedLast` 控制。
+6. **已学排后**：`src/lib/sort.ts`，由设置 `sortCompletedLast` 控制；学完的模块排到列表末尾后由 `CoursePage` 自动收起（只处理「未完成 → 完成」的瞬间，手动展开不误关）。
 7. **发布**：`git push origin main` → GitHub Actions 自动部署 Pages（工作流里 `VITE_BASE=/仓库名/`）；APK 用 `pnpm build:apk`。
 
 ## 6. 代码约定

@@ -47,6 +47,34 @@ const EMPTY_STATE = {
   settings: { confirmBeforeJump: false, returnPrompt: true, theme: 'light' },
 }
 
+/** 系统课 194 个知识点全部完成，用于验证「全部完成时默认全部收起」 */
+const ALL_DONE_STATE = {
+  v: 1,
+  done: Object.fromEntries(
+    DATA.systemCourse.modules.flatMap((module) =>
+      module.items.map((item) => [`s:${item.p}`, { at: Date.now() }]),
+    ),
+  ),
+  settings: {
+    confirmBeforeJump: false,
+    returnPrompt: true,
+    theme: 'light',
+    sortCompletedLast: true,
+  },
+}
+
+/** 关闭「已学排后」：完成模块后应保持原位且不自动收起 */
+const SORT_OFF_STATE = {
+  v: 1,
+  done: { 's:2': { at: Date.now() } },
+  settings: {
+    confirmBeforeJump: false,
+    returnPrompt: true,
+    theme: 'light',
+    sortCompletedLast: false,
+  },
+}
+
 function stateJson(state) {
   return JSON.stringify(JSON.stringify(state))
 }
@@ -518,6 +546,188 @@ async function main() {
     )
     await cdp.evaluate(`document.querySelector('.sheet-backdrop')?.click(); true`)
     await sleep(400)
+
+    /* ---------------- 12.6 完成模块自动收起 ---------------- */
+    section('12.6) 完成模块自动收起（回归）')
+    await loadWithState(cdp, EMPTY_STATE)
+
+    const moduleBefore = await cdp.evaluate(`(() => {
+      const first = document.querySelector('.cp-module')
+      return {
+        name: (first?.querySelector('.cp-module__name')?.textContent || '').trim(),
+        expanded: first?.querySelector('.cp-module__head')?.getAttribute('aria-expanded'),
+        cards: first?.querySelectorAll('.cp-card').length ?? 0,
+      }
+    })()`)
+    check(
+      '默认展开第一个未完成模块',
+      moduleBefore.name === MODULE_NAMES[0] &&
+        moduleBefore.expanded === 'true' &&
+        moduleBefore.cards === 2,
+      `${moduleBefore.name} expanded=${moduleBefore.expanded} cards=${moduleBefore.cards}`,
+    )
+
+    // 第一项打勾：模块还没学完，保持展开
+    await cdp.evaluate(`document.querySelector('.cp-module .cp-card .check-btn')?.click(); true`)
+    await sleep(450)
+    const moduleMid = await cdp.evaluate(`(() => {
+      const first = document.querySelector('.cp-module')
+      return {
+        expanded: first?.querySelector('.cp-module__head')?.getAttribute('aria-expanded'),
+        cards: first?.querySelectorAll('.cp-card').length ?? 0,
+        count: (first?.querySelector('.cp-module__count')?.textContent || '').trim(),
+      }
+    })()`)
+    check(
+      '打完第一项后模块保持展开',
+      moduleMid.expanded === 'true' && moduleMid.cards === 2 && moduleMid.count.includes('1/2'),
+      `expanded=${moduleMid.expanded} cards=${moduleMid.cards} count=${moduleMid.count}`,
+    )
+
+    // 最后一项打勾：模块应移到底部并自动收起
+    await cdp.evaluate(`document.querySelector('.cp-module .cp-card .check-btn')?.click(); true`)
+    await sleep(650)
+    const moduleCompleted = await cdp.evaluate(`(() => {
+      const modules = [...document.querySelectorAll('.cp-module')]
+      const last = modules[modules.length - 1]
+      const done = JSON.parse(localStorage.getItem(${JSON.stringify(STORAGE_KEY)}) || '{}').done || {}
+      return {
+        last: (last?.querySelector('.cp-module__name')?.textContent || '').trim(),
+        lastExpanded: last?.querySelector('.cp-module__head')?.getAttribute('aria-expanded'),
+        lastCards: last?.querySelectorAll('.cp-card').length ?? 0,
+        count: (last?.querySelector('.cp-module__count')?.textContent || '').trim(),
+        totalCards: document.querySelectorAll('.cp-card').length,
+        doneCount: Object.keys(done).length,
+      }
+    })()`)
+    check(
+      '模块学完后排到列表最后',
+      moduleCompleted.last === MODULE_NAMES[0],
+      `最后=${moduleCompleted.last}`,
+    )
+    check(
+      '模块学完后自动收起',
+      moduleCompleted.lastExpanded === 'false' && moduleCompleted.lastCards === 0,
+      `expanded=${moduleCompleted.lastExpanded} cards=${moduleCompleted.lastCards}`,
+    )
+    check(
+      '完成模块显示 ✓ 2/2',
+      moduleCompleted.count.includes('✓') && moduleCompleted.count.includes('2/2'),
+      moduleCompleted.count,
+    )
+    check(
+      '收起后页面没有遗留卡片',
+      moduleCompleted.totalCards === 0 && moduleCompleted.doneCount === 2,
+      `cards=${moduleCompleted.totalCards} done=${moduleCompleted.doneCount}`,
+    )
+
+    // 手动展开已完成模块：应保持展开
+    await cdp.evaluate(`(() => {
+      const modules = [...document.querySelectorAll('.cp-module')]
+      modules[modules.length - 1]?.querySelector('.cp-module__head')?.click()
+      return true
+    })()`)
+    await sleep(450)
+    const moduleReopened = await cdp.evaluate(`(() => {
+      const modules = [...document.querySelectorAll('.cp-module')]
+      const last = modules[modules.length - 1]
+      return {
+        expanded: last?.querySelector('.cp-module__head')?.getAttribute('aria-expanded'),
+        cards: last?.querySelectorAll('.cp-card').length ?? 0,
+      }
+    })()`)
+    check(
+      '已完成模块可手动展开，且不会被自动关掉',
+      moduleReopened.expanded === 'true' && moduleReopened.cards === 2,
+      `expanded=${moduleReopened.expanded} cards=${moduleReopened.cards}`,
+    )
+
+    // 取消完成：模块回到原位置，并保持展开
+    await cdp.evaluate(`(() => {
+      const modules = [...document.querySelectorAll('.cp-module')]
+      const last = modules[modules.length - 1]
+      last?.querySelector('.cp-card .check-btn')?.click()
+      return true
+    })()`)
+    await sleep(650)
+    const moduleMovedBack = await cdp.evaluate(`(() => {
+      const first = document.querySelector('.cp-module')
+      return {
+        name: (first?.querySelector('.cp-module__name')?.textContent || '').trim(),
+        expanded: first?.querySelector('.cp-module__head')?.getAttribute('aria-expanded'),
+        cards: first?.querySelectorAll('.cp-card').length ?? 0,
+      }
+    })()`)
+    check(
+      '取消完成后退回原位置且保持展开',
+      moduleMovedBack.name === MODULE_NAMES[0] &&
+        moduleMovedBack.expanded === 'true' &&
+        moduleMovedBack.cards === 2,
+      `${moduleMovedBack.name} expanded=${moduleMovedBack.expanded} cards=${moduleMovedBack.cards}`,
+    )
+
+    // 再次完成：重新移到底部并收起
+    await cdp.evaluate(`document.querySelector('.cp-module .cp-card .check-btn')?.click(); true`)
+    await sleep(650)
+    const moduleRecollapsed = await cdp.evaluate(`(() => {
+      const modules = [...document.querySelectorAll('.cp-module')]
+      const last = modules[modules.length - 1]
+      return {
+        last: (last?.querySelector('.cp-module__name')?.textContent || '').trim(),
+        expanded: last?.querySelector('.cp-module__head')?.getAttribute('aria-expanded'),
+        cards: last?.querySelectorAll('.cp-card').length ?? 0,
+      }
+    })()`)
+    check(
+      '再次完成后再次收起并回到底部',
+      moduleRecollapsed.last === MODULE_NAMES[0] &&
+        moduleRecollapsed.expanded === 'false' &&
+        moduleRecollapsed.cards === 0,
+      `${moduleRecollapsed.last} expanded=${moduleRecollapsed.expanded} cards=${moduleRecollapsed.cards}`,
+    )
+
+    // 关闭「已学排后」：模块不移动，也不自动收起
+    await loadWithState(cdp, SORT_OFF_STATE)
+    await cdp.evaluate(
+      `document.querySelector('.cp-module .cp-card:not(.is-done) .check-btn')?.click(); true`,
+    )
+    await sleep(650)
+    const sortOffView = await cdp.evaluate(`(() => {
+      const first = document.querySelector('.cp-module')
+      return {
+        name: (first?.querySelector('.cp-module__name')?.textContent || '').trim(),
+        expanded: first?.querySelector('.cp-module__head')?.getAttribute('aria-expanded'),
+        cards: first?.querySelectorAll('.cp-card').length ?? 0,
+        count: (first?.querySelector('.cp-module__count')?.textContent || '').trim(),
+      }
+    })()`)
+    check(
+      '关闭已学排后时不移动也不自动收起',
+      sortOffView.name === MODULE_NAMES[0] &&
+        sortOffView.expanded === 'true' &&
+        sortOffView.cards === 2 &&
+        sortOffView.count.includes('2/2'),
+      `${sortOffView.name} expanded=${sortOffView.expanded} cards=${sortOffView.cards} count=${sortOffView.count}`,
+    )
+
+    // 全部完成：刷新后不应自动展开任何已完成模块
+    await loadWithState(cdp, ALL_DONE_STATE)
+    const allDoneView = await cdp.evaluate(`(() => ({
+      modules: document.querySelectorAll('.cp-module').length,
+      open: document.querySelectorAll('.cp-module__head[aria-expanded="true"]').length,
+      cards: document.querySelectorAll('.cp-card').length,
+      hero: document.querySelector('.cp-hero')?.innerText ?? '',
+    }))()`)
+    check(
+      '全部完成后刷新默认全部收起',
+      allDoneView.modules === 24 && allDoneView.open === 0 && allDoneView.cards === 0,
+      `modules=${allDoneView.modules} open=${allDoneView.open} cards=${allDoneView.cards}`,
+    )
+    check(
+      '全部完成后 Hero 显示全部完成',
+      allDoneView.hero.includes('全部完成'),
+      allDoneView.hero.replace(/\s+/g, ' ').slice(0, 60),
+    )
 
     /* ---------------- 13. PWA ---------------- */
     section('13) PWA（manifest / Service Worker / 离线打开）')

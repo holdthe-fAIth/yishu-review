@@ -5,6 +5,7 @@ $ErrorActionPreference = 'Stop'
 $root = Split-Path -Parent $PSScriptRoot
 $jdk = Join-Path $root '.tools\jdk\jdk-17.0.13+11'
 $sdk = Join-Path $root '.tools\android-sdk'
+$version = (Get-Content (Join-Path $root 'package.json') -Raw | ConvertFrom-Json).version
 
 if (-not (Test-Path $jdk)) { throw "Missing JDK: $jdk (see README 'APK' section)" }
 if (-not (Test-Path $sdk)) { throw "Missing Android SDK: $sdk (see README 'APK' section)" }
@@ -42,7 +43,7 @@ try {
 
     $apk = Join-Path $root 'android\app\build\outputs\apk\debug\app-debug.apk'
     if (-not (Test-Path $apk)) { throw "APK not found: $apk" }
-    $out = Join-Path $root 'yishu-review-2.1.1-debug.apk'
+    $out = Join-Path $root "yishu-review-$version-debug.apk"
     Copy-Item $apk $out -Force
     Write-Host ''
     Write-Host "APK generated: $out"

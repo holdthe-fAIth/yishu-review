@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import type {
   KeyboardEvent as ReactKeyboardEvent,
   MouseEvent as ReactMouseEvent,
@@ -21,7 +21,6 @@ import { ActionSheet, type ActionSheetItem } from '../components/Sheet'
 import { useToast } from '../components/Toast'
 import {
   DATA_GENERATED_AT,
-  MODULES,
   SYSTEM_BVID,
   SYSTEM_ITEMS,
   TOPICS,
@@ -588,10 +587,11 @@ export function CoursePage({ onOpenSearch }: { onOpenSearch: () => void }) {
 
   const [view, setView] = useState<CourseView>('system')
   const [expanded, setExpanded] = useState<Set<string>>(() => {
-    // 默认展开列表中第一个模块（学完的模块会被排到后面）
-    const first = orderModuleStats(moduleStats(state.done), settings.sortCompletedLast)[0]
-    const module = first?.module ?? MODULES[0]
-    return new Set(module ? [module.id] : [])
+    // 默认展开第一个未完成模块；全部学完时不自动展开任何模块
+    const first = orderModuleStats(moduleStats(state.done), settings.sortCompletedLast).find(
+      (stat) => !isModuleComplete(stat),
+    )
+    return new Set(first ? [first.module.id] : [])
   })
   // 选中合集按 id 记录：tab 排序后不会选错合集
   const [topicId, setTopicId] = useState<string>(
@@ -607,6 +607,36 @@ export function CoursePage({ onOpenSearch }: { onOpenSearch: () => void }) {
     () => orderModuleStats(moduleStats(state.done), settings.sortCompletedLast),
     [state.done, settings.sortCompletedLast],
   )
+  /** 当前已全部学完的模块 id；用于检测「未完成 → 完成」的瞬间 */
+  const completedModuleIds = useMemo(
+    () => stats.filter(isModuleComplete).map((stat) => stat.module.id),
+    [stats],
+  )
+  /** 上一次的已完成模块集合；首次只记录基线，不触发收起 */
+  const completedModuleIdsRef = useRef<Set<string> | null>(null)
+
+  // 模块学完会被排到列表末尾，同时自动收起。
+  // 只处理「未完成 → 完成」的转变，用户手动展开的已完成模块不会被误关。
+  // 用 layout effect 在绘制前收起，避免模块在底部先闪一下展开态。
+  useLayoutEffect(() => {
+    const current = new Set(completedModuleIds)
+    const previous = completedModuleIdsRef.current
+    completedModuleIdsRef.current = current
+    if (!previous || !settings.sortCompletedLast) return
+
+    const justCompleted = completedModuleIds.filter((id) => !previous.has(id))
+    if (justCompleted.length === 0) return
+
+    setExpanded((prev) => {
+      let changed = false
+      const next = new Set(prev)
+      for (const id of justCompleted) {
+        if (next.delete(id)) changed = true
+      }
+      return changed ? next : prev
+    })
+  }, [completedModuleIds, settings.sortCompletedLast])
+
   const nextTarget = useMemo(() => firstUnfinished(state.done), [state.done])
   const progressPercent = percent(progress.ratio)
 
