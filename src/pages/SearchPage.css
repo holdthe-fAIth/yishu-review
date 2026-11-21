@@ -13,6 +13,12 @@
   animation: search-in 0.2s ease both;
 }
 
+@media (min-width: 720px) {
+  .search-page {
+    max-width: 760px;
+  }
+}
+
 @keyframes search-in {
   from {
     opacity: 0;

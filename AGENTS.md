@@ -1,4 +1,4 @@
-# AGENTS.md · 「一数复习」项目说明书
+# AGENTS.md · 「数理复习」项目说明书
 
 > 给**任何接手本项目的 AI / 开发者**：先读这个文件，再动手。它包含项目结构、核心机制、开发命令、验收方式、发布流程和踩过的坑。
 > 项目不依赖任何特定 AI 或对话——仓库是唯一事实来源。换电脑、换 AI、开新会话，读完这份 + README + 相关源码即可继续开发。
@@ -7,7 +7,7 @@
 
 ## 1. 项目是什么
 
-- **名称**：一数复习（v3.0.0）
+- **名称**：数理复习（v3.1.0）
 - **定位**：把 B站 UP 主「一数」（数学，mid `14229967`）和「黄夫人」（物理，mid `23630128`）的高中视频，整理成「知识体系 + 打勾进度本」的 App；**不是播放器**，App 内不放视频。
 - **核心循环**：选科目 → 点知识点 → 深链唤起 B站 App 播放对应视频 → 看完切回 → 浮条「看完了？」→ 一键打勾 → 卡片/模块/科目进度/学习日历联动。
 - **线上**：<https://holdthe-faith.github.io/yishu-review/>（GitHub Pages，自动部署）
@@ -65,8 +65,8 @@ pnpm check               # copy-data + tsc + verify:data + vite build（提交�
 pnpm preview             # 预览 dist
 # UI 功能验收（需要先起 preview，且本机有 Edge）：
 pnpm preview --port 4173
-pnpm verify:ui           # Edge headless 92 项功能验收（CDP 脚本 scripts/e2e-check.mjs）
-pnpm screenshot          # 480×900@2x 视觉验收图 → screenshots/
+pnpm verify:ui           # Edge headless 100 项功能验收（CDP 脚本 scripts/e2e-check.mjs）
+pnpm screenshot          # 480×900@2x + 1024×768 平板视觉验收图 → screenshots/
 pnpm fetch:data          # 从 B站 刷新数学数据（仅开发/CI；保留物理）
 pnpm fetch:physics       # 从 B站 刷新黄夫人物理数据（仅开发/CI；保留数学）
 pnpm build:apk           # 打 Android APK（需要 .tools 便携 JDK/SDK，见 README）
@@ -84,7 +84,9 @@ pnpm build:apk           # 打 Android APK（需要 .tools 便携 JDK/SDK，见 
 4. **内容更新**：`src/lib/updates.ts`。PWA 默认拉同源 `data/courses.json`；APK 默认拉 `src/config.ts` 里的 Pages 数据地址（`raw.githubusercontent.com` 国内不可用）。远程数据校验通过后写入 `localStorage` 的 `yishu-review:courses:v3` 并刷新；旧 `:v2` 覆盖会被清掉，回退内置 v3；「恢复内置数据」清除覆盖。
 5. **学习日历**：`src/lib/history.ts`（月历网格、按天记录、热力统计），记录带 `math` / `physics` 科目标签。
 6. **已学排后**：`src/lib/sort.ts`，由设置 `sortCompletedLast` 控制；学完的模块排到列表末尾后由 `CoursePage` 自动收起（只处理「未完成 → 完成」的瞬间，手动展开不误关）。
-7. **发布**：`git push origin main` → GitHub Actions 自动部署 Pages（工作流里 `VITE_BASE=/仓库名/`）；APK 用 `pnpm build:apk`。
+7. **进度展示**：课程页只保留紧凑「继续复习」入口，不显示总进度卡；知识体系页保留当前科目的总进度大环。
+8. **响应式布局**：手机 480px 为单列底部 tab；≥720px 放宽框架、卡片 3 列；≥900×600 横屏时底部 tab 变左侧导航栏、内容 1120px、卡片最多 4 列。相关规则在 `src/index.css` 和各页面 CSS 的 media query 里。
+9. **发布**：`git push origin main` → GitHub Actions 自动部署 Pages（工作流里 `VITE_BASE=/仓库名/`）；APK 用 `pnpm build:apk`。
 
 ## 6. 代码约定
 
@@ -128,9 +130,11 @@ pnpm build:apk           # 打 Android APK（需要 .tools 便携 JDK/SDK，见 
 - [ ] 数学 194 个知识点一个不少，物理 444 个知识点一个不少，模块顺序与 `data/courses.json` 一致
 - [ ] 数学卡片带正确 `page`；物理卡片带自己的 BV 且没有错误 `page`
 - [ ] 旧 `s:` / `t:` 进度迁移为 `math:` 后不丢；数学/物理切换后互不污染
+- [ ] 课程页不显示总进度卡，知识体系页总进度正常
 - [ ] 从 B站 切回弹「看完了？」浮条，打勾后四处进度同步
 - [ ] 刷新/重开数据不丢；导出/导入/重置正常
 - [ ] 480px 无横向滚动、tabbar 安全区正常、暗色正常
+- [ ] 平板 1024×768：左侧导航栏、内容不横向滚动、课程卡片 3 列；1280×800：4 列
 - [ ] UI 改动：`pnpm verify:ui` 全过（本机 Edge）
 - [ ] README / 版本号 / 验收记录同步更新
 

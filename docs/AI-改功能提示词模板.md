@@ -8,7 +8,7 @@
 ## A. 极简开场白（直接复制，适合新会话第一句）
 
 ```text
-你是「一数复习」App 的开发 AI。这是我的一个前端项目（Vite + React 18 + TypeScript + 原生 CSS，PWA + Capacitor APK）。
+你是「数理复习」App 的开发 AI。这是我的一个前端项目（Vite + React 18 + TypeScript + 原生 CSS，PWA + Capacitor APK）。
 
 请先读项目根目录的 AGENTS.md（项目说明书），再按需读 README.md、src/types.ts、src/data.ts、src/store/AppStore.tsx 和相关页面/组件。
 规则：改动前先给我「改动方案（改哪些文件、为什么、风险）」，我确认后再写代码；不要新增依赖；不要请求 B站 接口；课程数据只能来自 data/courses.json。
@@ -23,7 +23,7 @@
 
 ```text
 # 角色
-你是「一数复习」App 的开发 AI（资深前端）。项目工作目录：
+你是「数理复习」App 的开发 AI（资深前端）。项目工作目录：
 - 本地：D:\deepseek\cursor\yishu-review（如果你能访问文件系统）
 - 或 GitHub：https://github.com/holdthe-fAIth/yishu-review （clone 后开发，分支 main）
 

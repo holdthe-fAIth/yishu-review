@@ -1,5 +1,5 @@
 /* ============================================================
-   一数复习 · 设计系统（照提示词视觉规格实现）
+   数理复习 · 设计系统（照提示词视觉规格实现）
    主色 #FB7299 / 辅色 #00AEEC / 成功 #2AC864 / 警告 #FFA726 / 危险 #FF5C5C
    ============================================================ */
 
@@ -32,6 +32,7 @@
   --safe-bottom: env(safe-area-inset-bottom, 0px);
   --safe-top: env(safe-area-inset-top, 0px);
   --tabbar-h: 58px;
+  --app-max: 480px;
   --page-x: 12px;
 
   font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Noto Sans SC', 'Microsoft YaHei',
@@ -155,7 +156,7 @@ a {
   display: flex;
   flex-direction: column;
   width: 100%;
-  max-width: 480px;
+  max-width: var(--app-max);
   min-height: 100dvh;
   margin: 0 auto;
   background: var(--bg);
@@ -635,7 +636,7 @@ a {
   bottom: 0;
   z-index: 40;
   width: 100%;
-  max-width: 480px;
+  max-width: var(--app-max);
   transform: translateX(-50%);
   border-top: 0.5px solid var(--line);
   background: var(--tabbar-bg);
@@ -966,6 +967,106 @@ a {
   color: #fff;
   font-size: 13px;
   font-weight: 600;
+}
+
+/* ============================== 平板 / 横屏适配 ============================== */
+
+/* 平板竖屏 / 小横屏：放宽内容，卡片由页面 CSS 改为 3 列 */
+@media (min-width: 720px) {
+  :root {
+    --app-max: 760px;
+    --page-x: 20px;
+  }
+
+  .page-head {
+    padding-top: 20px;
+  }
+
+  .sheet-panel,
+  .return-bar,
+  .update-bar {
+    max-width: 560px;
+  }
+
+  .cp-subject .segmented,
+  .cp-seg .segmented,
+  .k-subject .segmented,
+  .m-subject .segmented {
+    max-width: 520px;
+  }
+}
+
+/* 平板横屏：底部 tabbar 变成左侧导航栏，内容区放宽到 1120px */
+@media (min-width: 900px) and (min-height: 600px) and (orientation: landscape) {
+  :root {
+    --app-max: 1280px;
+    --page-x: 28px;
+  }
+
+  .app__frame {
+    display: grid;
+    grid-template-columns: 92px minmax(0, 1fr);
+    grid-template-rows: 1fr;
+    align-items: stretch;
+  }
+
+  .screen {
+    grid-column: 2;
+    grid-row: 1;
+    padding-bottom: 24px;
+  }
+
+  .page {
+    width: 100%;
+    max-width: 1120px;
+    margin: 0 auto;
+  }
+
+  .tabbar {
+    position: sticky;
+    top: 0;
+    bottom: auto;
+    left: auto;
+    grid-column: 1;
+    grid-row: 1;
+    width: auto;
+    max-width: none;
+    height: 100dvh;
+    padding-bottom: 0;
+    border-top: 0;
+    border-right: 0.5px solid var(--line);
+    transform: none;
+  }
+
+  .tabbar__inner {
+    flex: 1;
+    flex-direction: column;
+    height: auto;
+    padding: 18px 8px;
+    gap: 6px;
+  }
+
+  .tabbar__item {
+    flex: 0 0 auto;
+    height: 64px;
+    border-radius: 12px;
+    font-size: 11px;
+  }
+
+  .tabbar__item.is-active {
+    background: var(--pink-soft);
+  }
+
+  .return-bar {
+    left: calc(50% + 46px);
+    bottom: 18px;
+    max-width: 560px;
+  }
+
+  .update-bar {
+    left: calc(50% + 46px);
+    max-width: 560px;
+  }
 }
 
 /* ============================== 无障碍：减少动效 ============================== */

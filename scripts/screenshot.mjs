@@ -92,6 +92,31 @@ const SCENARIOS = [
     expandModule: 17,
   },
   { name: '10-mine-dark', state: buildState({ settings: { confirmBeforeJump: false, returnPrompt: true, theme: 'dark' } }), tab: 2 },
+  {
+    name: '12-tablet-course',
+    state: buildState(),
+    tab: 0,
+    viewport: { width: 1024, height: 768, scale: 1, mobile: false },
+  },
+  {
+    name: '13-tablet-knowledge',
+    state: buildState(),
+    tab: 1,
+    expandModule: 1,
+    viewport: { width: 1024, height: 768, scale: 1, mobile: false },
+  },
+  {
+    name: '14-tablet-mine',
+    state: buildState(),
+    tab: 2,
+    viewport: { width: 1024, height: 768, scale: 1, mobile: false },
+  },
+  {
+    name: '15-tablet-dark',
+    state: buildState({ settings: { confirmBeforeJump: false, returnPrompt: true, theme: 'dark' } }),
+    tab: 0,
+    viewport: { width: 1024, height: 768, scale: 1, mobile: false },
+  },
 ]
 
 class PageCDP {
@@ -263,6 +288,14 @@ async function main() {
     const scenarios = only ? SCENARIOS.filter((item) => only.some((key) => item.name.includes(key))) : SCENARIOS
     for (const scenario of scenarios) {
       console.log(`\n[${scenario.name}]`)
+      const viewport = scenario.viewport ?? VIEWPORT
+      await cdp.send('Emulation.setDeviceMetricsOverride', {
+        width: viewport.width,
+        height: viewport.height,
+        deviceScaleFactor: viewport.scale,
+        mobile: viewport.mobile ?? true,
+      })
+      await sleep(250)
       await loadWithState(cdp, scenario.state ?? null)
 
       if (scenario.tab > 0) {

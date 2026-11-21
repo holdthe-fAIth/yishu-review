@@ -1,5 +1,5 @@
-export const APP_NAME = '一数复习'
-export const APP_VERSION = '3.0.0'
+export const APP_NAME = '数理复习'
+export const APP_VERSION = '3.1.0'
 
 /**
  * APK 内默认的内容更新源（GitHub Pages 上的 data/courses.json，带 CORS: *）。

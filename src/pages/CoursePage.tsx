@@ -15,7 +15,6 @@ import {
   SearchIcon,
 } from '../components/Icons'
 import { LevelTag } from '../components/LevelTag'
-import { ProgressRing } from '../components/ProgressRing'
 import { Segmented, type SegmentedItem } from '../components/Segmented'
 import { ActionSheet, type ActionSheetItem } from '../components/Sheet'
 import { SubjectSwitch } from '../components/SubjectSwitch'
@@ -33,13 +32,12 @@ import {
   type SubjectView,
 } from '../data'
 import { openInBrowser } from '../lib/bilibili'
-import { formatCount, formatHoursLabel, percent } from '../lib/format'
+import { formatCount, percent } from '../lib/format'
 import { useJump } from '../lib/jump'
 import {
   firstUnfinished,
   moduleStats,
   topicStat,
-  totalSystemProgress,
   type ModuleStat,
 } from '../lib/progress'
 import { isTopicComplete, orderItems, orderTopicVideos, orderTopics } from '../lib/sort'
@@ -605,10 +603,6 @@ export function CoursePage({ onOpenSearch }: { onOpenSearch: () => void }) {
   )
   const [menu, setMenu] = useState<CardMenuState | null>(null)
 
-  const progress = useMemo(
-    () => totalSystemProgress(subject, state.done),
-    [subject, state.done],
-  )
   const stats = useMemo(
     () =>
       orderModuleStats(moduleStats(subject, state.done), settings.sortCompletedLast),
@@ -648,7 +642,6 @@ export function CoursePage({ onOpenSearch }: { onOpenSearch: () => void }) {
     () => firstUnfinished(subject, state.done),
     [subject, state.done],
   )
-  const progressPercent = percent(progress.ratio)
 
   const handleSubjectChange = useCallback(
     (subjectId: string) => {
@@ -742,7 +735,7 @@ export function CoursePage({ onOpenSearch }: { onOpenSearch: () => void }) {
     <div className="page cp-page">
       <header className="page-head cp-head">
         <div className="cp-head__text">
-          <h1 className="page-title">一数复习</h1>
+          <h1 className="page-title">数理复习</h1>
           <p className="page-subtitle">
             {subject.info.up.name} · 高中{subject.info.name} · {subject.totalKp} 个知识点 ·{' '}
             <span className="cp-head__updated">
@@ -759,44 +752,29 @@ export function CoursePage({ onOpenSearch }: { onOpenSearch: () => void }) {
         <SubjectSwitch value={subject.info.id} onChange={handleSubjectChange} />
       </div>
 
-      {/* Hero：总进度 + 继续复习 */}
-      <section className="cp-hero card" aria-label="系统课总进度">
-        <div className="cp-hero__ring">
-          <ProgressRing
-            value={progress.ratio}
-            size={92}
-            stroke={8}
-            label={`系统课总进度 ${progressPercent}%`}
-          >
-            <span className="cp-hero__percent">
-              {progressPercent}
-              <span className="cp-hero__percent-unit">%</span>
-            </span>
-          </ProgressRing>
-        </div>
-        <div className="cp-hero__info">
-          <p className="cp-hero__eyebrow">系统课总进度</p>
-          <p className="cp-hero__meta">
-            已完成 <strong>{progress.done}</strong> / {progress.total} 个知识点 ·{' '}
-            {formatHoursLabel(progress.secondsDone)}
-          </p>
-          <button
-            type="button"
-            className="btn btn--primary cp-hero__btn"
-            onClick={handleContinue}
-            disabled={!nextTarget}
-          >
-            {nextTarget ? (
-              <>
-                <PlayIcon size={16} />
-                继续复习
-              </>
-            ) : (
-              '🎉 全部完成'
-            )}
-          </button>
-        </div>
-      </section>
+      {/* 紧凑入口：只保留「继续复习」，总进度放在知识体系页 */}
+      <div className="cp-continue">
+        <button
+          type="button"
+          className="btn btn--primary cp-continue__btn"
+          onClick={handleContinue}
+          disabled={!nextTarget}
+        >
+          {nextTarget ? (
+            <>
+              <PlayIcon size={16} />
+              继续复习
+            </>
+          ) : (
+            '🎉 全部完成'
+          )}
+        </button>
+        {nextTarget ? (
+          <span className="cp-continue__hint">
+            {nextTarget.moduleName} · {nextTarget.name}
+          </span>
+        ) : null}
+      </div>
 
       {subject.totalTopics > 0 ? (
         <div className="cp-seg">

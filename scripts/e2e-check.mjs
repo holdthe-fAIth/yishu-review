@@ -131,7 +131,10 @@ async function main() {
         modules: document.querySelectorAll('.cp-module').length,
         cards: document.querySelectorAll('.cp-card').length,
         titles: names,
-        hero: document.querySelector('.cp-hero')?.innerText ?? '',
+        title: document.querySelector('.page-title')?.textContent?.trim() ?? '',
+        subtitle: document.querySelector('.page-subtitle')?.textContent ?? '',
+        hasHero: Boolean(document.querySelector('.cp-hero')),
+        hasContinue: Boolean(document.querySelector('.cp-continue')),
         tabbarInView: Boolean(tabbar) && tabbar.bottom <= window.innerHeight + 1 && tabbar.top < window.innerHeight,
         noHScroll: document.documentElement.scrollWidth <= window.innerWidth + 1,
         viewport: [window.innerWidth, window.innerHeight],
@@ -144,7 +147,12 @@ async function main() {
       home.titles.length === 24 ? '顺序一致' : '数量不一致',
     )
     check('默认展开第一个模块（2 张卡片）', home.cards === 2, `实际 ${home.cards}`)
-    check('Hero 显示 194 个知识点', home.hero.includes(String(KP_COUNT)))
+    check('App 名称已改为「数理复习」', home.title === '数理复习', home.title)
+    check(
+      '课程页显示 194 个知识点，且没有总进度卡',
+      home.subtitle.includes(`${KP_COUNT} 个知识点`) && !home.hasHero && home.hasContinue,
+      `hero=${home.hasHero} continue=${home.hasContinue}`,
+    )
     check('480px 视口无横向滚动', home.noHScroll, `viewport=${home.viewport.join('x')}`)
     check('底部 tabbar 在视口内', home.tabbarInView)
 
@@ -154,10 +162,12 @@ async function main() {
     await sleep(450)
     const afterCheck = await cdp.evaluate(`(() => {
       const state = JSON.parse(localStorage.getItem(${JSON.stringify(STORAGE_KEY)}) || '{}')
+      const continueBtn = document.querySelector('.cp-continue__btn')
       return {
         doneKeys: Object.keys(state.done ?? {}),
         pending: state.pending ?? null,
-        hero: document.querySelector('.cp-hero')?.innerText ?? '',
+        hasHero: Boolean(document.querySelector('.cp-hero')),
+        continueText: continueBtn?.textContent?.trim() ?? '',
         count: document.querySelector('.cp-module__count')?.textContent?.trim() ?? '',
         doneCards: document.querySelectorAll('.cp-card.is-done').length,
       }
@@ -167,7 +177,11 @@ async function main() {
       afterCheck.doneKeys.length === 1 && afterCheck.pending === null,
       `done=${afterCheck.doneKeys.length} pending=${JSON.stringify(afterCheck.pending)}`,
     )
-    check('Hero 进度立刻变 1/194', afterCheck.hero.includes(`已完成 1 / ${KP_COUNT}`), afterCheck.hero.slice(0, 60))
+    check(
+      '课程页已删除总进度卡，继续复习入口保留',
+      !afterCheck.hasHero && afterCheck.continueText.includes('继续复习'),
+      `hero=${afterCheck.hasHero} button=${afterCheck.continueText}`,
+    )
     check('模块进度立刻变 1/2', afterCheck.count === '1/2', `实际 ${afterCheck.count}`)
     check('卡片进入已完成态', afterCheck.doneCards === 1)
 
@@ -722,7 +736,8 @@ async function main() {
       modules: document.querySelectorAll('.cp-module').length,
       open: document.querySelectorAll('.cp-module__head[aria-expanded="true"]').length,
       cards: document.querySelectorAll('.cp-card').length,
-      hero: document.querySelector('.cp-hero')?.innerText ?? '',
+      hasHero: Boolean(document.querySelector('.cp-hero')),
+      continueText: document.querySelector('.cp-continue__btn')?.textContent?.trim() ?? '',
     }))()`)
     check(
       '全部完成后刷新默认全部收起',
@@ -730,9 +745,9 @@ async function main() {
       `modules=${allDoneView.modules} open=${allDoneView.open} cards=${allDoneView.cards}`,
     )
     check(
-      '全部完成后 Hero 显示全部完成',
-      allDoneView.hero.includes('全部完成'),
-      allDoneView.hero.replace(/\s+/g, ' ').slice(0, 60),
+      '全部完成后继续复习按钮显示全部完成，且没有总进度卡',
+      !allDoneView.hasHero && allDoneView.continueText.includes('全部完成'),
+      `hero=${allDoneView.hasHero} button=${allDoneView.continueText}`,
     )
 
     /* ---------------- 12.7 多科目：旧进度迁移 / 数学物理切换 ---------------- */
@@ -761,7 +776,8 @@ async function main() {
         active: state.settings?.activeSubject,
         selected: tabs.find((btn) => btn.getAttribute('aria-selected') === 'true')?.textContent?.trim() ?? '',
         tabs: tabs.map((btn) => btn.textContent?.trim() ?? ''),
-        hero: document.querySelector('.cp-hero')?.innerText ?? '',
+        hasHero: Boolean(document.querySelector('.cp-hero')),
+        continueHint: document.querySelector('.cp-continue__hint')?.textContent?.trim() ?? '',
       }
     })()`)
     check(
@@ -778,7 +794,24 @@ async function main() {
         JSON.stringify(migrated.tabs) === JSON.stringify(['数学', '物理']),
       `active=${migrated.active} selected=${migrated.selected} tabs=${migrated.tabs.join('/')}`,
     )
-    check('迁移后数学 Hero 进度仍为 1/194', migrated.hero.includes('已完成 1 / 194'), migrated.hero.replace(/\s+/g, ' ').slice(0, 50))
+    check(
+      '课程页无总进度卡，继续复习入口指向下一项',
+      !migrated.hasHero && migrated.continueHint.includes('初高衔接'),
+      `hero=${migrated.hasHero} hint=${migrated.continueHint}`,
+    )
+
+    await cdp.evaluate(`document.querySelectorAll('.tabbar__item')[1]?.click(); true`)
+    await sleep(650)
+    const migratedKnowledgeHero = await cdp.evaluate(
+      `document.querySelector('.k-hero')?.innerText ?? ''`,
+    )
+    check(
+      '迁移后知识体系仍显示 1/194',
+      migratedKnowledgeHero.includes('已完成 1 / 194'),
+      migratedKnowledgeHero.replace(/\s+/g, ' ').slice(0, 50),
+    )
+    await cdp.evaluate(`document.querySelectorAll('.tabbar__item')[0]?.click(); true`)
+    await sleep(650)
 
     await cdp.evaluate(
       `[...document.querySelectorAll('.cp-subject .segmented__item')].find((btn) => btn.textContent?.trim() === '物理')?.click(); true`,
@@ -789,7 +822,8 @@ async function main() {
       const state = JSON.parse(localStorage.getItem(${JSON.stringify(STORAGE_KEY)}) || '{}')
       return {
         subtitle: document.querySelector('.page-subtitle')?.textContent ?? '',
-        hero: document.querySelector('.cp-hero')?.innerText ?? '',
+        hasHero: Boolean(document.querySelector('.cp-hero')),
+        continueHint: document.querySelector('.cp-continue__hint')?.textContent?.trim() ?? '',
         modules: document.querySelectorAll('.cp-module').length,
         firstModule: (first?.querySelector('.cp-module__name')?.textContent || '').trim(),
         firstCard: (first?.querySelector('.cp-card__title')?.textContent || '').trim(),
@@ -797,10 +831,12 @@ async function main() {
       }
     })()`)
     check(
-      '切到物理：标题/进度正确',
+      '切到物理：标题/知识点数正确，无总进度卡',
       physicsView.subtitle.includes('黄夫人') &&
         physicsView.subtitle.includes('高中物理') &&
-        physicsView.hero.includes(`已完成 0 / ${PHYSICS_KP_COUNT}`),
+        physicsView.subtitle.includes(`${PHYSICS_KP_COUNT} 个知识点`) &&
+        !physicsView.hasHero &&
+        physicsView.continueHint.includes(PHYSICS_FIRST_MODULE.name),
       physicsView.subtitle.replace(/\s+/g, ' ').slice(0, 60),
     )
     check(
@@ -842,7 +878,8 @@ async function main() {
       const keys = Object.keys(state.done || {})
       return {
         keys,
-        hero: document.querySelector('.cp-hero')?.innerText ?? '',
+        moduleCount: document.querySelector('.cp-module__count')?.textContent?.trim() ?? '',
+        hasHero: Boolean(document.querySelector('.cp-hero')),
         pending: state.pending ?? null,
       }
     })()`)
@@ -855,9 +892,9 @@ async function main() {
       physicsDone.keys.join(','),
     )
     check(
-      '物理 Hero 进度变为 1/444',
-      physicsDone.hero.includes(`已完成 1 / ${PHYSICS_KP_COUNT}`),
-      physicsDone.hero.replace(/\s+/g, ' ').slice(0, 50),
+      '物理模块进度变为 1/15，课程页无总进度卡',
+      physicsDone.moduleCount.includes('1/15') && !physicsDone.hasHero,
+      `count=${physicsDone.moduleCount} hero=${physicsDone.hasHero}`,
     )
 
     await cdp.evaluate(`document.querySelectorAll('.cp-seg .segmented__item')[1]?.click(); true`)
@@ -880,13 +917,16 @@ async function main() {
     )
     await sleep(700)
     const backToMath = await cdp.evaluate(`(() => ({
-      hero: document.querySelector('.cp-hero')?.innerText ?? '',
       modules: document.querySelectorAll('.cp-module').length,
+      hasHero: Boolean(document.querySelector('.cp-hero')),
+      continueHint: document.querySelector('.cp-continue__hint')?.textContent?.trim() ?? '',
     }))()`)
     check(
-      '切回数学：模块数 24，旧进度仍在',
-      backToMath.modules === MODULE_NAMES.length && backToMath.hero.includes('已完成 1 / 194'),
-      `${backToMath.modules} 模块 / ${backToMath.hero.replace(/\s+/g, ' ').slice(0, 40)}`,
+      '切回数学：模块数 24，旧进度仍在，无总进度卡',
+      backToMath.modules === MODULE_NAMES.length &&
+        !backToMath.hasHero &&
+        backToMath.continueHint.includes('初高衔接'),
+      `${backToMath.modules} 模块 / hero=${backToMath.hasHero} / ${backToMath.continueHint}`,
     )
 
     // 跨科目搜索：数学页面也能搜到物理知识点
@@ -933,6 +973,102 @@ async function main() {
       `[...document.querySelectorAll('.m-subject .segmented__item')].find((btn) => btn.textContent?.trim() === '数学')?.click(); true`,
     )
     await sleep(450)
+
+    /* ---------------- 12.8 平板横屏 ---------------- */
+    section('12.8) 平板横屏适配（侧边栏 / 宽内容 / 多列卡片）')
+    await cdp.send('Emulation.setDeviceMetricsOverride', {
+      width: 1024,
+      height: 768,
+      deviceScaleFactor: 2,
+      mobile: false,
+    })
+    await sleep(500)
+    await cdp.evaluate(`document.querySelectorAll('.tabbar__item')[0]?.click(); true`)
+    await sleep(650)
+    const tablet = await cdp.evaluate(`(() => {
+      const frame = document.querySelector('.app__frame')?.getBoundingClientRect()
+      const tabbar = document.querySelector('.tabbar')?.getBoundingClientRect()
+      const screen = document.querySelector('.screen')?.getBoundingClientRect()
+      const grid = document.querySelector('.cp-grid')
+      const columns = grid ? getComputedStyle(grid).gridTemplateColumns.split(' ').length : 0
+      return {
+        viewport: [window.innerWidth, window.innerHeight],
+        frame: frame ? { left: frame.left, width: frame.width } : null,
+        tabbar: tabbar ? { left: tabbar.left, width: tabbar.width, height: tabbar.height } : null,
+        screenLeft: screen?.left ?? 0,
+        tabbarPosition: tabbar ? getComputedStyle(document.querySelector('.tabbar')).position : '',
+        columns,
+        noHScroll: document.documentElement.scrollWidth <= window.innerWidth + 1,
+        title: document.querySelector('.page-title')?.textContent?.trim() ?? '',
+      }
+    })()`)
+    check(
+      '平板横屏：底部 tabbar 变左侧导航栏',
+      tablet.viewport[0] === 1024 &&
+        tablet.tabbarPosition === 'sticky' &&
+        tablet.tabbar &&
+        tablet.tabbar.width >= 80 &&
+        tablet.tabbar.height >= 700 &&
+        tablet.tabbar.left === 0,
+      `tabbar=${JSON.stringify(tablet.tabbar)} position=${tablet.tabbarPosition}`,
+    )
+    check(
+      '平板横屏：内容区在侧边栏右侧，无横向滚动',
+      tablet.screenLeft >= 80 && tablet.frame && tablet.frame.width >= 1000 && tablet.noHScroll,
+      `screenLeft=${tablet.screenLeft} frame=${JSON.stringify(tablet.frame)}`,
+    )
+    check(
+      '平板横屏：课程卡片 3 列',
+      tablet.columns === 3,
+      `columns=${tablet.columns}`,
+    )
+    check('平板横屏仍显示数理复习课程页', tablet.title === '数理复习', tablet.title)
+
+    await cdp.send('Emulation.setDeviceMetricsOverride', {
+      width: 1280,
+      height: 800,
+      deviceScaleFactor: 2,
+      mobile: false,
+    })
+    await sleep(450)
+    const wideTablet = await cdp.evaluate(`(() => {
+      const grid = document.querySelector('.cp-grid')
+      return {
+        columns: grid ? getComputedStyle(grid).gridTemplateColumns.split(' ').length : 0,
+        noHScroll: document.documentElement.scrollWidth <= window.innerWidth + 1,
+        tabbarWidth: document.querySelector('.tabbar')?.getBoundingClientRect().width ?? 0,
+      }
+    })()`)
+    check(
+      '大平板 1280×800：课程卡片 4 列、侧边栏固定 92px',
+      wideTablet.columns === 4 && wideTablet.noHScroll && wideTablet.tabbarWidth === 92,
+      `columns=${wideTablet.columns} tabbar=${wideTablet.tabbarWidth}`,
+    )
+
+    await cdp.send('Emulation.setDeviceMetricsOverride', {
+      width: 480,
+      height: 900,
+      deviceScaleFactor: 2,
+      mobile: true,
+    })
+    await sleep(500)
+    const backToPhone = await cdp.evaluate(`(() => ({
+      width: window.innerWidth,
+      tabbar: (() => {
+        const rect = document.querySelector('.tabbar')?.getBoundingClientRect()
+        return rect ? { width: rect.width, bottom: rect.bottom } : null
+      })(),
+      noHScroll: document.documentElement.scrollWidth <= window.innerWidth + 1,
+    }))()`)
+    check(
+      '恢复 480px 手机布局：底部 tabbar 和原宽度',
+      backToPhone.width === 480 &&
+        backToPhone.tabbar &&
+        backToPhone.tabbar.width <= 480 &&
+        backToPhone.tabbar.bottom <= 900 + 1 &&
+        backToPhone.noHScroll,
+      `width=${backToPhone.width} tabbar=${JSON.stringify(backToPhone.tabbar)}`,
+    )
 
     /* ---------------- 13. PWA ---------------- */
     section('13) PWA（manifest / Service Worker / 离线打开）')
@@ -983,7 +1119,7 @@ async function main() {
     const offlineText = await cdp.evaluate(`document.body.innerText.slice(0, 160)`)
     check(
       '离线状态仍能打开 App（PWA 离线缓存生效）',
-      offlineLoaded && offlineText.includes('一数复习'),
+      offlineLoaded && offlineText.includes('数理复习'),
       offlineText.replace(/\s+/g, ' ').slice(0, 60),
     )
     await cdp.send('Network.emulateNetworkConditions', {

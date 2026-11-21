@@ -26,10 +26,10 @@ export default defineConfig({
         'icons/maskable-512.png',
       ],
       manifest: {
-        name: '一数复习 · 高中数学 + 高中物理',
-        short_name: '一数复习',
+        name: '数理复习 · 高中数学 + 高中物理',
+        short_name: '数理复习',
         description:
-          '一数与黄夫人的高中数学/高中物理视频知识体系与复习打勾进度本：点知识点直接跳 B站 App，看完回来一键打勾。',
+          '数理复习：一数与黄夫人的高中数学/高中物理视频知识体系与复习打勾进度本，点知识点直接跳 B站 App，看完回来一键打勾。',
         lang: 'zh-CN',
         theme_color: '#FB7299',
         background_color: '#F6F7F8',

@@ -335,7 +335,7 @@ export function MinePage() {
   }
 
   return (
-    <div className="page">
+    <div className="page m-page">
       <header className="page-head">
         <div>
           <h1 className="page-title">我的</h1>

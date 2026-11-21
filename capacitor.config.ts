@@ -7,7 +7,7 @@ import type { CapacitorConfig } from '@capacitor/cli'
  */
 const config: CapacitorConfig = {
   appId: 'com.yishu.review',
-  appName: '一数复习',
+  appName: '数理复习',
   webDir: 'dist',
   android: {
     // B站封面与深链都是 https，禁用明文流量

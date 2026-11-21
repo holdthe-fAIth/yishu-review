@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# Generate PWA icons: 192 / 512 / maskable-512 / apple-touch-icon-180.
+# Generate the "数理复习" app icon: PWA icons + Android legacy launcher icons.
 # Usage: python scripts/generate-icons.py
 from __future__ import annotations
 
@@ -8,8 +8,10 @@ import os
 from PIL import Image, ImageDraw, ImageFont
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-OUT_DIR = os.path.join(HERE, "..", "public", "icons")
-os.makedirs(OUT_DIR, exist_ok=True)
+ROOT = os.path.join(HERE, "..")
+PUBLIC_DIR = os.path.join(ROOT, "public", "icons")
+ANDROID_RES = os.path.join(ROOT, "android", "app", "src", "main", "res")
+os.makedirs(PUBLIC_DIR, exist_ok=True)
 
 FONT_CANDIDATES = [
     r"C:\Windows\Fonts\msyhbd.ttc",
@@ -19,9 +21,11 @@ FONT_CANDIDATES = [
 ]
 FONT_PATH = next((p for p in FONT_CANDIDATES if os.path.exists(p)), None)
 
-C1 = (255, 157, 185)  # #FF9DB9
-C2 = (251, 114, 153)  # #FB7299
-GLYPH = "\u6570"  # Chinese char: shu
+# 粉（数学）→ 蓝（物理）
+C1 = (255, 143, 179)  # #FF8FB3
+C2 = (0, 174, 236)  # #00AEEC
+GLYPHS = "\u6570\u7406"  # 数理
+GAP_RATIO = 0.03
 
 
 def diagonal_gradient(size: int) -> Image.Image:
@@ -47,27 +51,42 @@ def rounded_mask(size: int, radius: int) -> Image.Image:
     return mask
 
 
-def make_icon(size: int, glyph_ratio: float, maskable: bool) -> Image.Image:
+def circle_mask(size: int) -> Image.Image:
+    mask = Image.new("L", (size, size), 0)
+    ImageDraw.Draw(mask).ellipse([0, 0, size - 1, size - 1], fill=255)
+    return mask
+
+
+def draw_glyphs(draw: ImageDraw.ImageDraw, size: int, ratio: float) -> None:
+    if not FONT_PATH:
+        # 极端兜底：没有中文字体时画两个白点，避免生成空图标
+        r = size * ratio * 0.3
+        for cx in (size * 0.35, size * 0.65):
+            draw.ellipse([cx - r, size / 2 - r, cx + r, size / 2 + r], fill="white")
+        return
+
+    font = ImageFont.truetype(FONT_PATH, int(size * ratio))
+    bboxes = [draw.textbbox((0, 0), char, font=font) for char in GLYPHS]
+    widths = [bbox[2] - bbox[0] for bbox in bboxes]
+    gap = int(size * GAP_RATIO)
+    total = sum(widths) + gap
+    x = (size - total) / 2
+    for char, bbox, width in zip(GLYPHS, bboxes, widths):
+        draw.text(
+            (x - bbox[0], (size - (bbox[3] - bbox[1])) / 2 - bbox[1]),
+            char,
+            font=font,
+            fill=(255, 255, 255, 255),
+        )
+        x += width + gap
+
+
+def make_icon(size: int, glyph_ratio: float, maskable: bool, circular: bool = False) -> Image.Image:
     # 4x supersampling for cleaner text edges
     scale = 4
     big = size * scale
     image = diagonal_gradient(big).convert("RGBA")
-
-    if FONT_PATH:
-        draw = ImageDraw.Draw(image)
-        font = ImageFont.truetype(FONT_PATH, int(big * glyph_ratio))
-        left, top, right, bottom = draw.textbbox((0, 0), GLYPH, font=font)
-        draw.text(
-            ((big - (right - left)) / 2 - left, (big - (bottom - top)) / 2 - top),
-            GLYPH,
-            font=font,
-            fill=(255, 255, 255, 255),
-        )
-    else:
-        draw = ImageDraw.Draw(image)
-        r = big * glyph_ratio / 2
-        draw.ellipse([big / 2 - r, big / 2 - r, big / 2 + r, big / 2 + r], fill="white")
-
+    draw_glyphs(ImageDraw.Draw(image), big, glyph_ratio)
     image = image.resize((size, size), Image.LANCZOS)
 
     if maskable:
@@ -75,21 +94,53 @@ def make_icon(size: int, glyph_ratio: float, maskable: bool) -> Image.Image:
         return image
 
     out = Image.new("RGBA", (size, size), (0, 0, 0, 0))
-    out.paste(image, (0, 0), rounded_mask(size, int(size * 0.23)))
+    mask = circle_mask(size) if circular else rounded_mask(size, int(size * 0.23))
+    out.paste(image, (0, 0), mask)
     return out
 
 
+def make_foreground(size: int, glyph_ratio: float) -> Image.Image:
+    """Transparent foreground for a future adaptive icon (currently unused)."""
+    scale = 4
+    big = size * scale
+    image = Image.new("RGBA", (big, big), (0, 0, 0, 0))
+    draw_glyphs(ImageDraw.Draw(image), big, glyph_ratio)
+    return image.resize((size, size), Image.LANCZOS)
+
+
 def main() -> None:
-    targets = [
-        ("icon-192.png", 192, 0.62, False),
-        ("icon-512.png", 512, 0.62, False),
-        ("maskable-512.png", 512, 0.44, True),
-        ("apple-touch-icon-180x180.png", 180, 0.62, False),
+    public_targets = [
+        ("icon-192.png", 192, 0.42, False, False),
+        ("icon-512.png", 512, 0.42, False, False),
+        ("maskable-512.png", 512, 0.34, True, False),
+        ("apple-touch-icon-180x180.png", 180, 0.42, False, False),
     ]
-    for name, size, glyph_ratio, maskable in targets:
-        path = os.path.join(OUT_DIR, name)
-        make_icon(size, glyph_ratio, maskable).save(path, "PNG", optimize=True)
+    for name, size, glyph_ratio, maskable, circular in public_targets:
+        path = os.path.join(PUBLIC_DIR, name)
+        make_icon(size, glyph_ratio, maskable, circular).save(path, "PNG", optimize=True)
         print("  OK " + path)
+
+    android_sizes = {
+        "mdpi": 48,
+        "hdpi": 72,
+        "xhdpi": 96,
+        "xxhdpi": 144,
+        "xxxhdpi": 192,
+    }
+    for density, size in android_sizes.items():
+        out_dir = os.path.join(ANDROID_RES, "mipmap-" + density)
+        os.makedirs(out_dir, exist_ok=True)
+        make_icon(size, 0.42, False, False).save(
+            os.path.join(out_dir, "ic_launcher.png"), "PNG", optimize=True
+        )
+        make_icon(size, 0.42, False, True).save(
+            os.path.join(out_dir, "ic_launcher_round.png"), "PNG", optimize=True
+        )
+        make_foreground(int(round(size * 2.25)), 0.34).save(
+            os.path.join(out_dir, "ic_launcher_foreground.png"), "PNG", optimize=True
+        )
+        print("  OK mipmap-" + density)
+
     print("icons generated")
 
 

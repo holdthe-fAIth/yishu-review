@@ -26,91 +26,30 @@
   padding: 0 0 10px;
 }
 
-/* ---------------- Hero 卡：总进度 + 继续复习 ---------------- */
+/* ---------------- 紧凑「继续复习」入口（总进度在知识体系页） ---------------- */
 
-.cp-hero {
-  position: relative;
+.cp-continue {
   display: flex;
   align-items: center;
-  gap: 14px;
-  padding: 14px;
-  overflow: hidden;
-}
-
-/* 右上角粉色渐变装饰（B站风） */
-.cp-hero::before {
-  content: '';
-  position: absolute;
-  top: -42px;
-  right: -30px;
-  width: 152px;
-  height: 152px;
-  border-radius: 50%;
-  background: radial-gradient(circle at center, var(--pink-soft) 0%, transparent 70%);
-  pointer-events: none;
-}
-
-.cp-hero__ring {
-  position: relative;
-  z-index: 1;
-  flex: none;
-}
-
-.cp-hero__percent {
-  display: inline-flex;
-  align-items: baseline;
-  gap: 1px;
-  color: var(--text);
-  font-size: 21px;
-  font-weight: 700;
-  line-height: 1;
-  letter-spacing: -0.03em;
-  font-variant-numeric: tabular-nums;
-}
-
-.cp-hero__percent-unit {
-  color: var(--text-2);
-  font-size: 10px;
-  font-weight: 600;
-}
-
-.cp-hero__info {
-  position: relative;
-  z-index: 1;
-  flex: 1;
+  gap: 10px;
   min-width: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
+  padding: 0 0 4px;
 }
 
-.cp-hero__eyebrow {
-  color: var(--text-2);
-  font-size: 11px;
-  font-weight: 500;
-  line-height: 1.2;
-}
-
-.cp-hero__meta {
-  color: var(--text);
-  font-size: 13px;
-  line-height: 1.55;
-  font-variant-numeric: tabular-nums;
-  overflow-wrap: anywhere;
-}
-
-.cp-hero__meta strong {
-  color: var(--pink);
-  font-size: 15px;
-  font-weight: 700;
-}
-
-.cp-hero__btn {
-  align-self: flex-start;
-  margin-top: 3px;
-  padding: 9px 20px;
+.cp-continue__btn {
+  flex: none;
+  padding: 8px 16px;
   border-radius: 999px;
-  font-size: 14px;
+  font-size: 13px;
+}
+
+.cp-continue__hint {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--text-2);
+  font-size: 12px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 /* ---------------- 分段控件 ---------------- */
@@ -347,4 +286,20 @@
 .cp-tab.is-complete:not(.is-active) .cp-tab__count {
   color: var(--green);
   opacity: 1;
+}
+
+/* ---------------- 平板：更宽的卡片网格 ---------------- */
+
+@media (min-width: 720px) {
+  .cp-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
+  }
+}
+
+@media (min-width: 1100px) {
+  .cp-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 16px;
+  }
 }
