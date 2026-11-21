@@ -35,7 +35,9 @@ async function main() {
   const dataPath = join(root, 'data', 'courses.json')
   const publicPath = join(root, 'public', 'data', 'courses.json')
   const data = JSON.parse(readFileSync(dataPath, 'utf8'))
-  const videos = data.topics.flatMap((topic) => topic.videos)
+  const videos = (data.subjects ?? []).flatMap((subject) =>
+    subject.topics.flatMap((topic) => topic.videos),
+  )
   const candidates = videos.filter((video) => video.duration >= 5 * 3600)
   console.log(`需要补充分P数的视频：${candidates.length} 条`)
 

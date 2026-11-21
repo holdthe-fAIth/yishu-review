@@ -1,10 +1,10 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import {
-  SYSTEM_BVID,
-  SYSTEM_ITEMS,
-  TOPIC_VIDEOS,
+  ALL_SYSTEM_ITEMS,
+  ALL_TOPIC_VIDEOS,
   TOTAL_KP,
   TOTAL_TOPIC_VIDEOS,
+  getSubject,
   moduleChar,
   moduleColor,
   topicGradient,
@@ -31,7 +31,7 @@ type SearchResult =
 
 const LEVEL_FILTERS: LevelFilter[] = ['全部', '基础', '中档', '拔高']
 
-/** 全屏搜索页：搜索系统课 194 个知识点 + 专题 134 条视频，支持难度筛选 */
+/** 全屏搜索页：跨科目搜索系统课知识点 + 专题视频，支持难度筛选 */
 export function SearchPage({ open, onClose }: SearchPageProps) {
   const { state, toggleDone } = useApp()
   const { play } = useJump()
@@ -60,15 +60,17 @@ export function SearchPage({ open, onClose }: SearchPageProps) {
 
   const results = useMemo<SearchResult[]>(() => {
     if (!keyword) return []
-    const systemResults: SearchResult[] = SYSTEM_ITEMS.filter(
+    const systemResults: SearchResult[] = ALL_SYSTEM_ITEMS.filter(
       (item) =>
         item.name.toLowerCase().includes(keyword) ||
-        item.moduleName.toLowerCase().includes(keyword),
+        item.moduleName.toLowerCase().includes(keyword) ||
+        item.subjectName.toLowerCase().includes(keyword),
     ).map((item) => ({ kind: 'system', item }))
-    const topicResults: SearchResult[] = TOPIC_VIDEOS.filter(
+    const topicResults: SearchResult[] = ALL_TOPIC_VIDEOS.filter(
       (video) =>
         video.title.toLowerCase().includes(keyword) ||
-        video.topicTitle.toLowerCase().includes(keyword),
+        video.topicTitle.toLowerCase().includes(keyword) ||
+        video.subjectName.toLowerCase().includes(keyword),
     ).map((video) => ({ kind: 'topic', video }))
 
     let merged = [...systemResults, ...topicResults]
@@ -88,7 +90,7 @@ export function SearchPage({ open, onClose }: SearchPageProps) {
       kind: 'system',
       key: item.key,
       name: item.name,
-      bvid: SYSTEM_BVID,
+      bvid: item.bvid,
       p: item.p,
       subtitle: item.moduleName,
     })
@@ -184,7 +186,7 @@ export function SearchPage({ open, onClose }: SearchPageProps) {
                       <div className="search-result__info">
                         <div className="search-result__title">{item.name}</div>
                         <div className="search-result__meta">
-                          <span>{item.moduleName}</span>
+                          <span>{item.subjectName} · {item.moduleName}</span>
                           {item.no ? <span>第 {item.no} 讲</span> : null}
                           <LevelTag level={item.level} difficulty={item.difficulty} />
                         </div>
@@ -201,7 +203,9 @@ export function SearchPage({ open, onClose }: SearchPageProps) {
               }
 
               const { video } = result
-              const topicIndex = TOPIC_VIDEOS.findIndex((v) => v.seasonId === video.seasonId)
+              const topicIndex = getSubject(video.subjectId).topics.findIndex(
+                (topic) => topic.seasonId === video.seasonId,
+              )
               const gradient = topicGradient(Math.max(0, topicIndex))
               return (
                 <li key={`t-${video.key}`} className="search-result">
@@ -227,7 +231,7 @@ export function SearchPage({ open, onClose }: SearchPageProps) {
                     <div className="search-result__info">
                       <div className="search-result__title">{video.title}</div>
                       <div className="search-result__meta">
-                        <span>专题 · {video.topicTitle}</span>
+                        <span>{video.subjectName} · 专题 · {video.topicTitle}</span>
                       </div>
                     </div>
                   </button>

@@ -1,7 +1,7 @@
 name: Refresh course data
 
-# 可选：每周自动从 B站 重新抓取一数主页数据并提交（需要 GitHub Actions 能访问 B站 API，
-# 部分网络环境下可能失败，可手动在 Actions 页面点 Run workflow 重试）。
+# 可选：每周自动从 B站 重新抓取一数（数学）+ 黄夫人（物理）数据并提交
+# （需要 GitHub Actions 能访问 B站 API，部分网络环境下可能失败，可手动在 Actions 页面点 Run workflow 重试）。
 on:
   schedule:
     - cron: '0 2 * * 1' # 每周一 02:00 UTC（北京时间 10:00）
@@ -31,9 +31,13 @@ jobs:
       - name: Install dependencies
         run: pnpm install --no-frozen-lockfile
 
-      - name: Fetch latest course data
+      - name: Fetch latest math data
         continue-on-error: true
         run: pnpm fetch:data
+
+      - name: Fetch latest physics data
+        continue-on-error: true
+        run: pnpm fetch:physics
 
       - name: Commit if changed
         run: |
@@ -43,6 +47,6 @@ jobs:
           if git diff --cached --quiet; then
             echo "课程数据无变化"
           else
-            git commit -m "chore(data): 自动更新一数课程数据"
+            git commit -m "chore(data): 自动更新数学/物理课程数据"
             git push
           fi

@@ -1,8 +1,8 @@
-import { MODULES, SYSTEM_ITEMS, TOPIC_VIDEOS, TOTAL_KP, DURATION_BY_KEY } from '../data'
-import type { AppState, DoneEntry, FlatSystemItem, ModuleInfo } from '../types'
+import { DURATION_BY_KEY, type SubjectView } from '../data'
+import type { AppState, DoneEntry, FlatSystemItem } from '../types'
 
 export interface ModuleStat {
-  module: ModuleInfo
+  module: SubjectView['modules'][number]
   index: number
   done: number
   total: number
@@ -17,14 +17,17 @@ export interface TotalProgress {
   secondsDone: number
 }
 
-/** 每个模块的完成情况（按 modules 原顺序） */
-export function moduleStats(done: Record<string, DoneEntry>): ModuleStat[] {
-  return MODULES.map((module, index) => {
+/** 某个科目每个模块的完成情况（按 modules 原顺序） */
+export function moduleStats(
+  subject: SubjectView,
+  done: Record<string, DoneEntry>,
+): ModuleStat[] {
+  return subject.modules.map((module, index) => {
+    const items = subject.systemItems.filter((item) => item.moduleId === module.id)
     let doneCount = 0
     let secondsDone = 0
-    for (const item of module.items) {
-      const entry = done[`s:${item.p}`]
-      if (entry) {
+    for (const item of items) {
+      if (done[item.key]) {
         doneCount += 1
         secondsDone += item.duration
       }
@@ -33,25 +36,29 @@ export function moduleStats(done: Record<string, DoneEntry>): ModuleStat[] {
       module,
       index,
       done: doneCount,
-      total: module.items.length,
-      ratio: module.items.length === 0 ? 0 : doneCount / module.items.length,
+      total: items.length,
+      ratio: items.length === 0 ? 0 : doneCount / items.length,
       secondsDone,
     }
   })
 }
 
 export function moduleStat(
+  subject: SubjectView,
   done: Record<string, DoneEntry>,
   moduleIndex: number,
 ): ModuleStat {
-  return moduleStats(done)[moduleIndex]
+  return moduleStats(subject, done)[moduleIndex]
 }
 
-/** 系统课总进度（194 个知识点） */
-export function totalSystemProgress(done: Record<string, DoneEntry>): TotalProgress {
+/** 某个科目的系统课总进度 */
+export function totalSystemProgress(
+  subject: SubjectView,
+  done: Record<string, DoneEntry>,
+): TotalProgress {
   let doneCount = 0
   let secondsDone = 0
-  for (const item of SYSTEM_ITEMS) {
+  for (const item of subject.systemItems) {
     if (done[item.key]) {
       doneCount += 1
       secondsDone += item.duration
@@ -59,28 +66,35 @@ export function totalSystemProgress(done: Record<string, DoneEntry>): TotalProgr
   }
   return {
     done: doneCount,
-    total: TOTAL_KP,
-    ratio: TOTAL_KP === 0 ? 0 : doneCount / TOTAL_KP,
+    total: subject.totalKp,
+    ratio: subject.totalKp === 0 ? 0 : doneCount / subject.totalKp,
     secondsDone,
   }
 }
 
-/** 系统课里按模块顺序第一个没打勾的知识点（「继续复习」的目标） */
-export function firstUnfinished(done: Record<string, DoneEntry>): FlatSystemItem | undefined {
-  return SYSTEM_ITEMS.find((item) => !done[item.key])
+/** 某个科目系统课里按模块顺序第一个没打勾的知识点（「继续复习」的目标） */
+export function firstUnfinished(
+  subject: SubjectView,
+  done: Record<string, DoneEntry>,
+): FlatSystemItem | undefined {
+  return subject.systemItems.find((item) => !done[item.key])
 }
 
-/** 已完成的专题视频数 */
-export function topicDoneCount(done: Record<string, DoneEntry>): number {
-  return TOPIC_VIDEOS.reduce((n, v) => n + (done[v.key] ? 1 : 0), 0)
+/** 某个科目已完成的专题视频数 */
+export function topicDoneCount(
+  subject: SubjectView,
+  done: Record<string, DoneEntry>,
+): number {
+  return subject.topicVideos.reduce((n, v) => n + (done[v.key] ? 1 : 0), 0)
 }
 
-/** 单个专题合集的完成情况 */
+/** 某个科目单个专题合集的完成情况 */
 export function topicStat(
+  subject: SubjectView,
   done: Record<string, DoneEntry>,
   seasonId: number,
 ): { done: number; total: number; ratio: number } {
-  const videos = TOPIC_VIDEOS.filter((v) => v.seasonId === seasonId)
+  const videos = subject.topicVideos.filter((v) => v.seasonId === seasonId)
   const doneCount = videos.reduce((n, v) => n + (done[v.key] ? 1 : 0), 0)
   return {
     done: doneCount,
@@ -89,12 +103,12 @@ export function topicStat(
   }
 }
 
-/** 所有已看视频数（系统课 + 专题课） */
+/** 所有科目的已看视频数 */
 export function watchedCount(done: Record<string, DoneEntry>): number {
   return Object.keys(done).length
 }
 
-/** 累计视频时长（已完成视频 duration 之和，秒） */
+/** 所有科目的累计视频时长（已完成视频 duration 之和，秒） */
 export function watchedSeconds(done: Record<string, DoneEntry>): number {
   let total = 0
   for (const [key, entry] of Object.entries(done)) {
@@ -134,9 +148,13 @@ function localDateOf(ts: number): string {
   ).padStart(2, '0')}`
 }
 
-/** 完成率最低的 n 个模块（同率按模块原顺序），用于「最弱模块」 */
-export function weakestModules(done: Record<string, DoneEntry>, n = 3): ModuleStat[] {
-  return moduleStats(done)
+/** 某科目完成率最低的 n 个模块（同率按模块原顺序） */
+export function weakestModules(
+  subject: SubjectView,
+  done: Record<string, DoneEntry>,
+  n = 3,
+): ModuleStat[] {
+  return moduleStats(subject, done)
     .filter((stat) => stat.total > 0)
     .sort((a, b) => a.ratio - b.ratio || a.index - b.index)
     .slice(0, n)
@@ -148,8 +166,8 @@ export function isDone(done: Record<string, DoneEntry>, key: string): boolean {
 }
 
 /** 继续复习按钮的目标文案 */
-export function continueHint(state: AppState): string {
-  const target = firstUnfinished(state.done)
+export function continueHint(state: AppState, subject: SubjectView): string {
+  const target = firstUnfinished(subject, state.done)
   if (!target) return '全部知识点已完成 🎉'
   return `继续复习 · ${target.moduleName} ${target.no ? `第 ${target.no} 讲` : ''}`.trim()
 }

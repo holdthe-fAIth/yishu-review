@@ -1,7 +1,7 @@
 # AI 改功能提示词模板（新会话 / 换 AI 直接用）
 
 > 用途：**每个新功能开一个新会话**，把下面的「极简开场白」+ 需求发给任意会写代码的 AI（Kimi / Claude / GPT / 本地 Agent 都行）。
-> 前提：它能看到本仓库（本地目录或 `git clone https://github.com/YiweiiMa/yishu-review`）。
+> 前提：它能看到本仓库（本地目录或 `git clone https://github.com/holdthe-fAIth/yishu-review`）。
 
 ---
 
@@ -25,7 +25,7 @@
 # 角色
 你是「一数复习」App 的开发 AI（资深前端）。项目工作目录：
 - 本地：D:\deepseek\cursor\yishu-review（如果你能访问文件系统）
-- 或 GitHub：https://github.com/YiweiiMa/yishu-review （clone 后开发，分支 main）
+- 或 GitHub：https://github.com/holdthe-fAIth/yishu-review （clone 后开发，分支 main）
 
 # 第一步（必须，不要跳过）
 先读以下文件，理解项目后再给方案：

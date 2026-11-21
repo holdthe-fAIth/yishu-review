@@ -1,9 +1,9 @@
 {
   "name": "yishu-review",
   "private": true,
-  "version": "2.1.2",
+  "version": "3.0.0",
   "type": "module",
-  "description": "一数数学复习 · 目录型进度本（点知识点跳 B站 App，看完回来一键打勾；支持学习时间表、内容更新、发布时间提示）",
+  "description": "一数复习 · 高中数学 + 高中物理目录型进度本（点知识点跳 B站 App，看完回来一键打勾；支持学习日历、内容更新、发布时间提示）",
   "scripts": {
     "dev": "node scripts/copy-data.mjs && vite",
     "build": "node scripts/copy-data.mjs && tsc --noEmit && vite build",
@@ -11,6 +11,7 @@
     "check": "node scripts/copy-data.mjs && tsc --noEmit && node scripts/verify-data.mjs && vite build",
     "preview": "vite preview",
     "fetch:data": "node scripts/fetch-data.mjs",
+    "fetch:physics": "node scripts/fetch-physics.mjs",
     "enrich:data": "node scripts/enrich-part-counts.mjs",
     "copy:data": "node scripts/copy-data.mjs",
     "verify:data": "node scripts/verify-data.mjs",

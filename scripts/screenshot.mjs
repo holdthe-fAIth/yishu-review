@@ -41,9 +41,11 @@ function done(keys) {
 }
 
 const DONE_KEYS = [
-  's:5', 's:6', 's:7', 's:11', 's:12', 's:13', 's:14', 's:18', 's:19', 's:20',
-  's:22', 's:31', 's:32', 's:43', 's:44', 's:45', 's:69', 's:70', 's:85', 's:87',
-  's:119', 's:130', 's:149', 's:162', 's:183', 's:187', 't:8397438:BV1cE4m1R7YK',
+  'math:s:5', 'math:s:6', 'math:s:7', 'math:s:11', 'math:s:12', 'math:s:13',
+  'math:s:14', 'math:s:18', 'math:s:19', 'math:s:20', 'math:s:22', 'math:s:31',
+  'math:s:32', 'math:s:43', 'math:s:44', 'math:s:45', 'math:s:69', 'math:s:70',
+  'math:s:85', 'math:s:87', 'math:s:119', 'math:s:130', 'math:s:149', 'math:s:162',
+  'math:s:183', 'math:s:187', 'math:t:8397438:BV1UqHw63EEw',
 ]
 
 function buildState(overrides = {}) {
@@ -68,12 +70,19 @@ const SCENARIOS = [
   {
     name: '06-return-bar',
     state: buildState({
-      pending: { key: 's:8', name: '综合大题练习', at: Date.now() - 31_000 },
+      pending: { key: 'math:s:8', name: '综合大题练习', at: Date.now() - 31_000 },
     }),
     tab: 0,
   },
   { name: '07-search', state: buildState(), tab: 0, search: '函数' },
   { name: '08-topics', state: buildState(), tab: 0, segmented: 1 },
+  {
+    name: '11-physics',
+    state: buildState({
+      settings: { confirmBeforeJump: false, returnPrompt: true, theme: 'light', activeSubject: 'physics' },
+    }),
+    tab: 0,
+  },
   {
     name: '09-knowledge-dark',
     state: buildState({
@@ -267,7 +276,7 @@ async function main() {
       if (scenario.segmented !== undefined) {
         await evaluate(
           cdp,
-          `document.querySelectorAll('.segmented__item')[${scenario.segmented}]?.click(); true`,
+          `document.querySelectorAll('.cp-seg .segmented__item')[${scenario.segmented}]?.click(); true`,
         )
         await sleep(650)
       }

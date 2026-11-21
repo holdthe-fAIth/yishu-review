@@ -3,21 +3,17 @@ import './KnowledgePage.css'
 import { CheckIcon, ChevronDownIcon, ClockIcon } from '../components/Icons'
 import { normalizeLevel } from '../components/LevelTag'
 import { ProgressRing } from '../components/ProgressRing'
+import { SubjectSwitch } from '../components/SubjectSwitch'
 import {
   DATA_GENERATED_AT,
-  MODULES,
-  SYSTEM_BVID,
-  TOTAL_KP,
-  TOTAL_MODULES,
-  UP,
-  systemKey,
+  getSubject,
 } from '../data'
 import { formatHoursLabel, percent } from '../lib/format'
 import { useJump } from '../lib/jump'
 import { moduleStats, totalSystemProgress } from '../lib/progress'
 import { orderItems, orderModules } from '../lib/sort'
 import { useApp } from '../store/AppStore'
-import type { SystemItem } from '../types'
+import type { FlatSystemItem } from '../types'
 
 /** 难度 → 未点亮 chip 的边框色（基础绿 / 中档橙 / 拔高红） */
 const LEVEL_CHIP_CLASS: Record<string, string> = {
@@ -27,33 +23,37 @@ const LEVEL_CHIP_CLASS: Record<string, string> = {
 }
 
 /** 展开后的知识点 chip 行（带存储 key 与打勾状态，供排序复用） */
-interface ChipRow extends SystemItem {
-  key: string
+interface ChipRow extends FlatSystemItem {
   done: boolean
 }
 
 /**
  * 页面 2 · 知识体系
- * 总进度大环 + 24 个模块折叠列表（模块 24px 小环、知识点 chip 点击直达 B站）。
+ * 总进度大环 + 当前科目的模块折叠列表（模块 24px 小环、知识点 chip 点击直达 B站）。
  * 开启「已学内容排到最后」时：全部学完的模块排到列表末尾、已打勾的 chip 排到模块末尾；
  * 未学内容保持 courses.json 原复习顺序。
  */
 export function KnowledgePage() {
-  const { state, settings } = useApp()
+  const { state, settings, updateSettings } = useApp()
   const { play } = useJump()
+  const subject = getSubject(settings.activeSubject)
 
-  const progress = useMemo(() => totalSystemProgress(state.done), [state.done])
-  const stats = useMemo(() => moduleStats(state.done), [state.done])
+  const progress = useMemo(
+    () => totalSystemProgress(subject, state.done),
+    [subject, state.done],
+  )
+  const stats = useMemo(() => moduleStats(subject, state.done), [subject, state.done])
   const [expanded, setExpanded] = useState<Set<number>>(() => new Set<number>())
 
   /**
    * 模块顺序：全部学完的模块排到最后（受设置项 sortCompletedLast 控制）。
-   * moduleStats 的 index 对应 MODULES 原顺序，排序后仍按 index 取回原始 stat。
+   * moduleStats 的 index 对应原始顺序，排序后仍按 index 取回原始 stat。
    */
   const orderedStats = useMemo(() => {
     const statByIndex = new Map(stats.map((stat) => [stat.index, stat]))
     const ordered = orderModules(
       stats.map((stat) => ({ ...stat.module, index: stat.index })),
+      subject,
       state.done,
       settings.sortCompletedLast,
     )
@@ -61,22 +61,21 @@ export function KnowledgePage() {
       const stat = statByIndex.get(module.index)
       return stat ? [stat] : []
     })
-  }, [stats, state.done, settings.sortCompletedLast])
+  }, [stats, subject, state.done, settings.sortCompletedLast])
 
   /** 每个模块展开后的 chip 顺序：已打勾的排到末尾，未学保持原顺序 */
   const chipsByModule = useMemo(() => {
     const map = new Map<number, ChipRow[]>()
     for (const stat of stats) {
-      const rows: ChipRow[] = stat.module.items.map((item) => {
-        const key = systemKey(item.p)
-        return { ...item, key, done: Boolean(state.done[key]) }
-      })
+      const rows: ChipRow[] = subject.systemItems
+        .filter((item) => item.moduleId === stat.module.id)
+        .map((item) => ({ ...item, done: Boolean(state.done[item.key]) }))
       map.set(stat.index, orderItems(rows, state.done, settings.sortCompletedLast))
     }
     return map
-  }, [stats, state.done, settings.sortCompletedLast])
+  }, [stats, subject, state.done, settings.sortCompletedLast])
 
-  const allExpanded = expanded.size >= MODULES.length
+  const allExpanded = expanded.size >= subject.totalModules
   const watchedLabel =
     progress.secondsDone > 0 ? formatHoursLabel(progress.secondsDone) : '约 0 分钟'
 
@@ -91,18 +90,24 @@ export function KnowledgePage() {
 
   function toggleAll() {
     setExpanded((prev) =>
-      prev.size >= MODULES.length ? new Set<number>() : new Set<number>(MODULES.map((_, i) => i)),
+      prev.size >= subject.totalModules
+        ? new Set<number>()
+        : new Set<number>(subject.modules.map((_, i) => i)),
     )
   }
 
-  /** 点 chip 直接深链跳 B站对应分P（不带打勾，打勾在 course 页卡片热区 / 返回浮条） */
-  function jumpToItem(moduleName: string, p: number, name: string) {
+  function handleSubjectChange(subjectId: string) {
+    updateSettings({ activeSubject: subjectId })
+  }
+
+  /** 点 chip 直接深链跳 B站对应分P/视频（打勾在 course 页卡片热区 / 返回浮条） */
+  function jumpToItem(moduleName: string, item: FlatSystemItem) {
     play({
       kind: 'system',
-      key: systemKey(p),
-      name,
-      bvid: SYSTEM_BVID,
-      p,
+      key: item.key,
+      name: item.name,
+      bvid: item.bvid,
+      p: item.p,
       subtitle: moduleName,
     })
   }
@@ -113,14 +118,23 @@ export function KnowledgePage() {
         <div>
           <h1 className="page-title">知识体系</h1>
           <p className="page-subtitle">
-            {UP.name} · {TOTAL_MODULES} 个模块 · {TOTAL_KP} 个知识点 · 内容更新于{' '}
-            {DATA_GENERATED_AT.slice(0, 10)}
+            {subject.info.up.name} · {subject.totalModules} 个模块 · {subject.totalKp}{' '}
+            个知识点 · 内容更新于 {DATA_GENERATED_AT.slice(0, 10)}
           </p>
         </div>
       </header>
 
+      <div className="k-subject">
+        <SubjectSwitch value={subject.info.id} onChange={handleSubjectChange} />
+      </div>
+
       <section className="card k-hero">
-        <ProgressRing size={124} stroke={10} value={progress.ratio} label="系统课总进度">
+        <ProgressRing
+          size={124}
+          stroke={10}
+          value={progress.ratio}
+          label={`${subject.info.name}系统课总进度`}
+        >
           <span className="k-hero__pct">
             {percent(progress.ratio)}
             <i>%</i>
@@ -129,13 +143,13 @@ export function KnowledgePage() {
         </ProgressRing>
         <div className="k-hero__info">
           <p className="k-hero__done">
-            已完成 <b>{progress.done}</b> / {TOTAL_KP} 个知识点
+            已完成 <b>{progress.done}</b> / {subject.totalKp} 个知识点
           </p>
           <p className="k-hero__time">
             <ClockIcon size={14} />
             {watchedLabel}
           </p>
-          <p className="k-hero__hint">按模块顺序复习 · 点知识点直达 B站对应分P</p>
+          <p className="k-hero__hint">按模块顺序复习 · 点知识点直达 B站对应视频</p>
         </div>
       </section>
 
@@ -183,11 +197,11 @@ export function KnowledgePage() {
                     const levelClass = item.done ? '' : LEVEL_CHIP_CLASS[level] ?? ''
                     return (
                       <button
-                        key={item.p}
+                        key={item.key}
                         type="button"
                         className={`chip k-chip ${item.done ? 'is-active' : ''} ${levelClass}`.trim()}
                         title={`${module.name} · ${item.name} · ${item.durationText}`}
-                        onClick={() => jumpToItem(module.name, item.p, item.name)}
+                        onClick={() => jumpToItem(module.name, item)}
                       >
                         {item.done ? <CheckIcon size={12} strokeWidth={3} /> : null}
                         <span className="k-chip__text">{item.name}</span>

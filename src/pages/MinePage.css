@@ -5,6 +5,10 @@
 
 /* ---------- 统计卡片 ---------- */
 
+.m-subject {
+  padding: 0 0 10px;
+}
+
 .m-stats {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));

@@ -1,10 +1,10 @@
 /**
- * 从 B站 重新抓取「一数」主页数据，生成 data/courses.json（v2）。
+ * 从 B站 重新抓取「一数」数学数据，合并进 data/courses.json（v3 多科目）。
  *
- * - 系统课：沿用人工整理好的 24 个模块 / 194 个知识点分组（复习顺序不变），
+ * - 数学系统课：沿用人工整理好的 24 个模块 / 194 个知识点分组（复习顺序不变），
  *   用 B站 分P 接口刷新标题/时长/发布时间（pages[].ctime 即每一集的发布时间）。
- * - 专题课：抓取一数主页全部「合集」，按最新发布时间排序；新增「高中数学大合集」
- *   （187 条独立视频，排除与系统课重复的 BV 本身和预告片）。
+ * - 数学专题课：抓取一数主页全部「合集」，按最新发布时间排序；排除与系统课重复的 BV 本身和预告片。
+ * - 物理科目原样保留；需要刷新物理请运行 pnpm fetch:physics。
  * - 所有封面统一转 https；运行时不请求 B站，本脚本只在开发/更新数据时跑。
  *
  * 用法：pnpm fetch:data
@@ -97,11 +97,18 @@ async function fetchSeasonVideos(seasonId) {
 
 async function main() {
   console.log('读取现有 courses.json（保留人工整理的模块分组）...')
-  const old = JSON.parse(readFileSync(join(root, 'data', 'courses.json'), 'utf8'))
-  const moduleByP = new Map()
-  for (const module of old.systemCourse.modules) {
-    for (const item of module.items) moduleByP.set(item.p, module.id)
-  }
+  const current = JSON.parse(readFileSync(join(root, 'data', 'courses.json'), 'utf8'))
+  const math =
+    current.subjects?.find((subject) => subject.id === 'math') ??
+    {
+      id: 'math',
+      name: '数学',
+      up: current.up,
+      systemCourse: current.systemCourse,
+      topics: current.topics,
+    }
+  const physics = current.subjects?.find((subject) => subject.id === 'physics')
+  if (!math?.systemCourse?.modules) throw new Error('现有数据缺少数学系统课，已中止')
 
   console.log('抓取系统课分P列表...')
   const view = await api(`https://api.bilibili.com/x/web-interface/view?bvid=${SYSTEM_BVID}`)
@@ -110,7 +117,7 @@ async function main() {
   console.log(`  分P：${view.pages.length}，首集发布时间：${dateText(view.pages[0].ctime)}`)
 
   let missing = 0
-  const modules = old.systemCourse.modules.map((module) => {
+  const modules = math.systemCourse.modules.map((module) => {
     const items = module.items.map((item) => {
       const page = pageByNumber.get(item.p)
       if (!page) {
@@ -206,18 +213,18 @@ async function main() {
   }
   if (seriesChecked > 0) console.log(`  已识别 ${seriesChecked} 个多P合集视频（显示为「N 讲」）`)
 
-  const next = {
-    version: 2,
-    generatedAt: new Date().toISOString(),
-    up: {
+  const mathSubject = {
+    id: 'math',
+    name: math.name ?? '数学',
+    up: math.up ?? {
       mid: MID,
       name: '一数',
       space: `https://space.bilibili.com/${MID}`,
     },
     systemCourse: {
-      id: 'system',
+      id: math.systemCourse.id ?? 'system',
       bvid: SYSTEM_BVID,
-      title: '高中数学基础与解法全集',
+      title: math.systemCourse.title ?? '高中数学基础与解法全集',
       subtitle: `一数 · 大合集（${view.pages.length} 分P / ${systemKpCount} 个知识点）`,
       kpCount: systemKpCount,
       durationMin: systemDurationMin,
@@ -225,11 +232,20 @@ async function main() {
     },
     topics,
   }
+  const extras = (current.subjects ?? []).filter(
+    (subject) => subject.id !== 'math' && subject.id !== 'physics',
+  )
+  const next = {
+    version: 3,
+    generatedAt: new Date().toISOString(),
+    subjects: [mathSubject, ...(physics ? [physics] : []), ...extras],
+  }
 
   mkdirSync(join(root, 'public', 'data'), { recursive: true })
   writeFileSync(join(root, 'data', 'courses.json'), JSON.stringify(next, null, 1) + '\n')
   writeFileSync(join(root, 'public', 'data', 'courses.json'), JSON.stringify(next))
   console.log('\n已写入 data/courses.json 与 public/data/courses.json ✓')
+  if (physics) console.log('物理科目数据保持不变；需要刷新物理请运行 pnpm fetch:physics')
 }
 
 main().catch((error) => {

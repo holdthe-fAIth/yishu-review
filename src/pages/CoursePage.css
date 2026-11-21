@@ -21,6 +21,11 @@
   white-space: nowrap;
 }
 
+/* 一级科目切换：数学 / 物理 */
+.cp-subject {
+  padding: 0 0 10px;
+}
+
 /* ---------------- Hero 卡：总进度 + 继续复习 ---------------- */
 
 .cp-hero {

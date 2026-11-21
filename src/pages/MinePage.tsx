@@ -14,18 +14,17 @@ import {
 } from '../components/Icons'
 import { Segmented, type SegmentedItem } from '../components/Segmented'
 import { Sheet } from '../components/Sheet'
+import { SubjectSwitch } from '../components/SubjectSwitch'
 import { useToast } from '../components/Toast'
 import { APP_VERSION } from '../config'
 import {
   DATA_GENERATED_AT,
   DATA_SOURCE,
   DATA_VERSION,
-  SYSTEM_BVID,
-  TOTAL_KP,
-  TOTAL_MODULES,
+  SUBJECT_VIEWS,
   TOTAL_TOPICS,
   TOTAL_TOPIC_VIDEOS,
-  UP,
+  getSubject,
 } from '../data'
 import { diagnoseBilibiliJump, type DeepLinkDiagnostics } from '../lib/bilibili'
 import { formatCount, formatHoursLabel, formatStamp, percent } from '../lib/format'
@@ -63,15 +62,6 @@ const EXPORT_APP = 'yishu-review'
 /** 一周的中文表头（周一为一周起点，与日历网格一致） */
 const WEEKDAY_HEAD = ['一', '二', '三', '四', '五', '六', '日']
 
-/** 「测试 B站 跳转」用的诊断目标（系统课第 5 个分P） */
-const TEST_JUMP_TARGET: PlayTarget = {
-  kind: 'system',
-  key: 's:5',
-  name: '集合的概念',
-  bvid: SYSTEM_BVID,
-  p: 5,
-}
-
 /** 累计时长 → 大数字 + 单位（沿用 formatHoursLabel 的文案，拆开排版） */
 function splitDurationLabel(seconds: number): { value: string; unit: string } {
   if (seconds <= 0) return { value: '0', unit: '分钟' }
@@ -99,7 +89,7 @@ function StudyRecordRow({ record }: { record: StudyRecord }) {
       <span className="m-rec__main">
         <span className="m-rec__name">
           <i className={`m-rec__tag ${record.kind === 'system' ? 'is-system' : 'is-topic'}`}>
-            {record.kind === 'system' ? '系统课' : '专题'}
+            {record.subjectName} · {record.kind === 'system' ? '系统' : '专题'}
           </i>
           <b>{record.name}</b>
         </span>
@@ -137,6 +127,7 @@ export function MinePage() {
   const { state, settings, updateSettings, replaceState, reset } = useApp()
   const { showToast } = useToast()
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const subject = getSubject(settings.activeSubject)
 
   /** 待确认覆盖的导入数据（解析成功后才弹 Sheet） */
   const [pendingImport, setPendingImport] = useState<AppState | null>(null)
@@ -164,7 +155,22 @@ export function MinePage() {
   const [diagLoading, setDiagLoading] = useState(false)
   const [diag, setDiag] = useState<DeepLinkDiagnostics | null>(null)
 
-  const stats = useMemo(() => moduleStats(state.done), [state.done])
+  const stats = useMemo(
+    () => moduleStats(subject, state.done),
+    [subject, state.done],
+  )
+  const diagTarget = useMemo<PlayTarget | null>(() => {
+    const item = subject.systemItems[0]
+    if (!item) return null
+    return {
+      kind: 'system',
+      key: item.key,
+      name: item.name,
+      bvid: item.bvid,
+      p: item.p,
+      subtitle: item.moduleName,
+    }
+  }, [subject])
   const records = useMemo(() => buildStudyRecords(state.done), [state.done])
   const calendar = useMemo(
     () => buildMonthCalendar(state.done, calYear, calMonth),
@@ -311,11 +317,15 @@ export function MinePage() {
   }
 
   async function handleDiagnose() {
+    if (!diagTarget) {
+      showToast('当前科目没有可诊断的视频')
+      return
+    }
     setDiag(null)
     setDiagLoading(true)
     setDiagOpen(true)
     try {
-      const result = await diagnoseBilibiliJump(TEST_JUMP_TARGET)
+      const result = await diagnoseBilibiliJump(diagTarget)
       setDiag(result)
     } catch {
       showToast('诊断失败，请稍后再试')
@@ -478,7 +488,13 @@ export function MinePage() {
 
       <div className="section-title">
         <span>模块完成率</span>
-        <span className="section-title__extra">共 {TOTAL_MODULES} 个模块</span>
+        <span className="section-title__extra">共 {subject.totalModules} 个模块</span>
+      </div>
+      <div className="m-subject">
+        <SubjectSwitch
+          value={subject.info.id}
+          onChange={(subjectId) => updateSettings({ activeSubject: subjectId })}
+        />
       </div>
       <section className="card m-bars">
         {stats.map((stat) => (
@@ -681,14 +697,21 @@ export function MinePage() {
         <div className="m-about__row">
           <span>数据来源</span>
           <b>
-            {UP.name} · B站 mid {UP.mid}
+            {SUBJECT_VIEWS.map(
+              (subjectView) =>
+                `${subjectView.info.up.name}（B站 mid ${subjectView.info.up.mid}）`,
+            ).join(' · ')}
           </b>
         </div>
         <div className="m-about__row">
           <span>课程数据</span>
           <b>
-            {TOTAL_TOPICS} 个专题合集 / {TOTAL_TOPIC_VIDEOS} 条视频 + {TOTAL_MODULES} 模块 /{' '}
-            {TOTAL_KP} 知识点
+            {SUBJECT_VIEWS.map(
+              (subjectView) =>
+                `${subjectView.info.name} ${subjectView.totalModules} 模块 / ${subjectView.totalKp} 知识点`,
+            ).join(' · ')}
+            <br />
+            {TOTAL_TOPICS} 个专题合集 / {TOTAL_TOPIC_VIDEOS} 条视频
           </b>
         </div>
         <div className="m-about__row">
@@ -784,7 +807,7 @@ export function MinePage() {
           inputMode="url"
           className="m-input"
           value={urlDraft}
-          placeholder="https://yiweiima.github.io/yishu-review/data/courses.json"
+          placeholder="https://holdthe-faith.github.io/yishu-review/data/courses.json"
           onChange={(event) => setUrlDraft(event.target.value)}
           spellCheck={false}
           autoComplete="off"

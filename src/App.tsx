@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react'
-import { AppProvider } from './store/AppStore'
+import { AppProvider, useApp } from './store/AppStore'
 import { ToastProvider } from './components/Toast'
 import { JumpProvider } from './lib/jump'
 import { TabBar } from './components/TabBar'
@@ -12,6 +12,7 @@ import { SearchPage } from './pages/SearchPage'
 import type { TabKey } from './types'
 
 function AppShell() {
+  const { settings } = useApp()
   const [tab, setTab] = useState<TabKey>('course')
   const [searchOpen, setSearchOpen] = useState(false)
 
@@ -22,8 +23,10 @@ function AppShell() {
     <div className="app">
       <div className="app__frame">
         <main className="screen" key={tab}>
-          {tab === 'course' ? <CoursePage onOpenSearch={openSearch} /> : null}
-          {tab === 'knowledge' ? <KnowledgePage /> : null}
+          {tab === 'course' ? (
+            <CoursePage key={settings.activeSubject} onOpenSearch={openSearch} />
+          ) : null}
+          {tab === 'knowledge' ? <KnowledgePage key={settings.activeSubject} /> : null}
           {tab === 'mine' ? <MinePage /> : null}
         </main>
         <UpdateBanner />

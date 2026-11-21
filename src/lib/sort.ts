@@ -1,3 +1,4 @@
+import type { SubjectView } from '../data'
 import type { DoneEntry, FlatTopicVideo, ModuleInfo, TopicInfo } from '../types'
 
 /**
@@ -30,12 +31,15 @@ export interface ModuleWithItems extends ModuleInfo {
 /** 已全部学完的模块排到最后；未学完的保持原复习顺序 */
 export function orderModules<T extends ModuleWithItems>(
   modules: T[],
+  subject: SubjectView,
   done: Record<string, DoneEntry>,
   enabled: boolean,
 ): T[] {
   if (!enabled) return modules
-  const complete = (module: T) =>
-    module.items.length > 0 && module.items.every((item) => isDone(done, `s:${item.p}`))
+  const complete = (module: T) => {
+    const items = subject.systemItems.filter((item) => item.moduleId === module.id)
+    return items.length > 0 && items.every((item) => isDone(done, item.key))
+  }
   return [...modules].sort((a, b) => Number(complete(a)) - Number(complete(b)))
 }
 
@@ -51,19 +55,28 @@ export function orderTopicVideos(
 /** 整个合集都刷完时，合集 tab 也排到最后 */
 export function orderTopics<T extends TopicInfo>(
   topics: T[],
+  subjectId: string,
   done: Record<string, DoneEntry>,
   enabled: boolean,
 ): T[] {
   if (!enabled) return topics
   const complete = (topic: T) =>
     topic.videos.length > 0 &&
-    topic.videos.every((video) => isDone(done, `t:${topic.seasonId}:${video.bvid}`))
+    topic.videos.every((video) =>
+      isDone(done, `${subjectId}:t:${topic.seasonId}:${video.bvid}`),
+    )
   return [...topics].sort((a, b) => Number(complete(a)) - Number(complete(b)))
 }
 
-export function isTopicComplete(topic: TopicInfo, done: Record<string, DoneEntry>): boolean {
+export function isTopicComplete(
+  topic: TopicInfo,
+  subjectId: string,
+  done: Record<string, DoneEntry>,
+): boolean {
   return (
     topic.videos.length > 0 &&
-    topic.videos.every((video) => isDone(done, `t:${topic.seasonId}:${video.bvid}`))
+    topic.videos.every((video) =>
+      isDone(done, `${subjectId}:t:${topic.seasonId}:${video.bvid}`),
+    )
   )
 }

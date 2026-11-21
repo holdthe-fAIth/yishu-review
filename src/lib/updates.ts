@@ -47,7 +47,7 @@ export async function fetchRemoteCourses(url: string): Promise<CoursesData> {
     const response = await fetch(url, { cache: 'no-store', signal: controller.signal })
     if (!response.ok) throw new Error(`HTTP ${response.status}`)
     const json: unknown = await response.json()
-    if (!isValidCoursesData(json)) throw new Error('数据格式不正确（需要 v2 结构）')
+    if (!isValidCoursesData(json)) throw new Error('数据格式不正确（需要 v3 多科目结构）')
     return json
   } finally {
     window.clearTimeout(timer)

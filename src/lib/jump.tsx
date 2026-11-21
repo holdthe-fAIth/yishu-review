@@ -61,7 +61,9 @@ export function JumpProvider({ children }: { children: ReactNode }) {
             <div className="jump-confirm__name">{confirming.name}</div>
             <p className="jump-confirm__desc">
               {confirming.kind === 'system'
-                ? `将在 B站 App 播放系统课第 ${links.page ?? '?'} 分P（${copyTextFor(confirming)}）。`
+                ? links.page !== undefined
+                  ? `将在 B站 App 播放系统课第 ${links.page} 分P（${copyTextFor(confirming)}）。`
+                  : `将在 B站 App 播放该知识点视频（${copyTextFor(confirming)}）。`
                 : `将在 B站 App 播放该专题视频（${copyTextFor(confirming)}）。`}
               看完切回来，会提示你一键打勾。
             </p>

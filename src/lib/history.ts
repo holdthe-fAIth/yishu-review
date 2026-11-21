@@ -6,6 +6,8 @@ export interface StudyRecord {
   key: string
   name: string
   groupName: string
+  subjectId: string
+  subjectName: string
   kind: 'system' | 'topic'
   /** 完成时间（毫秒时间戳） */
   at: number
@@ -24,6 +26,8 @@ export function buildStudyRecords(done: Record<string, DoneEntry>): StudyRecord[
         key,
         name: system.name,
         groupName: system.moduleName,
+        subjectId: system.subjectId,
+        subjectName: system.subjectName,
         kind: 'system',
         at: entry.at,
         duration: system.duration,
@@ -37,6 +41,8 @@ export function buildStudyRecords(done: Record<string, DoneEntry>): StudyRecord[
         key,
         name: topic.title,
         groupName: topic.topicTitle,
+        subjectId: topic.subjectId,
+        subjectName: topic.subjectName,
         kind: 'topic',
         at: entry.at,
         duration: topic.duration,

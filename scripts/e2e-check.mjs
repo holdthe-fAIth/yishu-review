@@ -21,9 +21,15 @@ const APP_URL = process.env.APP_URL || 'http://127.0.0.1:4173/'
 const STORAGE_KEY = 'yishu-review:state:v1'
 
 const DATA = JSON.parse(readFileSync(join(root, 'data', 'courses.json'), 'utf8'))
-const MODULE_NAMES = DATA.systemCourse.modules.map((module) => module.name)
-const TOPIC_COUNT = DATA.topics.length
-const KP_COUNT = DATA.systemCourse.kpCount
+const MATH = DATA.subjects.find((subject) => subject.id === 'math')
+const PHYSICS = DATA.subjects.find((subject) => subject.id === 'physics')
+const MODULE_NAMES = MATH.systemCourse.modules.map((module) => module.name)
+const TOPIC_COUNT = MATH.topics.length
+const KP_COUNT = MATH.systemCourse.kpCount
+const PHYSICS_KP_COUNT = PHYSICS.systemCourse.kpCount
+const PHYSICS_MODULE_COUNT = PHYSICS.systemCourse.modules.length
+const PHYSICS_FIRST_MODULE = PHYSICS.systemCourse.modules[0]
+const PHYSICS_FIRST_ITEM = PHYSICS_FIRST_MODULE.items[0]
 
 let passed = 0
 let failed = 0
@@ -47,12 +53,12 @@ const EMPTY_STATE = {
   settings: { confirmBeforeJump: false, returnPrompt: true, theme: 'light' },
 }
 
-/** 系统课 194 个知识点全部完成，用于验证「全部完成时默认全部收起」 */
+/** 数学系统课全部知识点完成，用于验证「全部完成时默认全部收起」 */
 const ALL_DONE_STATE = {
   v: 1,
   done: Object.fromEntries(
-    DATA.systemCourse.modules.flatMap((module) =>
-      module.items.map((item) => [`s:${item.p}`, { at: Date.now() }]),
+    MATH.systemCourse.modules.flatMap((module) =>
+      module.items.map((item) => [`math:s:${item.p}`, { at: Date.now() }]),
     ),
   ),
   settings: {
@@ -66,7 +72,7 @@ const ALL_DONE_STATE = {
 /** 关闭「已学排后」：完成模块后应保持原位且不自动收起 */
 const SORT_OFF_STATE = {
   v: 1,
-  done: { 's:2': { at: Date.now() } },
+  done: { 'math:s:2': { at: Date.now() } },
   settings: {
     confirmBeforeJump: false,
     returnPrompt: true,
@@ -188,8 +194,8 @@ async function main() {
     )
     check('深链带正确的分P参数 ?p=3', String(jump.opened[0] ?? '').includes('?p=3'), jump.opened[0] ?? '')
     check(
-      '跳转前写入 pending（key=s:3）',
-      jump.pending?.key === 's:3',
+      '跳转前写入 pending（key=math:s:3）',
+      jump.pending?.key === 'math:s:3',
       JSON.stringify(jump.pending),
     )
 
@@ -217,13 +223,13 @@ async function main() {
       String(jump2.opened[1] ?? '').includes('?p=12'),
       jump2.opened[1] ?? '',
     )
-    check('pending 只保留一条（最新）', jump2.pending?.key === 's:12', JSON.stringify(jump2.pending))
+    check('pending 只保留一条（最新）', jump2.pending?.key === 'math:s:12', JSON.stringify(jump2.pending))
 
     /* ---------------- 4. 返回浮条 ---------------- */
     section('4) 从 B站 回来（离开 >30s）→ 浮条一键打勾')
     await cdp.evaluate(`(() => {
       const state = JSON.parse(localStorage.getItem(${JSON.stringify(STORAGE_KEY)}) || '{}')
-      state.pending = { key: 's:5', name: '集合的概念', at: Date.now() - 31000 }
+      state.pending = { key: 'math:s:5', name: '集合的概念', at: Date.now() - 31000 }
       localStorage.setItem(${JSON.stringify(STORAGE_KEY)}, JSON.stringify(state))
       return true
     })()`)
@@ -241,7 +247,7 @@ async function main() {
     const barDone = await readState(cdp)
     check(
       '浮条点「打勾」→ 立刻完成并清空 pending',
-      Boolean(barDone?.done?.['s:5']) && !barDone?.pending,
+      Boolean(barDone?.done?.['math:s:5']) && !barDone?.pending,
       `done=${Object.keys(barDone?.done ?? {}).length} pending=${JSON.stringify(barDone?.pending)}`,
     )
 
@@ -299,7 +305,7 @@ async function main() {
     section('7) 专题课（7 个合集 / 真实封面卡片）')
     await cdp.evaluate(`document.querySelectorAll('.tabbar__item')[0]?.click(); true`)
     await sleep(600)
-    await cdp.evaluate(`document.querySelectorAll('.segmented__item')[1]?.click(); true`)
+    await cdp.evaluate(`document.querySelectorAll('.cp-seg .segmented__item')[1]?.click(); true`)
     await sleep(650)
     const topicView = await cdp.evaluate(`(() => ({
       tabs: document.querySelectorAll('.cp-tab').length,
@@ -380,7 +386,7 @@ async function main() {
       `selected=${calendarPanel.selected} records=${calendarPanel.records}`,
     )
     check('内容更新相关入口齐全', mine.text.includes('检查内容更新') && mine.text.includes('内容更新源'))
-    check('数据版本信息可见', /v2|数据版本/.test(mine.text))
+    check('数据版本信息可见', /v3|数据版本/.test(mine.text))
     check('我的页无横向滚动', mine.noHScroll)
 
     // 主题切换
@@ -446,7 +452,7 @@ async function main() {
       const state = JSON.parse(localStorage.getItem(${JSON.stringify(STORAGE_KEY)}) || '{}')
       state.done = { ...(state.done || {}) }
       const base = Date.now() - 3600000
-      ;['s:2', 's:3', 's:5'].forEach((key, index) => { state.done[key] = { at: base + index * 60000 } })
+      ;['math:s:2', 'math:s:3', 'math:s:5'].forEach((key, index) => { state.done[key] = { at: base + index * 60000 } })
       state.settings = { ...state.settings, sortCompletedLast: true }
       delete state.pending
       localStorage.setItem(${JSON.stringify(STORAGE_KEY)}, JSON.stringify(state))
@@ -728,6 +734,205 @@ async function main() {
       allDoneView.hero.includes('全部完成'),
       allDoneView.hero.replace(/\s+/g, ' ').slice(0, 60),
     )
+
+    /* ---------------- 12.7 多科目：旧进度迁移 / 数学物理切换 ---------------- */
+    section('12.7) 多科目：旧进度迁移 / 科目切换 / 物理深链')
+    const OLD_MATH_STATE = {
+      v: 1,
+      done: {
+        's:5': { at: Date.now() - 7_200_000 },
+        't:8397438:BV1UqHw63EEw': { at: Date.now() - 3_600_000 },
+      },
+      settings: {
+        confirmBeforeJump: false,
+        returnPrompt: true,
+        theme: 'light',
+        sortCompletedLast: true,
+      },
+    }
+    await loadWithState(cdp, OLD_MATH_STATE)
+    const migrated = await cdp.evaluate(`(() => {
+      const state = JSON.parse(localStorage.getItem(${JSON.stringify(STORAGE_KEY)}) || '{}')
+      const keys = Object.keys(state.done || {})
+      const tabs = [...document.querySelectorAll('.cp-subject .segmented__item')]
+      return {
+        keys,
+        oldKeys: keys.filter((key) => key.startsWith('s:') || key.startsWith('t:')),
+        active: state.settings?.activeSubject,
+        selected: tabs.find((btn) => btn.getAttribute('aria-selected') === 'true')?.textContent?.trim() ?? '',
+        tabs: tabs.map((btn) => btn.textContent?.trim() ?? ''),
+        hero: document.querySelector('.cp-hero')?.innerText ?? '',
+      }
+    })()`)
+    check(
+      '旧数学 s:/t: 进度迁移为 math: 前缀且不丢',
+      migrated.keys.includes('math:s:5') &&
+        migrated.keys.includes('math:t:8397438:BV1UqHw63EEw') &&
+        migrated.oldKeys.length === 0,
+      migrated.keys.join(','),
+    )
+    check(
+      '旧数据默认选中数学，科目切换显示数学/物理',
+      migrated.active === 'math' &&
+        migrated.selected === '数学' &&
+        JSON.stringify(migrated.tabs) === JSON.stringify(['数学', '物理']),
+      `active=${migrated.active} selected=${migrated.selected} tabs=${migrated.tabs.join('/')}`,
+    )
+    check('迁移后数学 Hero 进度仍为 1/194', migrated.hero.includes('已完成 1 / 194'), migrated.hero.replace(/\s+/g, ' ').slice(0, 50))
+
+    await cdp.evaluate(
+      `[...document.querySelectorAll('.cp-subject .segmented__item')].find((btn) => btn.textContent?.trim() === '物理')?.click(); true`,
+    )
+    await sleep(750)
+    const physicsView = await cdp.evaluate(`(() => {
+      const first = document.querySelector('.cp-module')
+      const state = JSON.parse(localStorage.getItem(${JSON.stringify(STORAGE_KEY)}) || '{}')
+      return {
+        subtitle: document.querySelector('.page-subtitle')?.textContent ?? '',
+        hero: document.querySelector('.cp-hero')?.innerText ?? '',
+        modules: document.querySelectorAll('.cp-module').length,
+        firstModule: (first?.querySelector('.cp-module__name')?.textContent || '').trim(),
+        firstCard: (first?.querySelector('.cp-card__title')?.textContent || '').trim(),
+        active: state.settings?.activeSubject,
+      }
+    })()`)
+    check(
+      '切到物理：标题/进度正确',
+      physicsView.subtitle.includes('黄夫人') &&
+        physicsView.subtitle.includes('高中物理') &&
+        physicsView.hero.includes(`已完成 0 / ${PHYSICS_KP_COUNT}`),
+      physicsView.subtitle.replace(/\s+/g, ' ').slice(0, 60),
+    )
+    check(
+      '物理模块数与首个模块/知识点正确',
+      physicsView.modules === PHYSICS_MODULE_COUNT &&
+        physicsView.firstModule === PHYSICS_FIRST_MODULE.name &&
+        physicsView.firstCard === PHYSICS_FIRST_ITEM.name,
+      `${physicsView.modules} 模块 / ${physicsView.firstModule} / ${physicsView.firstCard}`,
+    )
+    check('当前科目持久化为 physics', physicsView.active === 'physics', String(physicsView.active))
+
+    await cdp.evaluate(`(() => {
+      window.__opened = []
+      window.open = (url) => { window.__opened.push(url); return null }
+      document.querySelector('.cp-module .cp-card')?.click()
+      return true
+    })()`)
+    await sleep(550)
+    const physicsJump = await cdp.evaluate(`(() => {
+      const state = JSON.parse(localStorage.getItem(${JSON.stringify(STORAGE_KEY)}) || '{}')
+      return { opened: window.__opened ?? [], pending: state.pending ?? null }
+    })()`)
+    check(
+      '物理卡片跳转使用自己的 BV，且不带错误 page 参数',
+      physicsJump.opened.length === 1 &&
+        physicsJump.opened[0] === `https://www.bilibili.com/video/${PHYSICS_FIRST_ITEM.bvid}`,
+      physicsJump.opened[0] ?? '',
+    )
+    check(
+      '物理 pending 使用科目前缀 key',
+      physicsJump.pending?.key === `physics:s:${PHYSICS_FIRST_ITEM.bvid}`,
+      JSON.stringify(physicsJump.pending),
+    )
+
+    await cdp.evaluate(`document.querySelector('.cp-module .cp-card .check-btn')?.click(); true`)
+    await sleep(650)
+    const physicsDone = await cdp.evaluate(`(() => {
+      const state = JSON.parse(localStorage.getItem(${JSON.stringify(STORAGE_KEY)}) || '{}')
+      const keys = Object.keys(state.done || {})
+      return {
+        keys,
+        hero: document.querySelector('.cp-hero')?.innerText ?? '',
+        pending: state.pending ?? null,
+      }
+    })()`)
+    check(
+      '物理打勾 key 带 physics: 前缀，数学进度不丢',
+      physicsDone.keys.includes(`physics:s:${PHYSICS_FIRST_ITEM.bvid}`) &&
+        physicsDone.keys.includes('math:s:5') &&
+        physicsDone.keys.includes('math:t:8397438:BV1UqHw63EEw') &&
+        !physicsDone.pending,
+      physicsDone.keys.join(','),
+    )
+    check(
+      '物理 Hero 进度变为 1/444',
+      physicsDone.hero.includes(`已完成 1 / ${PHYSICS_KP_COUNT}`),
+      physicsDone.hero.replace(/\s+/g, ' ').slice(0, 50),
+    )
+
+    await cdp.evaluate(`document.querySelectorAll('.cp-seg .segmented__item')[1]?.click(); true`)
+    await sleep(650)
+    const physicsTopics = await cdp.evaluate(`(() => ({
+      tabs: document.querySelectorAll('.cp-tab').length,
+      cards: document.querySelectorAll('.cp-card').length,
+      firstTab: document.querySelector('.cp-tab .cp-tab__title')?.textContent ?? '',
+    }))()`)
+    check(
+      '物理专题课有 2 个合集（试卷讲解 / 补充合集）',
+      physicsTopics.tabs === PHYSICS.topics.length &&
+        physicsTopics.cards > 0 &&
+        physicsTopics.firstTab.includes('试卷讲解'),
+      `${physicsTopics.tabs} 合集 / ${physicsTopics.cards} 卡片 / ${physicsTopics.firstTab}`,
+    )
+
+    await cdp.evaluate(
+      `[...document.querySelectorAll('.cp-subject .segmented__item')].find((btn) => btn.textContent?.trim() === '数学')?.click(); true`,
+    )
+    await sleep(700)
+    const backToMath = await cdp.evaluate(`(() => ({
+      hero: document.querySelector('.cp-hero')?.innerText ?? '',
+      modules: document.querySelectorAll('.cp-module').length,
+    }))()`)
+    check(
+      '切回数学：模块数 24，旧进度仍在',
+      backToMath.modules === MODULE_NAMES.length && backToMath.hero.includes('已完成 1 / 194'),
+      `${backToMath.modules} 模块 / ${backToMath.hero.replace(/\s+/g, ' ').slice(0, 40)}`,
+    )
+
+    // 跨科目搜索：数学页面也能搜到物理知识点
+    await cdp.evaluate(`document.querySelector('.page-head .icon-btn')?.click(); true`)
+    await sleep(450)
+    await cdp.evaluate(typeSearch('质点'))
+    await sleep(600)
+    const crossSearch = await cdp.evaluate(`(() => {
+      const rows = [...document.querySelectorAll('.search-result')]
+      return { count: rows.length, text: rows.map((row) => row.innerText).join('\\n') }
+    })()`)
+    check(
+      '搜索跨科目，物理结果带科目标签',
+      crossSearch.count > 0 && crossSearch.text.includes('物理') && crossSearch.text.includes('质点'),
+      `${crossSearch.count} 条`,
+    )
+    await cdp.evaluate(`document.querySelector('.search-page__head .icon-btn')?.click(); true`)
+    await sleep(400)
+
+    // 我的页：学习记录显示科目，模块完成率可切科目
+    await cdp.evaluate(`document.querySelectorAll('.tabbar__item')[2]?.click(); true`)
+    await sleep(700)
+    const mineSubjects = await cdp.evaluate(`(() => ({
+      tags: [...document.querySelectorAll('.m-rec__tag')].map((el) => el.textContent?.trim() ?? ''),
+      bars: document.querySelectorAll('.m-bar').length,
+    }))()`)
+    check(
+      '学习记录显示数学/物理科目',
+      mineSubjects.tags.some((tag) => tag.includes('数学')) &&
+        mineSubjects.tags.some((tag) => tag.includes('物理')),
+      mineSubjects.tags.join(' / '),
+    )
+    await cdp.evaluate(
+      `[...document.querySelectorAll('.m-subject .segmented__item')].find((btn) => btn.textContent?.trim() === '物理')?.click(); true`,
+    )
+    await sleep(550)
+    const minePhysicsBars = await cdp.evaluate(`document.querySelectorAll('.m-bar').length`)
+    check(
+      '我的页模块完成率可切到物理（36 行）',
+      minePhysicsBars === PHYSICS_MODULE_COUNT,
+      `实际 ${minePhysicsBars}`,
+    )
+    await cdp.evaluate(
+      `[...document.querySelectorAll('.m-subject .segmented__item')].find((btn) => btn.textContent?.trim() === '数学')?.click(); true`,
+    )
+    await sleep(450)
 
     /* ---------------- 13. PWA ---------------- */
     section('13) PWA（manifest / Service Worker / 离线打开）')

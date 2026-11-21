@@ -19,10 +19,21 @@ export const DEFAULT_SETTINGS: Settings = {
   sortCompletedLast: true,
   autoCheckUpdate: true,
   updateUrl: '',
+  activeSubject: 'math',
 }
 
 export function createDefaultState(): AppState {
   return { v: 1, done: {}, settings: { ...DEFAULT_SETTINGS } }
+}
+
+/**
+ * 旧版 key 迁移：`s:{p}` / `t:{seasonId}:{bvid}` 都是数学；
+ * 新版统一带科目前缀（`math:s:2`、`physics:s:BV...`）。
+ */
+function migrateDoneKey(key: string): string {
+  if (key.startsWith('s:')) return `math:${key}`
+  if (key.startsWith('t:')) return `math:${key}`
+  return key
 }
 
 function isThemeMode(value: unknown): value is Settings['theme'] {
@@ -32,14 +43,15 @@ function isThemeMode(value: unknown): value is Settings['theme'] {
 function sanitizeDone(raw: unknown): Record<string, DoneEntry> {
   const out: Record<string, DoneEntry> = {}
   if (!raw || typeof raw !== 'object') return out
-  for (const [key, value] of Object.entries(raw as Record<string, unknown>)) {
-    if (typeof key !== 'string' || key.length === 0) continue
+  for (const [rawKey, value] of Object.entries(raw as Record<string, unknown>)) {
+    if (typeof rawKey !== 'string' || rawKey.length === 0) continue
+    const key = migrateDoneKey(rawKey)
     const at = (value as { at?: unknown } | null)?.at
     if (typeof at === 'number' && Number.isFinite(at)) {
-      out[key] = { at }
+      if (!out[key] || at > out[key].at) out[key] = { at }
     } else if (value === true) {
       // 兼容「只有 key 没有时间」的旧数据
-      out[key] = { at: Date.now() }
+      if (!out[key]) out[key] = { at: Date.now() }
     }
   }
   return out
@@ -51,7 +63,7 @@ function normalizePending(raw: unknown): PendingItem | undefined {
   if (typeof value.key !== 'string' || !value.key) return undefined
   if (typeof value.name !== 'string' || !value.name) return undefined
   if (typeof value.at !== 'number' || !Number.isFinite(value.at)) return undefined
-  return { key: value.key, name: value.name, at: value.at }
+  return { key: migrateDoneKey(value.key), name: value.name, at: value.at }
 }
 
 /** 把任意来源（localStorage / 导入文件）的数据规范化成合法 AppState */
@@ -83,6 +95,10 @@ export function normalizeState(raw: unknown): AppState {
           : DEFAULT_SETTINGS.autoCheckUpdate,
       updateUrl:
         typeof settings.updateUrl === 'string' ? settings.updateUrl : DEFAULT_SETTINGS.updateUrl,
+      activeSubject:
+        typeof settings.activeSubject === 'string' && settings.activeSubject
+          ? settings.activeSubject
+          : DEFAULT_SETTINGS.activeSubject,
     },
   }
 }
@@ -238,7 +254,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const doneCount = useMemo(() => {
     let count = 0
     for (const key of Object.keys(state.done)) {
-      if (key.startsWith('s:')) count += 1
+      if (key.includes(':s:')) count += 1
     }
     return count
   }, [state.done])
