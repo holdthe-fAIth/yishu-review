@@ -50,7 +50,6 @@ src/
 scripts/                   # 数据抓取/校验、e2e、截图、APK 打包、图标生成
 android/                   # Capacitor Android 工程（build/ 等已 gitignore）
 .github/workflows/         # deploy-pages.yml（Pages 部署）、refresh-data.yml（每周刷数据）、verify.yml（CI 检查）
-video/                     # 宣传视频脚本与提示词（不属于 App 运行时）
 ```
 
 ## 4. 开发命令
@@ -122,7 +121,6 @@ pnpm build:apk           # 打 Android APK（需要 .tools 便携 JDK/SDK，见 
 - 物理知识点是独立 BV、没有分P：`SystemItem.p` 可省略，key 用 `physics:s:{bvid}`；不要给物理视频强行加 `?page=`。
 - 旧数学 key 迁移在 `normalizeState` 完成；改 key 规则时必须继续兼容 `s:` / `t:`。
 - `public/data/`、`android/build/`、`screenshots/`、`.tools/` 都是生成物，已 gitignore，不要提交。
-- 视频相关脚本（`video/`）不属于 App 运行时，改 App 时不用管。
 
 ## 9. 验收清单（提交/交付前自查）
 

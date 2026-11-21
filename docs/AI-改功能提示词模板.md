@@ -74,7 +74,7 @@
 按能力从好到差选择：
 
 1. **能 git clone / 访问目录**（最佳）：直接把仓库地址或本地路径给它。
-2. **能上传文件**：把仓库打成 zip 上传（不含 `node_modules`、`dist`、`.tools`、`screenshots`、`video/*.mp4`）。
+2. **能上传文件**：把仓库打成 zip 上传（不含 `node_modules`、`dist`、`.tools`、`screenshots`）。
 3. **只能聊天、不能跑代码**：让它只输出「patch / 完整文件内容」，你复制回本地；同时把相关源码贴给它（至少 `AGENTS.md` + 要改的文件）。
 4. 不要在纯聊天 AI 里让它「假装跑测试」；验收始终以本地 `pnpm check` / `verify:ui` 为准。
 

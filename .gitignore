@@ -16,12 +16,8 @@ screenshots/
 .tools/
 *.apk
 public/data/
-video/audio/
-video/stills/
-video/check/
-video/*.mp4
-video/qr.png
-video/cover.png
-video/素材包/
-video/*.zip
-video/Kimi-代码版-素材包/
+
+# 视频制作素材（已从 App 仓库移除）
+video/
+__pycache__/
+*.pyc
