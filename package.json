@@ -8,6 +8,7 @@
     "dev": "node scripts/copy-data.mjs && vite",
     "build": "node scripts/copy-data.mjs && tsc --noEmit && vite build",
     "typecheck": "tsc --noEmit",
+    "check": "node scripts/copy-data.mjs && tsc --noEmit && node scripts/verify-data.mjs && vite build",
     "preview": "vite preview",
     "fetch:data": "node scripts/fetch-data.mjs",
     "enrich:data": "node scripts/enrich-part-counts.mjs",

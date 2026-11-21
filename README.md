@@ -23,12 +23,27 @@ pnpm preview        # 预览 dist → http://localhost:4173
 
 pnpm fetch:data     # 重新抓取一数主页数据（B站接口，仅开发时运行）
 pnpm verify:data    # 数据完整性校验（194 知识点 / 7 合集 / 320 视频 / 发布时间齐全）
+pnpm check          # 一键：复制数据 + tsc + 数据校验 + build（提交前跑这个）
 pnpm verify:ui      # 49+ 项 Edge headless 功能验收（需先 build + preview）
 pnpm screenshot     # 480×900@2x 视觉验收截图 → screenshots/
 pnpm build:apk      # 打包 Android APK（需要 .tools 里的 JDK/SDK，见「APK」章节）
 ```
 
 > 本机没有 `pnpm` 时用 `npm run dev` / `npm run build` 等价；仓库自带 `pnpm-lock.yaml`。
+
+---
+
+## 接手开发：换 AI / 换电脑 / 新会话
+
+这个项目**不依赖某个对话或某个 AI**——仓库就是唯一事实来源，代码、数据、脚本、验收、发布流程都在仓库里。
+
+- **新 AI / 新会话**：先让它读 [AGENTS.md](AGENTS.md)（项目说明书：结构、核心机制、命令、约定、常见坑），再把需求按 [docs/需求模板.md](docs/需求模板.md) 写清楚，粘贴 [docs/AI-改功能提示词模板.md](docs/AI-改功能提示词模板.md) 里的模板即可。
+- **每个功能开一个新会话/新分支**，不要把功能都堆在同一个长对话里；上下文不够换会话完全不影响项目。
+- **一键自检**：`pnpm check`（tsc + 数据校验 + 构建）；UI 改动再 `pnpm preview` + `pnpm verify:ui`。
+- **提交发布**：`git add -A && git commit -m "feat: ..." && git push` → GitHub Actions 自动部署线上；影响 App 功能就重新 `pnpm build:apk`。
+- **CI**：`.github/workflows/verify.yml` 在 push/PR 时自动跑类型检查 + 数据校验 + 构建，改坏了会直接标红。
+
+> 一句话：以后加功能不用回到这个对话框——把仓库交给任意一个会写代码的 AI，按上面三个文件走即可。
 
 ---
 
