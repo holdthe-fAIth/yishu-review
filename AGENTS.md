@@ -13,6 +13,7 @@
 - **线上**：<https://holdthe-faith.github.io/yishu-review/>（GitHub Pages，自动部署）
 - **仓库**：<https://github.com/holdthe-fAIth/yishu-review>
 - **形态**：PWA（可安装、可离线）+ Android APK（Capacitor 6，debug 签名，`pnpm build:apk` 打包）
+- **许可**：代码 MIT（`LICENSE`）；课程数据、封面、UP 名称等第三方内容不在 MIT 范围内，见 `NOTICE`。
 
 ## 2. 技术栈（不要随意更换/加依赖）
 

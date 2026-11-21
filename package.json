@@ -2,6 +2,7 @@
   "name": "yishu-review",
   "private": true,
   "version": "3.1.0",
+  "license": "MIT",
   "type": "module",
   "description": "数理复习 · 高中数学 + 高中物理目录型进度本（点知识点跳 B站 App，看完回来一键打勾；支持学习日历、内容更新、发布时间提示）",
   "scripts": {

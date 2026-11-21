@@ -348,3 +348,13 @@ yishu-review/
 - 运行时：`react`、`react-dom`、`@capacitor/core`、`@capacitor/app`、`@capacitor/app-launcher`
 - 开发/构建：`vite`、`@vitejs/plugin-react`、`typescript`、`vite-plugin-pwa`、`@capacitor/cli`、`@capacitor/android`
 - 无 UI 组件库、无路由库、无状态管理库、无图表库、无请求库。
+
+---
+
+## 十、License / 第三方内容
+
+本项目**代码**以 [MIT License](LICENSE) 开源。
+
+课程数据、视频标题与封面、UP 主名称、B站相关商标等第三方内容**不在 MIT 授权范围内**，相关权利归原权利人所有。详细说明见 [NOTICE](NOTICE)。
+
+本项目是非官方个人复习工具，与哔哩哔哩、一数、黄夫人无隶属关系，也未获得其官方授权或背书。用于商业用途或上架应用商店前，请自行取得必要授权并遵守平台规则。
